@@ -4,7 +4,7 @@ summary: "An agent can write a change in minutes, but finding out what the chang
 part: start
 order: 1
 points:
-  - "Producing a change is now cheap. The scarce skill is knowing what a change does."
+  - "Producing a change is now cheap, and the scarce skill is knowing what a change does."
   - "A specification helps an agent build the right thing and says nothing about how well that thing was checked."
   - "On an agent-built system, most of the engineering goes into verification."
 related: [workflow, primitives, verification-engineering, open-bets]
@@ -12,9 +12,9 @@ related: [workflow, primitives, verification-engineering, open-bets]
 
 ## A familiar afternoon
 
-An agent opens a pull request that touches fourteen files. The tests pass. You have twenty minutes before your next meeting. You can read it properly and be late, or you can skim it, approve it, and hope.
+An agent opens a pull request that touches fourteen files, and the tests pass. You have twenty minutes before your next meeting, so you can either read the change properly and be late, or skim it, approve it, and hope.
 
-Both options get worse as agents get faster. If you read everything, the agent waits for you and its speed is wasted. If you stop reading, every change becomes a risk that nobody measured.
+Both options get worse as agents get faster. If you read everything, the agent waits for you and its speed is wasted. If you stop reading, every change becomes a risk that nobody has measured.
 
 <Figure id="bottleneck" />
 
@@ -22,22 +22,22 @@ Both options get worse as agents get faster. If you read everything, the agent w
 
 Producing a change used to cost enough that its author understood it. Code review was a second pair of eyes on something a person already understood.
 
-An agent now produces working code faster than a person can read it. The scarce skill is answering two questions about a change:
+An agent now produces working code faster than a person can read it, so the scarce skill is answering two questions about a change:
 
 - What does this change actually do?
 - What does the system still promise after it?
 
-A conventional codebase answers neither. Side effects are spread through the code. State is shared. Tests check whatever their author happened to think of. A green build says that some tests passed, and nothing about which promises were tested or how thoroughly.
+Many codebases answer neither question well. Side effects are spread through the code, state is shared, and tests check whatever their author happened to think of. A green build says that some tests passed, and nothing about which promises were tested or how thoroughly.
 
 ## Why a specification is not enough
 
-Giving the agent a written specification solves half of the problem: the agent builds the right thing more often.
+Giving the agent a written specification solves half of the problem, because the agent then builds the right thing more often.
 
-Tools that track a specification stop one step short. They can tell you that a requirement "has a test", and they cannot tell you what kind. A requirement covered by one example and a requirement covered by a proof look the same on a dashboard, and neither says what was assumed or left out.
+Tools that track a specification stop one step short of the other half. They can report that a requirement "has a test", but not what kind of test it is. A requirement covered by one example and a requirement covered by a proof look the same on a dashboard, and neither entry says what was assumed or left out.
 
 ## The idea CanonBall borrows
 
-Safety engineering has had a tool for this for decades, used on aircraft and medical devices. It is the **assurance case**: a written argument, backed by evidence, that a system meets a claim. It says what was checked, by which method, under which assumptions, and what is still open.
+Safety engineering has had a tool for this for decades, used on aircraft and medical devices. It is the **assurance case**: a written argument, backed by evidence, that a system meets a claim. An assurance case says what was checked, by which method, under which assumptions, and what is still open.
 
 Assurance cases are rare outside regulated industries mainly because they are expensive to write and expensive to keep current by hand.
 
@@ -45,17 +45,17 @@ Assurance cases are rare outside regulated industries mainly because they are ex
 
 ## Where the effort goes instead
 
-If the bet holds, the shape of the work changes.
+If the bet holds, the distribution of effort changes.
 
-| | When people wrote the code | When agents write it |
+| | When people write the code | When agents write it |
 |---|---|---|
 | Most effort goes to | Writing the product | Showing that the product keeps its promises |
 | People review | Code, one change at a time | Promises and worked examples |
 | "Done" means | Merged, with a green build | Every promise has evidence, and the weakest one is named |
 | An incident produces | A fix | A fix and a permanent example |
 
-The work in the right-hand column has a name in this guide: [verification engineering](../verification-engineering/). It means building places where a promise can be shown to hold, and shown to fail when it should.
+The work in the right-hand column is [verification engineering](../verification-engineering/): building places where a promise can be shown to hold, and shown to fail when it should.
 
 > **A claim to resist.** Current models can do most of this labor, and that alone does not make the result trustworthy. Trust comes from running the method on a real system and measuring what gets through.
 
-The next chapter, [How work moves](../workflow/), follows a change from the first request to the running system.
+[How work moves](../workflow/) follows a change from the first request to the running system, and shows what the process provides so that agents can do this work well.

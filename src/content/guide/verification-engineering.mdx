@@ -19,7 +19,7 @@ An agent produces a change quickly, but neither the agent nor the people respons
 
 Verification environments are engineered, and each one is designed with a person, because **people can trust evidence only if they understand how it is produced**.
 
-An engineered environment is treated as part of the product. It has a design, known limits and defects of its own, and it is reviewed, versioned and repaired like the code it tests. Designing it with a person means that someone can state, for any clause, what was real in the test, what was faked, which failures were tried, and what the environment could never have shown. An agent can generate passing checks in large numbers, and they become evidence only when a person can give that account of them.
+An engineered environment is treated as part of the product: it has a design, known limits and defects of its own, and it is reviewed, versioned and repaired like the code it tests. Designing it with a person means that someone can state, for any clause, what was real in the test, what was faked, which failures were tried, and what the environment could never have shown. An agent can generate passing checks in large numbers, and they become evidence only when a person can give that account of them.
 
 That person is the **verification lead**, who works with the verifier agent at two stations. At [Shape](../shape/) they agree the evidence plan before any code exists: what will count as evidence for each clause, and which environment will produce it. At [Verify](../verify/) they build the environment, the checks and the injected faults. Which of the two drafts the design is [the team's choice](../delegation/). In every team, people decide what counts as evidence and review any change that would weaken an environment.
 
@@ -36,16 +36,11 @@ A passing test suite establishes that the tests passed. An agent deciding whethe
 
 ## The assurance case: one per clause
 
-An **assurance case**, or *case*, connects a clause to its evidence. The idea comes from safety engineering, where a claim about a system has to be supported by a structured argument as well as by test results.
+An **assurance case**, or *case*, connects a clause to its evidence. The idea comes from safety engineering, where a claim about a system is supported by a structured argument as well as by test results.
 
 <Figure id="case" />
 
-| Element of a case | What it is |
-|---|---|
-| **Parts** | The clause, split into pieces that can each be checked. |
-| **Assumptions** | Whatever depends on the outside world, named. |
-| **A method and an environment** | One of each, for every part. |
-| **An argument** | Why those parts, taken together, are enough. |
+A case splits the clause into **parts** that can each be checked, names as **assumptions** whatever depends on the outside world, gives every part a **method and an environment**, and ends with an **argument** for why the parts, taken together, are enough.
 
 The argument is where gaps are usually found. A verified move gate and a fast sensor do not add up to "no robot moves near a person" until braking distance and sensor blind spots are accounted for as well, and writing the argument down is how someone notices that they were left out.
 
@@ -61,11 +56,11 @@ The method for verifying a part follows from one question: what must be true out
 | 3 | Real devices, drivers, latency | Tests on real hardware | Real infrastructure, a staging system |
 | 4 | Physics, materials, people | Measurement, field data | Production traffic |
 
-The levels resemble the test pyramid, with one difference: the pyramid sorts tests by size, and the levels sort claims by what they depend on. A level is not a measure of confidence, since a narrow proof about an abstract controller can leave a larger gap than a well-designed physical test.
+The levels resemble the test pyramid, except that the pyramid sorts tests by size and the levels sort claims by what they depend on. A level is not a measure of confidence, since a narrow proof about an abstract controller can leave a larger gap than a well-designed physical test.
 
 <Figure id="levels" />
 
-Control over an environment falls as its realism rises. At level 1 a test can freeze time and hold a race condition open, whereas on real infrastructure it can only wait for the race to occur. Timing faults are therefore best caught at the low levels and only observed at the high ones. A part is placed by what it depends on, whatever the team calls its tests: a "unit test" that runs real code against fakes is level 1.
+Control over an environment falls as its realism rises. At level 1 a test can freeze time and hold a race condition open, whereas on real infrastructure it can only wait for the race to occur. Timing faults are therefore best caught at the low levels and only observed at the high ones.
 
 ## Tiers: how much rigor
 
@@ -92,15 +87,8 @@ The sixth step can be misused. Moving logic to where it can be checked is progre
 
 ## What a proof does not give you
 
-A proof shows that the logic satisfies a property for every input. Other questions remain open, and each is covered by a different means.
-
-- Whether the property is the right one is settled by examples.
-- Whether the world behaves as assumed is covered by treatments.
-- Whether the parts are enough is the subject of the argument.
-- Whether the code matches the model that was proved is tested by checks against recorded behavior.
-
-For that reason the Record never shows "proven" alone. It shows the property, the model, the bounds and the assumptions with it.
+A proof shows that the logic satisfies a property for every input. It does not show that the property is the right one, that the world behaves as assumed, that the parts are enough, or that the code matches the model that was proved. Examples, treatments, the argument, and checks against recorded behavior cover those four in turn, and the Record shows "proven" only together with its property, model, bounds and assumptions.
 
 ## What a case depends on
 
-Every case lists the code its clause depends on. When that code changes, the clause shows as *unknown* until the case is checked again, by the mechanism described under [evidence](../evidence/). Building an environment and explaining a failed check both depend on seeing inside the running system, and [observability](../observability/) covers what to build for that.
+Every case lists the code its clause depends on. When that code changes, the clause shows as *unknown* until the case is checked again, by the mechanism described under [evidence](../evidence/). Explaining a failed check also depends on seeing inside the running system, which is the subject of [observability](../observability/).

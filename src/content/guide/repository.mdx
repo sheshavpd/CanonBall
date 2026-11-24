@@ -14,7 +14,7 @@ related: [workflow, layers, people-and-agents, observability]
 
 <Figure id="folders" />
 
-"Where does this go?" has one answer: the folder whose question it answers. "May I change this?" also has one answer, and the repository enforces it for each [role](../people-and-agents/).
+Because each folder answers one question, "where does this go?" has one answer: the folder whose question the file answers. "May I change this?" also has one answer, which the repository enforces for each [role](../people-and-agents/).
 
 ## The layout
 
@@ -90,12 +90,10 @@ Each planned change is a **milestone**, and its folder holds three things.
 
 ## The other folders
 
-Each of these belongs to another chapter.
-
-- `src/` is the code, written at [Build](../build/). CanonBall requires no particular layout inside it.
+- `src/` is the code, written at [Build](../build/), and CanonBall requires no particular layout inside it.
 - `verify/` holds the environments, one check per example, a kept failing run of each check in `checks/red/`, the injected faults and the monitors, as [Verify](../verify/) shows.
 - `observe/` lists what the system emits and holds the commands that read it, which [Observability](../observability/) describes.
-- `incidents/` keeps one file per incident, such as `INC-007`, permanently. [Operate](../operate/) follows that one.
+- `incidents/` keeps one file per incident permanently, such as the `INC-007` that [Operate](../operate/) follows.
 - `AGENTS.md` is the first file an agent reads, and it has [its own chapter](../agents-md/).
 
 Expect `verify/` to grow larger than `src/`, because showing that a clause holds takes more engineering than writing the code that keeps it.
@@ -109,4 +107,4 @@ Expect `verify/` to grow larger than `src/`, because showing that a clause holds
 
 ## What the layout buys you
 
-The layout gives an agent the state of the work as well as context about the product. At any moment an agent can read what is true now, what is being changed and why, what the evidence says, and which files it may write.
+The layout gives an agent the state of the work as well as context about the product: at any moment it can read what is true now, what is being changed and why, what the evidence says, and which files it may write.

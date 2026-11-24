@@ -5,7 +5,7 @@ part: structure
 order: 1
 points:
   - "Canon says what must be true. Blueprint says how. Build is what runs. The Verification Record says whether it is true."
-  - "A higher layer constrains the one below. A lower layer supplies the evidence for the one above."
+  - "A higher layer constrains the one below, and a lower layer supplies the evidence for the one above."
   - "Two automated checks, traceability and no silent gaps, keep the layers from drifting apart."
 related: [primitives, repository, evidence]
 ---
@@ -14,9 +14,9 @@ related: [primitives, repository, evidence]
 
 <Figure id="layers" />
 
-Canon and blueprint together are the **spec**: the statement of intent. Build and Verification Record together are reality. The agents have one job, which is to keep reality consistent with intent and to say so when they cannot.
+Canon and blueprint together are the **spec**, the statement of intent, and build and Verification Record together are reality. The agents' job is to keep reality consistent with intent and to say so when they cannot.
 
-Read down the left side, each layer constrains the one below. The canon bounds what the blueprint may design. The blueprint bounds what the build may contain.
+Read down the left side, each layer constrains the one below: the canon bounds what the blueprint may design, and the blueprint bounds what the build may contain.
 
 Read up the right side, each layer answers to the one above. The build produces evidence. The blueprint holds, for each clause, an **assurance case**: the argument for how that clause will be shown true. The evidence discharges the cases, and the cases discharge the clauses in the canon.
 
@@ -26,7 +26,7 @@ When two layers disagree, the higher one is right by definition, and the change 
 
 The canon is the set of approved [clauses](../primitives/), plus a few pages that give them context: the purpose of the system, who it serves, the [vocabulary](../vocabulary/), and the [tenets](../tenets/), which say which good thing wins when two conflict.
 
-It is written in plain language, and it is the only layer people must read in full. Everything else they read by exception.
+It is written in plain language, and it is the only layer people must read in full. They read the others by exception.
 
 ## Blueprint
 
@@ -37,29 +37,29 @@ The blueprint is where design choices are written down, so that they are visible
 - one case per clause;
 - the evidence plan and the design of each verification environment.
 
-The canon leaves gaps on purpose. The blueprint records how they were filled. Agents may revise it as often as they like, on one condition: it must never contradict the canon.
+The canon leaves gaps on purpose, and the blueprint records how they were filled. Agents may revise it as often as they like, on the condition that it never contradicts the canon.
 
-A person can move a derived decision up into the canon at any time. That is how you take a design choice back from the agents. Promote it to a [decision](../primitives/#decision), and it is yours. A team can also keep parts of the design with a person from the start. The chapter on [handing over decisions](../delegation/) covers that choice.
+A person can move a derived decision up into the canon at any time, which is how a design choice is taken back from the agents: once promoted to a [decision](../primitives/#decision), it changes only when a person changes it. A team can also keep parts of the design with a person from the start, a choice that [Handing over decisions](../delegation/) covers.
 
 ## Build
 
 The build has two halves. `src/` is the code that runs, written by the builder agent at the [Build](../build/) station. `verify/` is everything that produces evidence: environments, checks, injected faults, proofs and monitors, written by the verifier agent at the [Verify](../verify/) station.
 
-The agent that writes `src/` can run what is in `verify/` and cannot change it. The chapter on [people and agents](../people-and-agents/) explains why.
+The agent that writes `src/` can run what is in `verify/` and cannot change it, for reasons that [People and agents](../people-and-agents/) gives.
 
-Both agents work by looking inside the running system. Beside the two halves sits `observe/`, which lists what the system emits and holds the tools that read it. The chapter on [observability](../observability/) covers it.
+Both agents work by looking inside the running system. Beside the two halves sits `observe/`, which lists what the system emits and holds the tools that read it, as [Observability](../observability/) describes.
 
-The build is replaceable, with one restriction that surprises people. You may not regenerate it from the spec. The spec leaves many things open, and a fresh generation would decide each of them again, differently. The build changes only as a sequence of checked changes.
+The build is replaceable, with one restriction: it may not be regenerated from the spec. The spec leaves many things open, and a fresh generation would decide each of them again, differently. The build therefore changes only as a sequence of checked changes.
 
 ## Verification Record
 
 The Record states, for every clause, whether the evidence supports it. A program called the orchestrator computes it from the cases and the results of the checks, according to rules that people own.
 
-Nobody writes "done" or "verified" into the Record, because it is not a file in the repository. It is recomputed on every push and published. The [release rule](../release/) is stated in terms of it.
+Nobody writes "done" or "verified" into the Record, because it is not a file in the repository: it is recomputed on every push and published. The [release rule](../release/) is stated in terms of it.
 
 ## Two rules that make it mechanical
 
-Layers are only a diagram unless something enforces them. Two automated checks do, on every change.
+The layers are enforced by two automated checks, which run on every change.
 
 > **Traceability.** Every element of the build refers to an element of the blueprint, and every element of the blueprint refers to a clause. Anything that cannot be traced blocks the merge.
 

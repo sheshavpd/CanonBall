@@ -1,11 +1,11 @@
 ---
 title: Evidence and the Verification Record
-summary: "Each run of each check leaves one line of evidence, and a program computes the status of every clause from those lines."
+summary: "Each run of each check leaves one line of evidence, and the orchestrator computes the status of every clause from those lines."
 part: verification
 order: 3
 points:
   - "Status is computed from evidence. No person and no agent can write it."
-  - "A check must be seen to fail before its pass counts."
+  - "Every check must be seen to fail before its pass counts."
   - "The weakest link is named. Nothing is averaged."
   - "The reviewer agent and the person at the release gate read the same Verification Record."
 related: [verification-engineering, environments, review, operate, canonball]
@@ -13,30 +13,26 @@ related: [verification-engineering, environments, review, operate, canonball]
 
 ## Status is computed
 
-In most projects, "done" is something a person says. In CanonBall a program works it out.
+In CanonBall, nobody declares a clause, a task or a release to be done. The **orchestrator**, the program that computes every state and carries out a release, works it out from what exists.
 
-The **Verification Record** is the computed status of every clause. A program reads the assurance cases and the results of the checks, applies rules that people own, and publishes the outcome. No agent and no person can write a status into it, because it is not a file in the repository.
+The **Verification Record** is the computed status of every clause. The orchestrator reads the assurance cases and the results of the checks, applies rules that people own, and publishes the outcome. No agent and no person can write a status into the Record, because it is not a file in the repository.
 
-The Record has two readers. The reviewer agent reads it for every milestone. When the change is critical, the person at the release gate reads it as well. The chapter on [review](../review/) describes both.
-
-The rule extends to the work itself. Whether a task is finished, or a change is ready to [release](../release/), is also computed from what exists.
+The reviewer agent reads the Record for every change. A person at the release gate reads it as well when the policy lists the change as critical or the reviewer rates its blast radius as large, as the chapter on [review](../review/) describes. Whether a task is finished, and whether a change is ready to [release](../release/), are computed in the same way.
 
 ## A check must fail before its pass counts
 
-Test-driven development has a rule: watch the test fail before you make it pass. A test that has never failed tells you nothing. It may assert something that is always true. It may be testing the fake. It may not be running at all.
-
-CanonBall makes that rule a condition of acceptance.
+Test-driven development has a rule: watch the test fail before making it pass. A check that has never failed proves nothing, because it may assert something that is always true, it may be testing the fake, or it may not be running at all. CanonBall makes the rule a condition of acceptance.
 
 <FailFirst />
 
-For every example that describes a violation, the check is run once against a build that has been broken on purpose. The broken build comes from a small patch called an **injected fault**. The failing run is kept beside the check as a **recorded failure**. Only when that file exists does the check's pass count.
+Every check is run once against a build that has been broken on purpose. The break is an **injected fault**, a small patch to the code that is kept in `verify/faults/`. The failing run is kept beside the check as a **recorded failure**, and the check's pass counts only when that file exists.
 
 ```text
-INV-004   unsupported   checks 3/3 passed   seen to fail 0/1
-INV-004   accepted      checks 3/3 passed   seen to fail 1/1
+INV-004   unsupported   checks 3/3   seen to fail 2/3
+INV-004   accepted      checks 3/3   seen to fail 3/3
 ```
 
-Both lines show three passing checks. Only the second is evidence. Mutation testing applies the same idea across a whole suite. Here it is applied one check at a time.
+Both lines show three passing checks, and only the second supports the clause. Mutation testing applies the same idea across a whole suite, whereas here it is applied to each check in turn.
 
 ## A line of evidence
 
@@ -44,21 +40,21 @@ Each run of each check writes one line.
 
 ```json
 {"clause": "INV-004", "part": "a",
- "check": "verify/checks/test_inv_004.py::test_two_requests_pay_once",
+ "check": "verify/checks/test_inv_004.py::test_concurrent_copies_pay_once",
  "example": "INV-004#violates/1",
  "environment": "VE-002", "commit": "3f9c",
  "assumptions": [], "seed": 4411,
  "state": "passed",
- "recorded_failure": "verify/checks/red/test_two_requests_pay_once.json"}
+ "recorded_failure": "verify/checks/red/test_concurrent_copies_pay_once.json"}
 ```
 
-It says which clause the run is evidence for, which example the check encodes, what code it ran against, in which environment, with which random seed, and what happened. That is enough for someone else to run it again. Evidence that cannot be reproduced is treated as a claim.
+The line records which clause the run is evidence for, which example the check encodes, what code it ran against, in which environment, with which random seed, and what happened. That is enough for someone else to run it again, and evidence that cannot be reproduced is treated as a claim.
 
 ## Five statuses
 
 <Figure id="rollup" />
 
-The status of a clause is a decision. It is not a confidence score.
+The status of a clause is a decision, not a confidence score.
 
 | Status | Meaning |
 |---|---|
@@ -68,15 +64,13 @@ The status of a clause is a decision. It is not a confidence score.
 | **Pending** | Agreed, and waiting on another team to provide something. |
 | **Unknown** | Not yet assessed, or the code the case rests on has changed. |
 
-Two properties keep the Record trustworthy.
+The Record can be trusted because it never averages and never omits. The weakest link is named: a clause with three strong parts and one missing part is unsupported, and the Record names the missing part. A gap is never hidden: a part that ran and saw nothing is shown as unsupported and is not left out.
 
-> **The weakest link is named.** A clause with three strong parts and one missing part is unsupported, and the Record names the missing part.
-
-> **A gap is never hidden.** A part that ran and saw nothing is unsupported. It is not quietly left out.
+For the refunds service at CanonBall 13, the Record's summary reads "4 accepted, 1 accepted with stated risk, 0 unsupported".
 
 ## Evidence that does not count
 
-A passing run is not always evidence. These are marked and set aside.
+A passing run is not always evidence. Runs of the following kinds are marked and set aside.
 
 | Marked as | Why it does not count |
 |---|---|
@@ -88,11 +82,9 @@ A passing run is not always evidence. These are marked and set aside.
 
 ## How staleness works
 
-Everything evidence depends on carries a content hash: the code a clause relies on, the environment's declaration, each fake. When any of them changes, the hash changes, and the evidence that relied on it is stale until the check runs again.
+Everything that evidence depends on carries a content hash: the code a clause relies on, the environment's declaration, each fake. When any of them changes, the hash changes, and the evidence that relied on it is stale until the check runs again. Because one mechanism serves every kind of dependency, evidence never silently outlives the thing it was about.
 
-One mechanism serves everywhere, and evidence never silently outlives the thing it was about.
-
-It also keeps runs affordable. A change re-runs only the checks for clauses whose code it touched, the way a build system skips what has not changed.
+The same mechanism keeps runs affordable. A change re-runs only the checks for clauses whose code it touched, in the way a build system skips what has not changed.
 
 ## When a check fails
 
@@ -109,19 +101,19 @@ The label decides what happens next, and it is recorded. Retrying a failed check
 
 ## Assumptions and monitors
 
-A clause that depends on the outside world cannot be fully proven. Its assumption gets a **treatment**:
+A clause that depends on the outside world cannot be fully proven. In the refunds canon, ASM-011 says that the payment gateway pays at most once per request key, and no check in VE-002 can establish that about the real gateway. Such an assumption gets a **treatment**, which states:
 
 - how it is observed in production;
 - how long a failure would take to show;
 - what the system does when it fails;
 - what is accepted when a failure could not be detected at all.
 
-A monitor that raises an alarm is a treatment. It does not show that the clause holds. At best it supports "accepted, with stated risk".
+A monitor that raises an alarm is a treatment. It does not show that the clause holds, and at best it supports "accepted, with stated risk".
 
-When a monitor fires, an incident opens. The repair comes back as a small piece of unplanned work, with a new example and usually a new invariant. Operating the system improves the canon this way, and the chapter on [operating](../operate/) follows one incident from the alarm to the release.
+When a monitor fires, an incident opens, and the repair comes back as a small piece of unplanned work with a new example and often a new invariant. Operating the system improves the canon in this way, and the chapter on [operating](../operate/) follows one incident from the first report to the release.
 
 ## The policy
 
-The rules that turn evidence into status live in `spec/canon/policy/`. People write them. No agent can.
+The rules that turn evidence into status live in `spec/canon/policy/`. People write them, and no agent can.
 
-They say what counts as evidence for each tier, what counts as an independent check, which kinds of oracle are trusted, and which changes are critical enough that a person must review them before release. A change that would lower the bar is reviewed explicitly.
+The policy says what counts as evidence for each tier, what counts as an independent check, which kinds of oracle are trusted, and which changes are critical enough that a person must review them before release. A change that would lower the bar is reviewed explicitly.

@@ -120,7 +120,7 @@ export const rows: Row[] = [
   { id: 'ball', depth: 0, name: 'CanonBall 13', question: 'what was released', writer: 'n', outside: true, title: 'A CanonBall', who: 'fixed at every release',
     what: 'What each release ships: the canon as it now stands, the build that keeps it, and the Verification Record that shows it. It answers "what does this system promise, and how do you know?" without anyone reading code.',
     note: 'Progress is a sequence of them.',
-    file: 'CanonBall 13\n  canon    spec/canon at this release\n  build    commit 3f9c\n  record   4 accepted, 1 accepted with stated risk,\n           0 unsupported\n  notes    + DEC-031 Small refunds are approved\n             automatically', more: 'canonball' },
+    file: 'CanonBall 13\n  canon    spec/canon at this release\n  build    commit 3f9c\n  record   4 accepted, 1 accepted with stated risk,\n           0 unsupported\n  notes    + DEC-031 A refund is approved automatically while\n             the total refunded on the order stays under $100', more: 'canonball' },
 ];
 
 /** Full path of a row, built from its ancestors. */

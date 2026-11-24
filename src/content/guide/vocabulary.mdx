@@ -12,15 +12,15 @@ related: [primitives, tenets, shape, composition]
 
 ## The problem with "delivery"
 
-Take the promise "a customer can request a refund within 30 days of delivery". It looks complete. Now ask three people when delivery happens.
+The promise "a customer can request a refund within 30 days of delivery" looks complete until three people are asked when delivery happens.
 
 - The warehouse lead says it is when the parcel leaves the building.
 - The support lead says it is when the carrier scans it at the door.
 - The engineer finds a `delivered_at` column and uses it, without knowing which of the two it records.
 
-All three will read the promise and nod. The system that gets built will satisfy one of them. The other two will find out from a customer complaint on day 29.
+All three will read the promise and agree with it. The system that gets built will satisfy one of them, and the other two will find out from a customer complaint on day 29.
 
-Agents make this both worse and better. Worse, because an agent picks a meaning without telling you. Better, because an agent follows a written definition every time.
+Agents make this both worse and better: worse, because an agent picks a meaning without telling you, and better, because an agent follows a written definition every time.
 
 ## The file
 
@@ -35,7 +35,7 @@ Refund     Money returned to the customer for an order.
 Payout     One transfer of money through the payment gateway.
 ```
 
-Three rules make it work.
+The file works under three rules.
 
 1. **One word per concept.** If "refund" is defined, nobody writes "reimbursement" or "return of funds".
 2. **No undefined nouns.** A clause that uses a noun missing from the vocabulary is blocked until the word is defined.
@@ -47,7 +47,7 @@ Eric Evans called this a *ubiquitous language*: one vocabulary shared by the dom
 
 <Figure id="word-chain" />
 
-The last row matters as much as the first. The people who operate the system describe what went wrong in the words that were used to specify it. An incident report can then become an example and a check without anyone translating.
+The incident report matters as much as the promise. Because the people who operate the system describe what went wrong in the words that were used to specify it, an incident report can become an example and a check without anyone translating.
 
 ## Where entries come from
 
@@ -60,7 +60,7 @@ Q-044  What is a delivery?
        c) The customer confirms receipt.
 ```
 
-A person picks an answer. The answer becomes the definition, and the question is kept as history. Expect undefined words to be the most common source of open questions, so a vocabulary that is filling up shows a team converging.
+A person picks an answer, the answer becomes the definition, and the question is kept as history. Expect undefined words to be the most common source of open questions, so a vocabulary that is filling up shows a team converging.
 
 A word can also be missing where nobody expected it. A proposal to approve refunds "under $100" automatically raised the question of whether $100 meant the order total or the amount being refunded, and the vocabulary gained an entry.
 
@@ -76,4 +76,4 @@ Sometimes two teams mean different things by one word, and both are right. "Acco
 
 ## What it costs
 
-A vocabulary is cheap to start and takes discipline to keep. Expect the first clauses to raise many questions about words. Those questions were always there, and they now arrive when they are cheapest to answer. Later, people want synonyms because "refund" feels repetitive. Elegant variation is a virtue in essays and a defect in specifications.
+A vocabulary is cheap to start and takes discipline to keep. Expect the first clauses to raise many questions about words. Those questions were always there, and they now arrive when they are cheapest to answer. Later, people want synonyms because "refund" feels repetitive, and the rule has to be held against them, because a second word for the same thing reads to an agent as a second thing.
