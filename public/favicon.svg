@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs><clipPath id="c"><circle cx="16" cy="16" r="11.6"/></clipPath></defs>
+  <g clip-path="url(#c)">
+    <rect width="32" height="11.5" fill="#d2622b"/>
+    <rect y="13" width="32" height="6" fill="#2f63dd"/>
+    <rect y="20.5" width="32" height="11.5" fill="#1f8f5c"/>
+  </g>
+  <circle cx="16" cy="16" r="14.6" fill="none" stroke="#12151b" stroke-width="1.6"/>
+  <style>@media (prefers-color-scheme: dark){circle:last-of-type{stroke:#eef0f4}}</style>
+</svg>

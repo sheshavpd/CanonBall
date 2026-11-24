@@ -1,0 +1,182 @@
+---
+import Base from '../layouts/Base.astro';
+import Logo from '../components/Logo.astro';
+import RepoExplorer from '../components/RepoExplorer.astro';
+import Dial from '../components/Dial.astro';
+import FailFirst from '../components/FailFirst.astro';
+import GuideIndex from '../components/GuideIndex.astro';
+import { written, computed } from '../data/site';
+import { url, guideUrl } from '../lib/links';
+---
+<Base path="/">
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <h1><Logo /><span class="sr">CanonBall</span><span class="wm" aria-hidden="true"><b>Canon</b><i>Ball</i></span></h1>
+        <p class="tagline">The lifecycle <span class="a">agents</span> can run and <span class="p">people</span> can trust.</p>
+        <p class="lede">CanonBall is a method for building and operating software with AI agents. People write down what the system must do. Agents build it and produce the evidence. Every release ships all three together.</p>
+        <div class="cta">
+          <a class="btn" href={url('/guide/')}>Read the guide</a>
+          <a class="btn ghost" href="#primitives">Start with the primitives</a>
+        </div>
+      </div>
+      <figure class="ballfig">
+        <svg viewBox="0 0 360 236" role="img" aria-label="A CanonBall: canon, build and Record held together by one ring">
+          <defs><clipPath id="hero-ball"><circle cx="118" cy="118" r="92" /></clipPath></defs>
+          <g clip-path="url(#hero-ball)">
+            <rect x="0" y="0" width="236" height="88" fill="var(--mark-people)" />
+            <rect x="0" y="96" width="236" height="44" fill="var(--mark-agents)" />
+            <rect x="0" y="148" width="236" height="88" fill="var(--mark-verify)" />
+          </g>
+          <circle cx="118" cy="118" r="110" fill="none" stroke="var(--ink)" stroke-width="5" />
+          <g stroke="var(--line-2)" stroke-width="1.5"><path d="M196 62 H242" /><path d="M210 118 H242" /><path d="M196 174 H242" /></g>
+          <g font-size="17" font-weight="600"><text x="250" y="60">Canon</text><text x="250" y="116">Build</text><text x="250" y="172">Record</text></g>
+          <g font-size="13" fill="var(--ink-3)"><text x="250" y="78" fill="var(--ink-3)">people approve</text><text x="250" y="134" fill="var(--ink-3)">agents write</text><text x="250" y="190" fill="var(--ink-3)">computed</text></g>
+        </svg>
+        <figcaption>A CanonBall is one release: what the system promises, the build that keeps the promises, and the evidence that it does.</figcaption>
+      </figure>
+    </section>
+  </div>
+
+  <section class="band" id="why">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">Why now</p>
+        <h2 class="t">Writing software got cheap. Knowing what it does did not.</h2>
+      </div>
+      <div class="why">
+        <div><b>Agents write faster than people can read.</b><span>Reviewing every change wastes the agent. Skipping review turns each change into a risk nobody measured.</span></div>
+        <div><b>So the question changed.</b><span>It used to be "can we build this?". Now it is "what does this change do, and what does the system still promise afterwards?"</span></div>
+        <div><b>The effort moves to verification.</b><span>Most of the engineering now goes into showing that a promise holds. CanonBall organizes the work around that.</span></div>
+      </div>
+      <p class="cap"><a class="more" href={guideUrl('why')}>Why the work changed</a></p>
+    </div>
+  </section>
+
+  <section class="band" id="primitives">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">The primitives</p>
+        <h2 class="t">People steer agents with a few written things.</h2>
+        <p class="sub">Each one is a short file in plain language. Together they are the controls: an agent may do anything that respects them, and nothing that does not trace back to them. Learn these seven and the rest of the method follows.</p>
+      </div>
+      <p class="group"><span class="pill p">People write</span></p>
+      <div class="prims">
+        {written.map((w) => (
+          <article class="prim">
+            <h3>{w.name}</h3>
+            <p class="what">{w.what}</p>
+            <p class="ex">{w.example}</p>
+            <p class="whyx"><b>Why it exists.</b> {w.why}</p>
+            <a class="more" href={guideUrl(w.slug)}>Learn more<span class="sr"> about {w.name}</span></a>
+          </article>
+        ))}
+        <aside class="prim note">
+          <h3>Five of these are clauses</h3>
+          <p class="what">A promise, an invariant, a decision, a limit and an assumption are each a kind of <b>clause</b>: one file with an ID and its stories.</p>
+          <p class="what">The approved clauses together are the <b>canon</b>.</p>
+        </aside>
+      </div>
+      <p class="group"><span class="pill v">Machines answer</span></p>
+      <div class="prims">
+        {computed.map((c) => (
+          <article class="prim m">
+            <h3>{c.name}</h3>
+            <p class="what">{c.what}</p>
+            <p class="whyx"><b>Why it exists.</b> {c.why}</p>
+            <a class="more" href={guideUrl(c.slug)}>Learn more<span class="sr"> about {c.name}</span></a>
+          </article>
+        ))}
+        <aside class="prim note">
+          <h3>Nobody writes these</h3>
+          <p class="what">They are produced by running checks and by a program that reads the results. That is what makes them worth trusting.</p>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="structure">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">The structure</p>
+        <h2 class="t">A repository organized around moving a change.</h2>
+        <p class="sub">Every folder answers one question and has one kind of writer. Open any of them, or follow a small change from a one-page proposal to a release.</p>
+      </div>
+      <RepoExplorer />
+      <p class="cap">The example is a refunds service. Dots show who writes each file: <span class="p">people</span>, <span class="a">agents that build</span>, <span class="v">agents and programs that verify</span>.</p>
+    </div>
+  </section>
+
+  <section class="band" id="verification">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">Verification engineering</p>
+        <h2 class="t"><span class="v">Verification engineering</span> is where the work is now.</h2>
+        <p class="sub">When people wrote the code, most of the effort went into the product and testing came second. With agents writing it, that ratio turns over. The discipline that matters is engineering the environments in which a promise can be checked.</p>
+      </div>
+      <div class="two">
+        <div class="box">
+          <h3>A verification environment has seven parts</h3>
+          <ul class="anat">
+            <li><b>Boundary</b><span>What is under test: the refunds service, at this commit.</span></li>
+            <li><b>Stimulus</b><span>How it is driven: requests through the public interface.</span></li>
+            <li><b>World</b><span>What surrounds it: a real local store, a fake payment gateway.</span></li>
+            <li><b>Probes</b><span>What can be observed: what the store holds, what the gateway paid.</span></li>
+            <li><b>Oracle</b><span>What decides pass or fail: a mechanical check, not an opinion.</span></li>
+            <li><b>Coverage</b><span>What was exercised, and which injected faults were caught.</span></li>
+            <li><b>Control</b><span>Seed, clock, a clean start and a clean teardown.</span></li>
+          </ul>
+          <div class="cannot"><b>It also states what it cannot show.</b> Real gateway timing, for one. Evidence counts only inside what the environment can show.</div>
+        </div>
+        <FailFirst />
+      </div>
+      <p class="cap"><a class="more" href={guideUrl('verification-engineering')}>Verification engineering</a> &nbsp; <a class="more" href={guideUrl('environments')}>Verification environments</a></p>
+    </div>
+  </section>
+
+  <section class="band" id="architecture">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">A recommended architecture</p>
+        <h2 class="t">Keep decisions apart from side effects.</h2>
+        <p class="sub">Agents do their best work inside clear structure. CanonBall does not dictate how your code is laid out. It recommends one habit, because it makes evidence cheap: put the logic that decides in one place, and the code that touches the outside world in another.</p>
+      </div>
+      <div class="arch">
+        <div class="z"><b>Inputs come in as data</b>The request, the current time, a reading from a sensor. The logic never fetches them itself.</div>
+        <em aria-hidden="true">&rarr;</em>
+        <div class="z core"><b>Decision logic</b>Given this state and this input, what should happen? No database, no network, no clock. The same inputs always give the same answer.<br /><span class="pill a">checked for every input</span></div>
+        <em aria-hidden="true">&rarr;</em>
+        <div class="z"><b>Side effects go out through adapters</b>Paying out, sending an email, writing a row. Each goes through one named place.<br /><span class="pill p">people still review this code</span></div>
+      </div>
+      <div class="aka">
+        <div><b>You may already know it.</b>Functional core, imperative shell. Ports and adapters. Hexagonal architecture.</div>
+        <div><b>Why it suits agents.</b>Logic with no side effects can be tested exhaustively, replayed exactly, and rewritten safely.</div>
+        <div><b>What people keep.</b>The interface, the limits, the adapters, and any design choice they promote to a decision.</div>
+      </div>
+      <p class="cap"><a class="more" href={guideUrl('architecture')}>An architecture agents can work in</a></p>
+    </div>
+  </section>
+
+  <section class="band" id="dial">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">Adoption</p>
+        <h2 class="t">Hand over decisions as agents earn them.</h2>
+        <p class="sub">Each kind of decision has its own setting. A team starts with agents recommending and people deciding. Settings move one at a time, on track record, and where they end up depends on the domain.</p>
+      </div>
+      <Dial />
+      <p class="cap">An illustration. Each team writes its own thresholds in advance. A new model release does not move a setting. Agreement with people over many cases does, and one failure that gets through moves it back. <a class="more" href={guideUrl('delegation')}>Handing over decisions</a></p>
+    </div>
+  </section>
+
+  <section class="band" id="guide">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">The guide</p>
+        <h2 class="t">Each idea, explained properly.</h2>
+        <p class="sub">This page is the overview. The guide takes one concept per chapter, with examples, the reasoning behind it, and what it costs.</p>
+      </div>
+      <GuideIndex />
+    </div>
+  </section>
+</Base>

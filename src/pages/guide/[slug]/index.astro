@@ -1,0 +1,12 @@
+---
+import { render } from 'astro:content';
+import Guide from '../../../layouts/Guide.astro';
+import { chapters, type Chapter } from '../../../lib/guide';
+export async function getStaticPaths() {
+  return (await chapters()).map((chapter) => ({ params: { slug: chapter.id }, props: { chapter } }));
+}
+interface Props { chapter: Chapter }
+const { chapter } = Astro.props;
+const { Content, headings } = await render(chapter);
+---
+<Guide chapter={chapter} headings={headings}><Content /></Guide>
