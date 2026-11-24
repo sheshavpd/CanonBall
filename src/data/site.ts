@@ -69,13 +69,13 @@ export const computed = [
     why: 'A pass means nothing unless the same check has been seen to fail.',
   },
   {
-    id: 'record', name: 'The Record', slug: 'evidence',
+    id: 'record', name: 'Verification Record', slug: 'evidence',
     what: 'The status of every clause, computed from evidence.',
     why: 'Nobody gets to write "done". The weakest link is named, not averaged away.',
   },
   {
     id: 'canonball', name: 'A CanonBall', slug: 'canonball',
-    what: 'One release: the clauses, the build and the Record, fixed together.',
+    what: 'One release: the clauses, the build and the Verification Record, fixed together.',
     why: 'It answers "what does this system promise, and how do you know?" without reading code.',
   },
 ] as const;
@@ -86,7 +86,7 @@ export const steps = [
   { n: 'Plan', k: 'a', say: 'Agents write the proposed clauses, the design, and the plan for evidence beside the page. Nothing in spec/ changes yet.', ids: ['m2', 'diff', 'tasks'], focus: 'diff' },
   { n: 'Build', k: 'a', say: 'One agent writes the code.', ids: ['src'], focus: 'src' },
   { n: 'Verify', k: 'v', say: 'Verification engineering. A different agent builds the environment, the checks and the injected faults.', ids: ['verify', 'envs', 'checks', 'red', 'faults', 'holdout'], focus: 'verify' },
-  { n: 'Record', k: 'v', say: 'A program computes the status of every clause, with the change applied.', ids: ['record'], focus: 'record' },
+  { n: 'Compute status', k: 'v', say: 'A program computes the Verification Record: the status of every clause, with the change applied.', ids: ['record'], focus: 'record' },
   { n: 'Release', k: 'p', say: 'The proposed files are copied into spec/. The spec now describes the new system, and a CanonBall is published.', ids: ['spec', 'canon', 'dec', 'bp', 'ball'], focus: 'ball' },
   { n: 'Operate', k: '', say: 'A monitor fires. The incident becomes a small change and follows the same path.', ids: ['monitors', 'inc', 'unpl'], focus: 'inc' },
 ] as const;

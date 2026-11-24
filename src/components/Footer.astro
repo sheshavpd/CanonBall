@@ -1,14 +1,16 @@
 ---
-import { url, agentsUrl } from '../lib/links';
+import { url, guideUrl, agentsUrl } from '../lib/links';
+import { chapters } from '../lib/guide';
 import { site } from '../data/site';
 interface Props { path: string }
 const { path } = Astro.props;
+const first = (await chapters())[0]!;
 ---
 <footer class="site-foot">
   <div class="wrap">
     <span>{site.name}. {site.tagline}</span>
     <nav aria-label="Footer">
-      <a href={url('/') + '#guide'}>Guide</a>
+      <a href={guideUrl(first.id)}>Guide</a>
       <a href={url('/glossary/')}>Glossary</a>
       <a class="txt" href={agentsUrl(path)}>This page as agents.txt</a>
       <a class="txt" href={url('/agents.txt')}>Site index for agents</a>

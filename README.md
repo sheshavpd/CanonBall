@@ -2,7 +2,7 @@
 
 **The lifecycle agents can run and people can trust.**
 
-This repository is the CanonBall website: a landing page that introduces the method and indexes the guide, eighteen guide chapters with one concept each, a glossary, and a plain-text twin of every page for agents.
+This repository is the CanonBall website: a landing page that introduces the method, eighteen guide chapters with one concept each, a glossary, and a plain-text twin of every page for agents.
 
 ## Stack
 
@@ -32,7 +32,7 @@ src/
 │   ├── repo.ts             the example repository shown on the landing page
 │   ├── figures.ts          caption and text description of every figure
 │   └── glossary.ts         every term, with the chapter that explains it
-├── components/             Logo, Header, Footer, RepoExplorer, Dial, FailFirst, GuideIndex, Figure
+├── components/             Logo, Header, Footer, RepoExplorer, Dial, FailFirst, Figure
 ├── layouts/                Base (every page), Guide (chapter pages)
 ├── lib/
 │   ├── links.ts            url() helper, so the site can live under a sub-path
@@ -65,7 +65,7 @@ Body text. Link to other chapters with relative links: [examples](../examples/).
 <Figure id="layers" />
 ```
 
-The chapter appears in the sidebar and in the guide index on the landing page, and gets its own `agents.txt`. Nothing else needs editing.
+The chapter appears in the guide sidebar and in the root `agents.txt`, and gets its own `agents.txt`. Nothing else needs editing.
 
 ### Figures
 

@@ -1,6 +1,6 @@
 ---
 title: An architecture agents can work in
-summary: CanonBall does not dictate how your code is organized. It recommends one habit, because that habit decides how expensive evidence is. Keep the logic that makes decisions apart from the code that causes side effects.
+summary: "CanonBall recommends one habit because it decides how expensive evidence is: keep the logic that decides apart from the code that acts."
 part: building
 order: 1
 points:
@@ -14,13 +14,11 @@ related: [environments, verification-engineering, delegation]
 
 A person can hold a messy system in their head, because they were there when it got messy. An agent starts each task cold. What it can do well depends on how much of the system it can reason about from the files in front of it.
 
-Good architecture has always made software easier to change. With agents it also decides how cheaply you can find out whether a change is right. That is why this method has an opinion about it.
+Good architecture has always made software easier to change. With agents it also decides how cheaply you can find out whether a change is right.
 
 ## A recommendation, not a requirement
 
-Everything in the earlier chapters works on any codebase. You can write clauses, build environments and compute a Record for a system laid out however you like.
-
-What follows is the layout that makes all of it cheapest. Adopt it where it fits and skip it where it does not.
+Everything in the earlier chapters works on any codebase. What follows is the layout that makes all of it cheapest. Adopt it where it fits and skip it where it does not.
 
 ## The idea in one sentence
 
@@ -58,13 +56,11 @@ def handle_refund_request(request):
 
 The first function contains every rule about refunds and touches nothing. The second contains no rules and touches everything.
 
-## Three terms
+## Two terms
 
-| Term | Meaning |
-|---|---|
-| **Decision logic** | Code that, given explicit inputs, returns what should happen. It reads no clock, generates no random numbers, and performs no input or output. The same inputs always produce the same result. |
-| **Inputs as data** | The current time, a sensor reading, the output of a model: each is passed in. The logic never fetches them. When checking, treat every one of them as hostile. |
-| **Adapter** | The one place where a particular side effect happens: paying out, sending an email, writing a record. Until something passes through an adapter, nothing has happened. |
+**Decision logic** is code that, given explicit inputs, returns what should happen. It reads no clock, generates no random numbers, and performs no input or output. The time, a sensor reading, the output of a model: each is passed in as data.
+
+An **adapter** is the one place where a particular side effect happens. Until something passes through an adapter, nothing has happened.
 
 ## You already know this
 
@@ -91,12 +87,6 @@ The specification behind this guide calls the two halves the *pure core* and its
 The last row matters more than it looks. Every [assurance case](../verification-engineering/) lists the code its clause depends on. If the rules about refunds live in one function, that list has one entry. If they are spread across handlers, queries and jobs, the list is long, it changes often, and the evidence goes stale constantly.
 
 Adapters help in a different way. Each one is a narrow point through which an effect must pass. That makes it the natural place to enforce a [constraint](../primitives/#constraint), add an extra check, or require a person's approval before something irreversible happens.
-
-## Why it suits agents
-
-- **An agent can rewrite decision logic freely.** If the checks pass for every generated input, the rewrite is safe.
-- **Review can stop where it is safe to stop.** People no longer read decision logic, because machines check it more thoroughly than a reader would.
-- **Review concentrates where it is still needed.** Adapters and permission checks are where inputs nobody recorded can cause harm. There are few of them, and they change rarely.
 
 ## What people still control
 

@@ -1,6 +1,6 @@
 ---
 title: The primitives
-summary: People steer agents with a small set of written statements called clauses. There are five kinds. This chapter says what each one is, why it exists, and how to tell them apart.
+summary: "People steer agents with five kinds of written statement, called clauses."
 part: idea
 order: 2
 points:
@@ -100,10 +100,6 @@ This one field is the most direct control you have. Marking a clause *deferred* 
 
 Every change to a clause is classified. **Strengthening** promises more or assumes less. **Weakening** does the reverse. Strengthening is free. Weakening a clause that other people rely on is a breaking change, and each of them must agree to it.
 
-Incidents follow the same rule. Each one adds an example, and usually an invariant, before the fix is released. The set of guarded failures only grows. It shrinks only when a person removes a clause on purpose.
-
 ## What belongs in the canon
 
-Only what a person would need to approve: external promises, safety, money, irreversible actions, and the trade-offs between them. Design choices stay in the [blueprint](../layers/), where agents may revise them.
-
-If the canon grows until people can no longer read it, it has absorbed the design. One question settles any line: would a person need to approve a change to it?
+Only what a person would need to approve: external promises, safety, money, irreversible actions, and the trade-offs between them. Design choices stay in the [blueprint](../layers/), where agents may revise them. One question settles any line: would a person need to approve a change to it?

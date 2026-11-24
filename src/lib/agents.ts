@@ -51,7 +51,7 @@ function retarget(body: string): string {
 
 /** Chapters embed a few components. In text they become a labeled description. */
 const interactive: Record<string, string> = {
-  Dial: '[Interactive figure: levels of automation] Seven kinds of decision, each on a scale from 0 (agent analyzes, a person decides) to 5 (agent acts, people watch the metrics), shown for three scenarios: day one, a billing service later, and a robot fleet later. The table that follows gives the same values.',
+  Dial: '[Interactive figure: levels of automation] Seven kinds of decision, each on a scale from 0 (agent analyzes, a person decides) to 5 (agent acts, people watch the metrics), shown for three scenarios: day one, a billing service later, and a robot fleet later. Values in that order: what the system promises 1, 1, 1; what is never allowed 1, 1, 1; choices a customer would notice 1, 2, 1; internal design 1, 4, 3; decision logic 1, 5, 4; code that touches the outside world 1, 2, 2; releasing with no clause changed 1, 5, 2. These are an illustration.',
   FailFirst: '[Interactive figure: a check must fail before its pass counts] Three checks for INV-004 pass. The third has never been seen to fail, so the computed status is "unsupported". After a fault is injected, the third check fails as it should, and that failing run is kept. Run again on the real build, all three pass and the status becomes "accepted".',
 };
 function describeComponents(body: string): string {

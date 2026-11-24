@@ -97,11 +97,11 @@ export const rows: Row[] = [
     file: 'INC-031  Refund refused on day 29.\n         The delivery date was read from dispatch.\n\nExample added:   delivered 3 March, requested 1 April: accepted\nProposed:      INV-009', more: 'change' },
   { id: 'holdout', depth: 0, name: 'held-out scenarios', question: 'kept apart', writer: 'v', outside: true, title: 'Held-out scenarios', who: 'no building agent can read them',
     what: 'Scenarios and faults kept in a separate repository that neither the builder nor the verifier can read. It reports only pass or fail, so its contents cannot be learned.', more: 'environments' },
-  { id: 'record', depth: 0, name: 'the Record', question: 'whether it is true', writer: 'v', outside: true, title: 'The Record', who: 'computed by a program',
+  { id: 'record', depth: 0, name: 'Verification Record', question: 'whether it is true', writer: 'v', outside: true, title: 'The Verification Record', who: 'computed by a program',
     what: 'The status of every clause, computed from evidence under rules that people own. No person and no agent writes "done". The weakest link is named, not averaged away.',
     file: 'REQ-012   accepted   checks 2/2   seen to fail 1/1\nINV-004   accepted   checks 3/3   seen to fail 1/1\nENV-003   accepted   checks 2/2   seen to fail 1/1\nDEC-031   accepted   checks 2/2   seen to fail 1/1', more: 'evidence' },
   { id: 'ball', depth: 0, name: 'CanonBall 13', question: 'what was released', writer: 'n', outside: true, title: 'A CanonBall', who: 'fixed at every release',
-    what: 'What each release ships: the canon as it now stands, the build that keeps it, and the Record that shows it. It answers "what does this system promise, and how do you know?" without anyone reading code.',
+    what: 'What each release ships: the canon as it now stands, the build that keeps it, and the Verification Record that shows it. It answers "what does this system promise, and how do you know?" without anyone reading code.',
     note: 'Progress is a sequence of them.',
     file: 'CanonBall 13\n  canon    spec/canon at this release\n  build    commit 3f9c\n  record   4 accepted, 0 unsupported\n  notes    + DEC-031 Refunds under $100 are approved automatically', more: 'canonball' },
 ];

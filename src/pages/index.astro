@@ -4,9 +4,12 @@ import Logo from '../components/Logo.astro';
 import RepoExplorer from '../components/RepoExplorer.astro';
 import Dial from '../components/Dial.astro';
 import FailFirst from '../components/FailFirst.astro';
-import GuideIndex from '../components/GuideIndex.astro';
 import { written, computed } from '../data/site';
 import { url, guideUrl } from '../lib/links';
+import { chapters } from '../lib/guide';
+const all = await chapters();
+const first = all[0]!;
+const count = all.length;
 ---
 <Base path="/">
   <div class="wrap">
@@ -16,20 +19,21 @@ import { url, guideUrl } from '../lib/links';
         <p class="tagline">The lifecycle <span class="a">agents</span> can run and <span class="p">people</span> can trust.</p>
         <p class="lede">CanonBall is a method for building and operating software with AI agents. People write down what the system must do. Agents build it and produce the evidence. Every release ships all three together.</p>
         <div class="cta">
-          <a class="btn" href="#guide">Read the guide</a>
+          <a class="btn" href={guideUrl(first.id)}>Read the guide</a>
           <a class="btn ghost" href="#primitives">Start with the primitives</a>
         </div>
       </div>
       <figure class="ballfig">
-        <svg viewBox="0 0 400 240" role="img" aria-label="A CanonBall: canon at the center, the build around it, the Record around that">
-          <circle cx="120" cy="120" r="102" fill="none" stroke="var(--mark-verify)" stroke-width="27" />
-          <circle cx="120" cy="120" r="63" fill="none" stroke="var(--mark-agents)" stroke-width="27" />
-          <circle cx="120" cy="120" r="33" fill="var(--mark-people)" />
-          <g stroke="var(--line-2)" stroke-width="1.5" fill="none"><path d="M120 120 H262" /><path d="M183 78 H262 V70" /><path d="M210 40 H262 V26" /></g>
-          <g font-family="var(--display)" font-size="18" font-weight="700" fill="var(--ink)"><text x="270" y="124">Canon</text><text x="270" y="74">Build</text><text x="270" y="28">Record</text></g>
-          <g font-size="13.5" fill="var(--ink-3)"><text x="270" y="142">people approve</text><text x="270" y="92">agents write</text><text x="270" y="46">computed</text></g>
-        </svg>
-        <figcaption>A CanonBall is one release. The canon sits at the center, the build that keeps it surrounds it, and the Record that shows it surrounds both.</figcaption>
+        <div class="ballrow">
+          <Logo title="The CanonBall mark" />
+          <ul>
+            <li class="p"><b>Canon</b><span>what the system promises</span></li>
+            <li class="a"><b>Build</b><span>the code that keeps the promises</span></li>
+            <li class="v"><b>Verification Record</b><span>the evidence that it does</span></li>
+            <li class="r"><b>Release</b><span>all three, shipped together</span></li>
+          </ul>
+        </div>
+        <figcaption>One turn of the work. People agree the canon, agents build, the Verification Record is computed, and a CanonBall leaves the loop as a release.</figcaption>
       </figure>
     </section>
   </div>
@@ -169,11 +173,10 @@ import { url, guideUrl } from '../lib/links';
     <div class="wrap">
       <div class="head">
         <p class="eyebrow">The guide</p>
-        <h2 class="t">Each idea, explained properly.</h2>
-        <p class="sub">This page is the overview. The guide takes one concept per chapter. Each chapter defines its terms before using them, works through a refunds service as its example, and says what the idea costs.</p>
-        <p class="cta" style="margin-top:20px"><a class="btn" href={guideUrl('why')}>Start with chapter one</a><a class="btn ghost" href={url('/glossary/')}>Glossary</a></p>
+        <h2 class="t">Read the rest in {count} short chapters.</h2>
+        <p class="sub">This page is the overview. Each chapter takes one concept, defines its terms before using them, and works through the refunds service as its example.</p>
+        <p class="cta" style="margin-top:22px"><a class="btn" href={guideUrl(first.id)}>Start with chapter one</a><a class="btn ghost" href={url('/glossary/')}>Glossary</a></p>
       </div>
-      <GuideIndex />
     </div>
   </section>
 </Base>

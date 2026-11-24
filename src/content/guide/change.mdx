@@ -1,12 +1,12 @@
 ---
 title: How a change moves
-summary: The whole method is organized around one thing, which is moving a change into a running product. A change starts as a one-page proposal, is built and verified against that proposal, and ends as a release.
+summary: "A change starts as a one-page proposal, is built and verified against it, and ends as a release."
 part: change
 order: 1
 points:
   - "A change is a folder. It holds a one-page proposal, the files it proposes, and the tasks to build them."
   - "The plan for evidence is fixed before any code is written."
-  - "A release is the only thing that changes spec/, and it happens when the Record allows it."
+  - "A release is the only thing that changes spec/, and it happens when the Verification Record allows it."
 related: [repository, people-and-agents, evidence]
 ---
 
@@ -50,8 +50,6 @@ Beside the proposal sits `diff/`, holding every proposed file in its final form:
 
 ## The path
 
-<Figure id="path" />
-
 | Step | What happens | Who |
 |---|---|---|
 | **Words** | Any new noun is defined in the vocabulary. | An agent asks. A person answers. |
@@ -59,7 +57,7 @@ Beside the proposal sits `diff/`, holding every proposed file in its final form:
 | **Plan** | The design, the assurance cases and the evidence plan are written. | Planner and verifier agents |
 | **Build** | The code is written, in named tasks. | Builder agent |
 | **Verify** | Environments, checks and injected faults are built. | Verifier agent |
-| **Record** | Status is computed for every clause, with the change applied. | A program |
+| **Compute status** | The Verification Record is computed for every clause, with the change applied. | A program |
 | **Release** | The proposed files are copied into `spec/`. A CanonBall is published. | People accept, when there is risk to accept |
 | **Operate** | Monitors watch the assumptions. | Everyone |
 
@@ -108,11 +106,4 @@ One consequence is worth knowing early. How much work can run in parallel is dec
 
 ## What people do meanwhile
 
-People do not wait at the end of this path. Their recurring acts are these.
-
-- Agree to the next change proposals and approve their examples.
-- Answer questions, most of which arrive while a proposal is being drafted.
-- Rank `roadmap/index.md` together, weekly, by cost of delay.
-- Accept a release when the policy asks.
-
-The proposals people are shaping differ from the ones agents are building. So people usually work on upcoming changes while agents build the agreed ones. A person's attention is the scarce resource. Work in progress is limited by it, and agents do not start work that would only wait in a queue.
+People do not wait at the end of this path. They agree to the next proposals, answer questions, and rank `roadmap/index.md` by cost of delay while agents build what is already agreed. A person's attention is the scarce resource, so work in progress is limited by it. The [next chapter](../people-and-agents/) lists every point where a person acts.

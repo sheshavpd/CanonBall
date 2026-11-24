@@ -1,6 +1,6 @@
 ---
 title: Verification engineering
-summary: When agents write the code, most of the engineering goes into showing that a clause holds. This chapter covers the discipline, the assurance case that ties a clause to its evidence, and how to choose a method.
+summary: "When agents write the code, most of the engineering goes into showing that a clause holds."
 part: verification
 order: 1
 points:
@@ -12,9 +12,7 @@ related: [environments, evidence, why]
 
 ## The inversion
 
-When people wrote the code, the product took most of the effort. Testing mattered, and it came second. Hand-written code was slow to produce and fairly dependable, so the balance made sense.
-
-With agents writing the code, the balance turns over. Producing the change is quick. The engineering goes into building a place where you can find out whether the change is right.
+When people wrote the code, the product took most of the effort and testing came second. With agents writing the code, the balance turns over. Producing the change is quick. The engineering goes into building a place where you can find out whether the change is right.
 
 **Verification engineering** is the name for that work. It has three parts.
 
@@ -33,7 +31,7 @@ A conventional suite answers "did the tests pass?" Four questions go unanswered.
 | Which promise is each test evidence for? | Every check names the example it encodes. |
 | Could this test ever fail? | Every check keeps a run in which it did. |
 | What did the test assume about the outside world? | Assumptions are listed in the assurance case. |
-| Which promises have no test at all? | The Record shows them as unsupported. |
+| Which promises have no test at all? | The Verification Record shows them as unsupported. |
 
 ## The assurance case: one per clause
 
@@ -103,9 +101,7 @@ Step 6 has a trap. Moving logic to where it can be checked is progress. Relabeli
 
 ## Cases go stale on their own
 
-Every case lists the code its clause depends on, with a content hash of that code. When the code changes, the hash no longer matches, and the clause shows as *unknown* until the case is checked again.
-
-This one mechanism prevents the usual decay, in which a case written a year ago still claims to cover code that has since been rewritten.
+Every case lists the code its clause depends on, with a content hash of that code. When the code changes, the clause shows as *unknown* until the case is checked again. The chapter on [evidence](../evidence/) describes the mechanism.
 
 ## What a proof does not give you
 
@@ -123,5 +119,3 @@ In the Record, "proven" always appears with its property, its model, its bounds,
 ## Who does this work
 
 The verifier agent builds the environments and checks. People decide what counts as evidence, review the arguments for critical clauses, and review any change that would weaken an environment.
-
-That split determines the cost. If people had to do the checking themselves, the result would be as expensive as certified avionics software. The bet is that agents carry the labor and people keep the judgment.

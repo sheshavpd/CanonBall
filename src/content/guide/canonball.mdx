@@ -1,10 +1,10 @@
 ---
 title: What a CanonBall is
-summary: The canon says what a system promises. A CanonBall is the canon bound to the build that keeps those promises and the Record that shows it, at one moment. Every release is one.
+summary: "A CanonBall is the canon bound to the build that keeps it and the Verification Record that shows it, at one moment."
 part: structure
 order: 3
 points:
-  - "A CanonBall is three things fixed together: the canon, the build, and the Record."
+  - "A CanonBall is three things fixed together: the canon, the build, and the Verification Record."
   - "Every release produces one. Progress is a sequence of them."
   - "It answers \"what does this system promise, and how do you know?\" without anyone reading code."
 related: [layers, evidence, change]
@@ -16,9 +16,9 @@ related: [layers, evidence, change]
 
 1. the canon as it stands,
 2. the build that keeps it,
-3. the Record that shows the build keeps it.
+3. the Verification Record that shows the build keeps it.
 
-Draw them as concentric circles, with the canon at the center, and you have the mark at the top of this page. The method takes its name from the artifact because every iteration of the work ends in one.
+The mark at the top of this page draws one turn of that work. The three arcs are the canon, the build and the Record, and the ball leaving the loop is the release. The method takes its name from the artifact because every iteration of the work ends in one.
 
 <Figure id="balls" />
 
@@ -51,19 +51,13 @@ Four properties separate it from a tagged commit.
 | **Assumptions travel with it** | It states what it assumes about where it runs, the way a package states its dependencies, and includes the monitors that notice when an assumption stops holding. |
 | **Scope stays visible** | Each clause appears with its status, the conditions under which the evidence holds, and anything still open. A bare "passed" is never shown. |
 
-## Only clauses that are kept
-
-A CanonBall contains the clauses the system keeps at that release. A clause that has been agreed and is still being built is not in it. The same rule governs [`spec/`](../repository/): the canon describes the system as it is.
+A CanonBall holds only the clauses the system keeps at that release. A clause still being built is not in it.
 
 ## For one team
 
 For a single team building for itself, none of the packaging matters. A repository with a `spec/canon/` folder, a rule about who may release, and a Record that is computed on every push is already a private CanonBall.
 
-Signing, registries and exchange formats become useful on the day you hand the artifact to someone who did not watch it being built. Until then they are overhead.
-
-## Across teams
-
-When one system depends on another, it pins the CanonBall version it relies on. When the provider publishes a new one, the dependent re-runs the checks that rest on it. The chapter on [larger systems](../composition/) describes how evidence composes this way without anyone reading another team's code.
+Signing, registries and exchange formats become useful on the day you hand the artifact to someone who did not watch it being built. The chapter on [larger systems](../composition/) covers what happens when another team depends on yours.
 
 ## Is it a framework?
 

@@ -1,6 +1,6 @@
 ---
 title: Examples, and writing clauses agents read correctly
-summary: A plain sentence hides decisions. A worked example exposes them. People approve examples, and each check is written from one.
+summary: "A plain sentence hides decisions, and a worked example exposes them."
 part: idea
 order: 4
 points:
@@ -41,8 +41,6 @@ In CanonBall a person never approves a formal statement, and never approves a ba
 
 This puts human attention where it counts. The step from prose to a precise property is the one step no tool can check. If the property is wrong, every check built on it verifies the wrong thing perfectly. Examples let a person confirm the meaning before any of that machinery is built.
 
-It also keeps approval quick. Reading four examples and saying "yes, that is what I meant" takes a minute. Reading a formal property takes an expert.
-
 ## From an example to a check
 
 <Figure id="example-flow" />
@@ -71,27 +69,14 @@ Five shapes cover nearly every promise. They come from a requirements notation c
 
 **Must**, **must not**, **should** and **may** each mean one thing, as they do in internet standards. *Must* is binding. *Should* marks a default that can be overridden for a recorded reason. *May* marks an option.
 
-### Plain prose
+### Plain prose, said back
 
-- One idea per sentence.
-- Active voice.
-- Quantities with units: "within 200 ms", never "quickly".
-- No elastic words. "Appropriate", "robust", "as needed" and "etc." each hide a decision.
+One idea per sentence, active voice, and quantities with units: "within 200 ms", never "quickly". Words such as "appropriate" and "as needed" each hide a decision.
 
-### Say it back
-
-After drafting a clause, the agent restates it in its own words. If the restatement surprises the author, the clause lost something in compression, and it is reworked before anyone approves it.
-
-## When a formal property is derived
-
-For clauses that matter enough, an agent later derives a precise property that a tool can check or prove. Three safeguards keep that property faithful to the clause.
-
-1. It is checked against every example. A property that disagrees with an approved example is wrong.
-2. It is translated back into prose and compared with the clause.
-3. A deliberately violating case is fed in, and the property must reject it.
+After drafting a clause, the agent restates it in its own words. If the restatement surprises the author, the clause is reworked before anyone approves it.
 
 ## What an example cannot do
 
 Examples pin down meaning at the points you thought to write. They say nothing about the points you did not. A clause with five examples can still be wrong in a sixth situation.
 
-Two things reduce that risk. The agent proposes extra examples and files the ambiguities it finds as questions. And every incident adds the example that was missing. Examples make a missing case cheap to add. They do not tell you it is missing.
+The agent proposes extra examples, and every incident adds the one that was missing. Examples make a missing case cheap to add. They do not tell you it is missing.

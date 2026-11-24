@@ -1,6 +1,6 @@
 ---
-title: Evidence and the Record
-summary: Nobody gets to write "done". Each run of each check leaves one line of evidence. A program reads those lines and computes the status of every clause, and names the weakest link.
+title: Evidence and the Verification Record
+summary: "Each run of each check leaves one line of evidence, and a program computes the status of every clause from those lines."
 part: verification
 order: 3
 points:
@@ -14,7 +14,7 @@ related: [verification-engineering, environments, canonball]
 
 In most projects, "done" is something a person says. In CanonBall a program works it out.
 
-The **Record** is the computed status of every clause. A program reads the assurance cases and the results of the checks, applies rules that people own, and publishes the outcome. No agent and no person can write a status into it, because it is not a file in the repository.
+The **Verification Record** is the computed status of every clause. A program reads the assurance cases and the results of the checks, applies rules that people own, and publishes the outcome. No agent and no person can write a status into it, because it is not a file in the repository.
 
 The rule extends to the work itself. Whether a task is finished, or a change is ready to release, is also computed from what exists.
 
@@ -89,7 +89,7 @@ Everything evidence depends on carries a content hash: the code a clause relies 
 
 One mechanism serves everywhere, and evidence never silently outlives the thing it was about.
 
-It also keeps runs affordable. A change re-runs only the checks for clauses whose code it touched. Every other clause keeps its last valid result, and the Record shows which commit that result came from. Build systems have used the same trick for years to avoid rebuilding what has not changed.
+It also keeps runs affordable. A change re-runs only the checks for clauses whose code it touched, the way a build system skips what has not changed.
 
 ## When a check fails
 
@@ -122,13 +122,3 @@ When a monitor fires, an incident opens. The incident becomes a small [change](.
 The rules that turn evidence into status live in `spec/canon/policy/`. People write them. No agent can.
 
 They say what counts as evidence for each tier, what counts as an independent check, which kinds of oracle are trusted, and when a person must accept a release. A change that would lower the bar is reviewed explicitly.
-
-## In the first week
-
-The full machinery is not needed to start. For a first system, the Record is one script and one table.
-
-```text
-INV-003 | unsupported | checks 3/3 | seen to fail 1/2 | missing: violates/2
-```
-
-Two statuses are enough at first, accepted and unsupported, with one rule: a clause is accepted when every example has a check, every check passed at this commit, and every violating example has a recorded failure.

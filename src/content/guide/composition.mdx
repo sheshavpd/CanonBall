@@ -1,10 +1,10 @@
 ---
 title: "Larger systems: units and roles"
-summary: One team can hold one canon. A company cannot. Large systems are built from units of the same shape, and a parent trusts its children through contracts called roles, without reading their code.
+summary: "Large systems are built from units of the same shape, and a parent trusts its children through contracts called roles."
 part: building
 order: 2
 points:
-  - "A unit is a separately owned part of a system with its own canon, build and Record."
+  - "A unit is a separately owned part of a system with its own canon, build and Verification Record."
   - "A parent depends on roles. One file, the assembly, says who fills them."
   - "Evidence composes through contract tests, so nobody verifies the whole system at once."
 related: [canonball, repository, evidence]
@@ -18,7 +18,7 @@ CanonBall handles this with two ideas: units and roles.
 
 ## A unit
 
-A **unit** is a separately owned part of a system with its own canon, blueprint, build and Record. A service is a unit. So is the subdomain that contains it, and so is the domain above that. The shape repeats at every level, and only the size differs. If you know domain-driven design, a unit is close to a bounded context.
+A **unit** is a separately owned part of a system with its own canon, blueprint, build and Verification Record. A service is a unit. So is the subdomain that contains it, and so is the domain above that. The shape repeats at every level, and only the size differs. If you know domain-driven design, a unit is close to a bounded context.
 
 Six rules keep a tree of units consistent.
 
@@ -92,9 +92,7 @@ Computer scientists call this assume-guarantee reasoning. It is the kind of veri
 
 ## Staleness crosses boundaries
 
-Each role has a content hash computed from its contract, its tests and its fake. If the parent changes the role, every provider's test result goes stale. If a provider weakens its own clauses, its status drops and the parent's assembly part notices.
-
-Each team pins the [CanonBall](../canonball/) versions it depends on. When a provider publishes a new one, its dependents re-run the checks that rest on it.
+Each role has a content hash computed from its contract, its tests and its fake. If the parent changes the role, every provider's test result goes stale. Each team also pins the [CanonBall](../canonball/) versions it depends on, and re-runs the checks that rest on a provider when it publishes a new one.
 
 ## Outside dependencies are roles too
 
@@ -110,7 +108,7 @@ A cooperation among five services with no owner is a classic source of distribut
 
 ## Teams do not wait for each other
 
-A consumer's change can be released while the provider's is still being built. The affected clauses show as *pending* in the Record, and move to accepted when the provider passes the contract tests. Two teams' roadmaps do not have to be scheduled against each other.
+A consumer's change can be released while the provider's is still being built. The affected clauses show as *pending* until the provider passes the contract tests.
 
 ## What it costs
 

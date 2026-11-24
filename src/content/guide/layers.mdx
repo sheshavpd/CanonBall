@@ -1,10 +1,10 @@
 ---
-title: "Four layers: canon, blueprint, build, Record"
-summary: A CanonBall system has four layers with different owners and different rules. Authority runs down through them. Evidence runs back up.
+title: "Four layers: canon, blueprint, build, Verification Record"
+summary: "A CanonBall system has four layers, with authority running down through them and evidence running back up."
 part: structure
 order: 1
 points:
-  - "Canon says what must be true. Blueprint says how. Build is what runs. The Record says whether it is true."
+  - "Canon says what must be true. Blueprint says how. Build is what runs. The Verification Record says whether it is true."
   - "A higher layer constrains the one below. A lower layer supplies the evidence for the one above."
   - "Two automated checks, traceability and no silent gaps, keep the layers from drifting apart."
 related: [primitives, repository, evidence]
@@ -12,16 +12,9 @@ related: [primitives, repository, evidence]
 
 ## The four layers
 
-| Layer | The question it answers | Who writes it | How firmly it binds |
-|---|---|---|---|
-| **Canon** | What must be true? | People approve; agents draft | Binding |
-| **Blueprint** | How will it be made true? | Agents | Revisable |
-| **Build** | What actually runs? | Agents | Replaceable, one checked change at a time |
-| **Record** | Is it true? | A program | Computed; nobody writes it |
-
-Canon and blueprint together are the **spec**: the statement of intent. Build and Record together are reality. The agents have one job, which is to keep reality consistent with intent and to say so when they cannot.
-
 <Figure id="layers" />
+
+Canon and blueprint together are the **spec**: the statement of intent. Build and Verification Record together are reality. The agents have one job, which is to keep reality consistent with intent and to say so when they cannot.
 
 Read down the left side, each layer constrains the one below. The canon bounds what the blueprint may design. The blueprint bounds what the build may contain.
 
@@ -57,11 +50,11 @@ The build has two halves.
 | `src/` | The code that runs | The builder agent |
 | `verify/` | Everything that produces evidence: environments, checks, proofs, monitors | The verifier agent |
 
-The agent that writes `src/` can run what is in `verify/` and cannot change it. That separation is what makes the evidence worth having. The chapter on [people and agents](../people-and-agents/) explains how it is enforced.
+The agent that writes `src/` can run what is in `verify/` and cannot change it. The chapter on [people and agents](../people-and-agents/) explains why.
 
 The build is replaceable, with one restriction that surprises people. You may not regenerate it from the spec. The spec leaves many things open, and a fresh generation would decide each of them again, differently. The build changes only as a sequence of checked changes.
 
-## Record
+## Verification Record
 
 The Record states, for every clause, whether the evidence supports it. A program computes it from the assurance cases and the results of the checks, according to rules that people own.
 
@@ -78,12 +71,3 @@ This check establishes that the references exist. It does not establish that the
 > **No silent gaps.** No clause is reported as accepted while any part of its case lacks evidence. Anything that has not been assessed is shown as unknown. It is never left out.
 
 Neither rule involves a person. Both are computed.
-
-## What each layer costs
-
-| Layer | The cost | What keeps it bearable |
-|---|---|---|
-| Canon | People must read and approve it | Keep it small: only what a person would need to approve |
-| Blueprint | Cases go stale as code moves | Each case is tied to the code it depends on, and goes stale visibly |
-| Build | Two agents, two sets of permissions | File permissions enforce it, so it needs no vigilance |
-| Record | A program to compute it | In the first week it is one script and one table |

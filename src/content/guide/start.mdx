@@ -1,11 +1,11 @@
 ---
 title: Start in a week
-summary: Most of CanonBall is sequencing. The minimum fits on one existing system in about a week, and everything else is adopted when a real need shows up.
+summary: "The minimum fits on one existing system in about a week, and everything else is adopted when a real need shows up."
 part: building
 order: 3
 points:
   - "Pick one logic-heavy system you already run and expect to keep changing."
-  - "Ten clauses, one verification environment, and a Record computed by one script are enough to start."
+  - "Ten clauses, one verification environment, and a Verification Record computed by one script are enough to start."
   - "The environment takes most of the week. That tells you where the work is."
 related: [evidence, environments, open-bets]
 ---
@@ -58,7 +58,7 @@ This is the largest piece of the week.
 
 > **A prerequisite.** The service must be startable with its outside dependencies pointed elsewhere. If it is not, creating that seam comes first, and the week slips by however long it takes.
 
-### Day 5: compute the Record
+### Day 5: compute the Verification Record
 
 Write a script that joins three things: the list of examples, the assurance cases, and the lines of evidence. It prints one row per clause.
 
@@ -70,15 +70,7 @@ Publish that table as a page. Do not commit it.
 
 ### Throughout: separate the identities
 
-Create three agent identities with write access limited by path.
-
-| Identity | Writes |
-|---|---|
-| One drafts clauses and plans | Proposed clauses, the blueprint |
-| One builds | `src/` |
-| One verifies | `verify/` |
-
-Keep a handful of scenarios, written by people, in a repository none of the three can read.
+Create three agent identities with write access limited by path: one drafts clauses and plans, one writes `src/`, one writes `verify/`. Keep a handful of scenarios, written by people, in a repository none of the three can read.
 
 ## What to do now and what to leave
 
@@ -88,19 +80,12 @@ Keep a handful of scenarios, written by people, in a repository none of the thre
 | A policy with two files | The other policy files. Conservative defaults apply meanwhile. |
 | One-line cases for ordinary clauses. Hand-reviewed cases for critical ones. | Generated cases, a verification plan, fidelity claims |
 | The traceability check, as a script | Tracing changes in behavior to clauses |
-| The Record as one generated table | The five statuses, signed evidence |
+| The Verification Record as one generated table | The five statuses, signed evidence |
 | One verification environment | The rest of the environment machinery |
 | Three agent identities | Separate elicitor and planner agents |
 | A roadmap page and a board in the tracker you already use | A purpose-built orchestrator |
 
 Everything in the right-hand column stays in the method. You adopt each item when a pilot shows you need it.
-
-## What you have at the end
-
-- A `spec/` you can trust to describe the system as it is.
-- A Record that says, per clause, whether there is evidence.
-- At least one clause shown as unsupported, which means the Record is telling the truth.
-- A private [CanonBall](../canonball/): canon, build and Record at one commit.
 
 ## The first surprise
 
@@ -110,7 +95,7 @@ Leave it unsupported and name the missing example. A check that cannot really fa
 
 ## What comes next
 
-Run changes through it. Twenty ordinary rule changes, each starting as a change proposal, will teach you more than any amount of setup. Include a refactoring, a bug fix, an ambiguous request and one failed release, and compare against the same changes done your usual way.
+Run changes through it. Twenty ordinary rule changes, each starting as a change proposal, will teach you more than any amount of setup. Include a refactoring, a bug fix and one failed release.
 
 Measure four things from the first day.
 

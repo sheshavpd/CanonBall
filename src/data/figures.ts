@@ -22,19 +22,15 @@ export const figures: Record<string, { caption: string; text: string }> = {
   },
   layers: {
     caption: 'Authority runs down the layers. Evidence runs back up.',
-    text: 'Four layers stacked top to bottom: canon (what must be true, approved by people), blueprint (how it will be made true, written by agents), build (what actually runs, written by agents), Record (whether it is true, computed by a program). An arrow down the left side is labeled "constrains". An arrow up the right side is labeled "is discharged by".',
+    text: 'Four layers stacked top to bottom: canon (what must be true, approved by people, binding), blueprint (how it will be made true, written by agents, revisable), build (what actually runs, written by agents, replaceable one checked change at a time), Verification Record (whether it is true, computed by a program, written by nobody). An arrow down the left side is labeled "constrains". An arrow up the right side is labeled "is discharged by".',
   },
   folders: {
     caption: 'Each folder answers one question and has one kind of writer.',
-    text: 'Six folders. spec/canon: what does the system promise? People approve. spec/blueprint: how do we keep those promises? Agents write. roadmap: what is proposed? People rank it. src: what runs? The builder agent. verify: how do we know? The verifier agent. incidents: what went wrong? Kept permanently. Outside the repository: the Record, computed, and the held-out scenarios, which building agents cannot read.',
+    text: 'Six folders. spec/canon: what does the system promise? People approve. spec/blueprint: how do we keep those promises? Agents write. roadmap: what is proposed? People rank it. src: what runs? The builder agent. verify: how do we know? The verifier agent. incidents: what went wrong? Kept permanently. Outside the repository: the Verification Record, computed, and the held-out scenarios, which building agents cannot read.',
   },
   balls: {
     caption: 'Progress is a sequence of CanonBalls.',
-    text: 'Three CanonBalls in a row, each drawn as three concentric circles: canon at the center, the build around it, the Record around that. CanonBall 12 is the system before the change. CanonBall 13 adds decision DEC-031 after a milestone is released. CanonBall 14 adds invariant INV-009 after an incident is repaired.',
-  },
-  path: {
-    caption: 'The path every change follows, with the two gates where a person must act.',
-    text: 'Eight steps in order: words, propose, plan, build, verify, Record, release, operate. The agreement gate sits after propose and always needs a person. The release gate sits before release and needs a person only when there is risk to accept. Build and verify run side by side.',
+    text: 'Three CanonBalls in a row, each drawn with the CanonBall mark. CanonBall 12 is the system before the change. CanonBall 13 adds decision DEC-031 after a milestone is released. CanonBall 14 adds invariant INV-009 after an incident is repaired.',
   },
   release: {
     caption: 'A release copies the proposed files into spec/ and publishes a CanonBall.',
@@ -42,7 +38,7 @@ export const figures: Record<string, { caption: string; text: string }> = {
   },
   walls: {
     caption: 'Who can write what. Independence is a matter of permissions.',
-    text: 'A grid of paths against roles. Canon: people approve, the elicitor drafts. Policy: people only. Blueprint: the planner writes, and the verifier writes the verification plan. src: the builder writes, the verifier reads. verify: the verifier writes, the builder reads and runs. Held-out scenarios: people write; neither the builder nor the verifier has access. The Record: nobody writes; it is computed.',
+    text: 'A grid of paths against roles. Canon: people approve, the elicitor drafts. Policy: people only. Blueprint: the planner writes, and the verifier writes the verification plan. src: the builder writes, the verifier reads. verify: the verifier writes, the builder reads and runs. Held-out scenarios: people write; neither the builder nor the verifier has access. The Verification Record: nobody writes; it is computed.',
   },
   case: {
     caption: 'An assurance case splits a clause into parts and argues that the parts are enough.',
@@ -54,11 +50,11 @@ export const figures: Record<string, { caption: string; text: string }> = {
   },
   environment: {
     caption: 'The seven parts of a verification environment.',
-    text: 'The system under test sits inside a boundary. Stimulus drives it from one side. Probes observe it from the other. The world, real or faked, surrounds it. An oracle reads the probes and decides pass or fail. Control fixes the seed, the clock, and start and teardown. Coverage records what was exercised.',
+    text: 'Seven parts, with the refunds example for each. Boundary: the system under test, here the refunds service at this commit. Stimulus: how it is driven, here requests through the public interface. World: what surrounds it, real or faked, here a real local database and a fake payment gateway. Probes: what can be observed, here what the database holds and what the gateway paid. Oracle: what decides pass or fail, here a mechanical check on what the probes saw. Coverage: what was exercised, here the examples run and the injected faults caught. Control: what can be fixed in place, here the seed, the clock, and start and teardown.',
   },
   rollup: {
     caption: 'Lines of evidence roll up to parts, and parts to a status. The weakest link is named.',
-    text: 'Three checks pass and feed part P1, which is evidenced. Part P4 has no evidence. The clause is therefore unsupported, and the Record names P4 as the open obligation.',
+    text: 'Three checks pass and feed part P1, which is evidenced. Part P4 has no evidence. The clause is therefore unsupported, and the Verification Record names P4 as the open obligation.',
   },
   'core-shell': {
     caption: 'Inputs arrive as data, the logic decides, and adapters carry out the effects.',
@@ -70,6 +66,6 @@ export const figures: Record<string, { caption: string; text: string }> = {
   },
   week: {
     caption: 'The first week. The environment is the largest piece.',
-    text: 'A five-day timeline. Days 1 and 2: vocabulary and ten clauses with examples. Day 2: the policy and the traceability check. Days 3 to 5: one verification environment, checks, and recorded failures. Day 5: the Record as one generated table. Throughout: separate agent identities.',
+    text: 'A five-day timeline. Days 1 and 2: vocabulary and ten clauses with examples. Day 2: the policy and the traceability check. Days 3 to 5: one verification environment, checks, and recorded failures. Day 5: the Verification Record as one generated table. Throughout: separate agent identities.',
   },
 };

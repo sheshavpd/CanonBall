@@ -1,6 +1,6 @@
 ---
 title: Verification environments
-summary: An agent can build a simulator in an afternoon, and an untested simulator produces confident, wrong evidence. A verification environment is a designed thing with seven parts, a stated limit, and a way to tell whether it can be trusted.
+summary: "A verification environment is a designed thing with seven parts, a stated limit, and a measure of whether it can be trusted."
 part: verification
 order: 2
 points:
@@ -20,15 +20,6 @@ Every environment, at every level, has the same seven parts. Hardware verificati
 
 <Figure id="environment" />
 
-| Part | The question | In the refunds example |
-|---|---|---|
-| **Boundary** | What is the system under test? | The refunds service, at this commit |
-| **Stimulus** | How is it driven? | Requests through the public interface |
-| **World** | What surrounds it, real or faked? | A real local database; a fake payment gateway |
-| **Probes** | What can be observed? | What the database holds; what the gateway paid |
-| **Oracle** | What decides pass or fail? | A mechanical check on those observations |
-| **Coverage** | What was exercised? | Which examples ran; which injected faults were caught |
-| **Control** | What can be fixed in place? | The random seed, the clock, start and teardown |
 
 ## It states what it cannot show
 
@@ -47,7 +38,7 @@ Real gateway timing. Whether the real gateway honors
 request keys. Database contention. Production request shapes.
 ```
 
-Evidence counts only inside what the environment can show. A check that passes here says nothing about real gateway timing, and the Record will not pretend otherwise.
+Evidence counts only inside what the environment can show. A check that passes here says nothing about real gateway timing, and the Verification Record will not pretend otherwise.
 
 Write this section first, before any code. It lists the claims this environment must decline to support.
 
@@ -113,18 +104,7 @@ A check about a race that never actually opened the window proves nothing, and i
 
 ## Designing one
 
-1. **Collect the parts** of assurance cases that need this boundary at this level.
-2. **Write the declaration first,** starting with what it cannot show.
-3. **Make it start and stop** with one command each.
-4. **Expose the verbs.**
-5. **Pin the fakes** to the real thing's contract tests.
-6. **Write each check so that it fails first.**
-7. **Inject faults and measure** what gets caught.
-8. **Register it** with how often it runs and what it is allowed to cost.
-
-## Shared environments
-
-An environment used by many teams, such as a simulated warehouse, is treated as a system in its own right. It makes promises about its own fidelity, and other teams' evidence counts only while those promises are kept.
+Collect the parts of assurance cases that need this boundary at this level. Write the declaration first, starting with what the environment cannot show. Then make it start and stop with one command each, expose the verbs, pin the fakes to the real thing's contract tests, and inject faults to measure what gets caught. The chapter on [starting](../start/) walks through a first one.
 
 ## What is hard
 
