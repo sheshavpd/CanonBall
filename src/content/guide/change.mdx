@@ -1,0 +1,118 @@
+---
+title: How a change moves
+summary: The whole method is organized around one thing, which is moving a change into a running product. A change starts as a one-page proposal, is built and verified against that proposal, and ends as a release.
+part: change
+order: 1
+points:
+  - "A change is a folder. It holds a one-page proposal, the files it proposes, and the tasks to build them."
+  - "The plan for evidence is fixed before any code is written."
+  - "A release is the only thing that changes spec/, and it happens when the Record allows it."
+related: [repository, people-and-agents, evidence]
+---
+
+## Three objects
+
+Three things carry all the work.
+
+| Object | Where | What it is |
+|---|---|---|
+| **The spec** | `spec/` | What is true of the system today. |
+| **A change** | a folder in `roadmap/` | A proposal that says what should become true, the files that would make it so, and the tasks to build them. |
+| **A release** | an event | The moment it becomes true. Nothing else writes to `spec/`. |
+
+Other tools give an agent context about the product. These three objects give it the state of the work.
+
+## The change proposal
+
+A planned change is a **milestone**. Its proposal, `change.md`, answers one question: what changes in the system?
+
+```markdown
+# Faster small refunds
+
+What changes: refunds under $100 are approved automatically.
+Nothing else changes.
+
+Adds:      DEC-031
+Examples:  2
+Why now:   the review queue is the slowest step for small refunds.
+status:    in progress
+```
+
+An agent drafts the proposal from conversations with the people who own the affected clauses. Those people agree to it. The `status` line is written by a program and by nobody else.
+
+Beside the proposal sits `diff/`, holding every proposed file in its final form: the new clause with its examples, and the design and evidence plan for it. Nothing in `diff/` is canon yet.
+
+### How big a milestone is
+
+1. **It delivers something a customer can use, end to end.** It crosses every component the change needs: the infrastructure, the service, the screen. Work on a single component is a task inside some milestone.
+2. **It can be read in a minute.** If it cannot, split it.
+3. **It changes at least one clause.** A change that alters no clause is a refactoring, and takes the shorter path described below.
+
+## The path
+
+<Figure id="path" />
+
+| Step | What happens | Who |
+|---|---|---|
+| **Words** | Any new noun is defined in the vocabulary. | An agent asks. A person answers. |
+| **Propose** | The change proposal and its examples are drafted and agreed. | People agree. |
+| **Plan** | The design, the assurance cases and the evidence plan are written. | Planner and verifier agents |
+| **Build** | The code is written, in named tasks. | Builder agent |
+| **Verify** | Environments, checks and injected faults are built. | Verifier agent |
+| **Record** | Status is computed for every clause, with the change applied. | A program |
+| **Release** | The proposed files are copied into `spec/`. A CanonBall is published. | People accept, when there is risk to accept |
+| **Operate** | Monitors watch the assumptions. | Everyone |
+
+### Plan comes before code
+
+The plan fixes what will count as evidence before the builder writes anything. Scientists register a hypothesis before running an experiment for the same reason. Tests written after the code can be shaped to fit it.
+
+The plan also states a **predicted change in behavior**: "refunds under $100 move from review to automatic approval, and nothing else changes." Later, a program compares the prediction with what actually changed, and people read only the mismatches. Each mismatch is a bug, a gap in the canon, or a wrong prediction.
+
+### Build and verify run side by side
+
+Both agents work from the same plan. The builder can run the verifier's checks. It cannot edit them.
+
+## The release rule
+
+Checks for a change run against the **release candidate**: `spec/` with the change's proposed files applied. A change may be released when two things are true of the Record computed for that candidate.
+
+1. Every clause the change touches is accepted.
+2. No clause the change did not touch has become worse.
+
+<Figure id="release" />
+
+When the rule holds, a program copies the files from `diff/` over the files of the same name in `spec/`, archives the change folder, and publishes a CanonBall. No person edits `spec/` by hand.
+
+A person must accept the release only when there is risk to accept. The chapter on [people and agents](../people-and-agents/) lists those cases.
+
+## Unplanned work
+
+Some work cannot be planned. An incident, a bug, or a one-line request gets a folder under `roadmap/unplanned/` with the same shape as a milestone and a single task.
+
+| Kind | What it is | What it needs |
+|---|---|---|
+| **Refactoring** | A change to structure that alters no clause and no behavior. | No agreement on examples, because there are none. Released when behavior is shown to be unchanged. |
+| **Bug fix** | A change in behavior that no clause covered. It is a gap in the canon. | The failing case becomes an example, an invariant is proposed, and a person approves both. |
+| **Incident** | A failure in production. | The same as a bug fix, starting from `incidents/`. |
+
+All three are released by the same rule. Building the product and operating it use one path.
+
+## Several changes at once
+
+Two milestones can be built at the same time if they touch different clauses. Each is released when it is ready, in any order, and judged against whatever `spec/` is at that moment.
+
+Two milestones that touch the same clause are one milestone. The agent merges their proposals.
+
+One consequence is worth knowing early. How much work can run in parallel is decided by how the product is divided, and that is decided at the start. A product cut into one capability that every change touches will run one change at a time, whatever the process says.
+
+## What people do meanwhile
+
+People do not wait at the end of this path. Their recurring acts are these.
+
+- Agree to the next change proposals and approve their examples.
+- Answer questions, most of which arrive while a proposal is being drafted.
+- Rank `roadmap/index.md` together, weekly, by cost of delay.
+- Accept a release when the policy asks.
+
+The proposals people are shaping differ from the ones agents are building. So people usually work on upcoming changes while agents build the agreed ones. A person's attention is the scarce resource. Work in progress is limited by it, and agents do not start work that would only wait in a queue.

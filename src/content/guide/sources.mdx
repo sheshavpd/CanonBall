@@ -1,0 +1,94 @@
+---
+title: Where the words come from
+summary: Very little in CanonBall is new. Most of its ideas, and most of its vocabulary, come from established work in software and safety engineering. This chapter maps each term to its source.
+part: building
+order: 5
+points:
+  - "Where an established term exists, the guide uses it."
+  - "Where the guide prefers a plainer word, this chapter gives the established one."
+  - "A handful of names are CanonBall's own, and they are listed at the end."
+related: [vocabulary, open-bets, why]
+---
+
+## Why this chapter exists
+
+A method that invents a new word for every old idea makes its readers learn twice. This guide tries to use the words engineers already know. Where it prefers a plainer word, the table below gives the established one, so you can connect what you read here to what you have read elsewhere.
+
+## Specifying
+
+| In this guide | Established term | Source |
+|---|---|---|
+| Promise | Requirement | Requirements engineering generally |
+| Invariant | Invariant | Bertrand Meyer, *Object-Oriented Software Construction* (1988); Leslie Lamport, *Specifying Systems* (2002) |
+| Decision | Architecture decision record | Michael Nygard, "Documenting Architecture Decisions" (2011) |
+| Constraint | Safety constraint; operating envelope | Nancy Leveson, *Engineering a Safer World* (2011) |
+| Vocabulary | Ubiquitous language | Eric Evans, *Domain-Driven Design* (2003) |
+| Example | Key example; scenario | Gojko Adzic, *Specification by Example* (2011); Dan North, "Introducing BDD" (2006) |
+| Sentence shapes for promises | EARS | Alistair Mavin and colleagues, "Easy Approach to Requirements Syntax" (2009) |
+| Must, should, may | Requirement levels | Scott Bradner, RFC 2119 (1997) |
+
+## Verifying
+
+| In this guide | Established term | Source |
+|---|---|---|
+| Assurance case | Assurance case; safety case | Tim Kelly, "Arguing Safety" (1998), the standard reference for Goal Structuring Notation |
+| Tier | Design assurance level; integrity level | The avionics standard DO-178C and the automotive standard ISO 26262 |
+| Check | Automated test | Kent Beck, *Test-Driven Development: By Example* (2002) |
+| A check must be seen to fail | Red, then green; watch the test fail | Beck, as above; Steve Freeman and Nat Pryce, *Growing Object-Oriented Software, Guided by Tests* (2009) |
+| Injected fault | Mutant; fault injection | Richard DeMillo, Richard Lipton and Frederick Sayward, "Hints on Test Data Selection" (1978) |
+| System under test, fake | System under test; test double | Gerard Meszaros, *xUnit Test Patterns* (2007) |
+| Oracle | Test oracle | Elaine Weyuker, "On Testing Non-Testable Programs" (1982) |
+| Property-based tests | Property-based testing | Koen Claessen and John Hughes, "QuickCheck" (2000) |
+| Model checking | Model checking | Lamport, as above |
+| Held-out scenarios | Holdout set | Machine learning practice |
+| Seam | Seam | Michael Feathers, *Working Effectively with Legacy Code* (2004) |
+| Comparing behavior before and after | Characterization test | Feathers, as above |
+
+## Building and releasing
+
+| In this guide | Established term | Source |
+|---|---|---|
+| Decision logic and adapters | Functional core, imperative shell | Gary Bernhardt, "Boundaries" (2012) |
+| Adapter | Ports and adapters; hexagonal architecture | Alistair Cockburn, "Hexagonal Architecture" (2005) |
+| Refactoring | Refactoring | Martin Fowler, *Refactoring* (1999) |
+| Release, release candidate | The same | Jez Humble and David Farley, *Continuous Delivery* (2010) |
+| Content hash | Content-addressed build inputs | Build systems such as Bazel and Nix |
+| Incident, and what follows it | Postmortem | Betsy Beyer and colleagues, *Site Reliability Engineering* (2016) |
+
+## Composing
+
+| In this guide | Established term | Source |
+|---|---|---|
+| Unit | Bounded context | Evans, as above |
+| Role contract | Design by contract | Meyer, as above |
+| Contract tests | Contract tests; conformance suite | Common practice for services |
+| A provider may promise more and assume less | Behavioral subtyping | Barbara Liskov and Jeannette Wing, "A Behavioral Notion of Subtyping" (1994) |
+| Assume-guarantee reasoning | Rely-guarantee | Cliff Jones (1983) |
+| Hiding a unit's internals | Information hiding | David Parnas, "On the Criteria To Be Used in Decomposing Systems into Modules" (1972) |
+
+## Working
+
+| In this guide | Established term | Source |
+|---|---|---|
+| Level of automation | Levels of automation | Thomas Sheridan and William Verplank, "Human and Computer Control of Undersea Teleoperators" (1978) |
+| Shadow mode | Shadow deployment | Common practice for releases |
+| Limit work in progress | WIP limits | David Anderson, *Kanban* (2010) |
+| Rank by cost of delay | Cost of delay | Donald Reinertsen, *The Principles of Product Development Flow* (2009) |
+| How work moves is part of the product | Work system | Steven Alter, "Work System Theory" (2013) |
+
+## CanonBall's own names
+
+A few names have no established equivalent, because the thing they name is specific to this method.
+
+| Name | What it names |
+|---|---|
+| **Canon** | The set of approved clauses |
+| **Clause** | One statement in the canon, of any of the five kinds |
+| **Blueprint** | The agents' design for keeping the canon |
+| **Record** | The computed status of every clause |
+| **CanonBall** | One release: canon, build and Record together. Also the method. |
+| **Verification engineering** | The discipline of building environments in which a clause can be checked |
+
+## A note on reading further
+
+If you read only three of these, read Adzic for examples, Leveson for constraints and safety thinking, and Humble and Farley for what a release should be. Between them they cover most of what this guide asks a team to do differently.

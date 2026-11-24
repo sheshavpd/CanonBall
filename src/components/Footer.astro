@@ -8,7 +8,7 @@ const { path } = Astro.props;
   <div class="wrap">
     <span>{site.name}. {site.tagline}</span>
     <nav aria-label="Footer">
-      <a href={url('/guide/')}>Guide</a>
+      <a href={url('/') + '#guide'}>Guide</a>
       <a href={url('/glossary/')}>Glossary</a>
       <a class="txt" href={agentsUrl(path)}>This page as agents.txt</a>
       <a class="txt" href={url('/agents.txt')}>Site index for agents</a>

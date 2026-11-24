@@ -21,7 +21,7 @@
     const states = [
       { ck: 'passed, never seen to fail', cls: 'tag warn', v: 'verdict bad', s: 'Unsupported', why: 'The third check has never failed, so its pass is not evidence yet.', btn: 'Inject a fault and run it' },
       { ck: 'failed against the injected fault', cls: 'tag red', v: 'verdict', s: 'The check works', why: 'With the lock removed, two requests both paid out, and the check caught it. The failing run is kept beside the check.', btn: 'Run it on the real build' },
-      { ck: 'passed, seen to fail', cls: 'tag', v: 'verdict ok', s: 'Accepted', why: 'Every story has a check, every check passed, and every check has been seen to fail.', btn: 'Start over' },
+      { ck: 'passed, seen to fail', cls: 'tag', v: 'verdict ok', s: 'Accepted', why: 'Every example has a check, every check passed, and every check has been seen to fail.', btn: 'Start over' },
     ];
     let i = 0;
     go.addEventListener('click', () => {

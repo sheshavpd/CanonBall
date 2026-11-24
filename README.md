@@ -2,14 +2,15 @@
 
 **The lifecycle agents can run and people can trust.**
 
-This repository is the CanonBall website: a landing page that introduces the method, a guide with one chapter per concept, a glossary, and a plain-text twin of every page for agents.
+This repository is the CanonBall website: a landing page that introduces the method and indexes the guide, eighteen guide chapters with one concept each, a glossary, and a plain-text twin of every page for agents.
 
 ## Stack
 
 - [Astro 7](https://astro.build), static output. Pages ship as HTML and CSS; the three interactive pieces on the landing page are small inline scripts.
 - TypeScript, strict.
 - Hand-written CSS with design tokens in `src/styles/global.css`. No CSS framework.
-- IBM Plex Sans and IBM Plex Mono, self-hosted through Fontsource.
+- Manrope for headings, Figtree for text, JetBrains Mono for code, self-hosted through Fontsource.
+- MDX for the guide, so chapters can embed figures.
 - pnpm.
 
 ## Run it
@@ -25,12 +26,13 @@ pnpm preview      # serve the built site
 
 ```text
 src/
-├── content/guide/*.md      the guide. One Markdown file per chapter.
+├── content/guide/*.mdx     the guide. One MDX file per chapter.
 ├── data/
 │   ├── site.ts             tagline, the primitives, the steps of a change, the dial
 │   ├── repo.ts             the example repository shown on the landing page
+│   ├── figures.ts          caption and text description of every figure
 │   └── glossary.ts         every term, with the chapter that explains it
-├── components/             Logo, Header, Footer, RepoExplorer, Dial, FailFirst, GuideIndex
+├── components/             Logo, Header, Footer, RepoExplorer, Dial, FailFirst, GuideIndex, Figure
 ├── layouts/                Base (every page), Guide (chapter pages)
 ├── lib/
 │   ├── links.ts            url() helper, so the site can live under a sub-path
@@ -42,7 +44,7 @@ src/
 
 ## Writing a chapter
 
-Add a Markdown file to `src/content/guide/`:
+Add an `.mdx` file to `src/content/guide/`:
 
 ```markdown
 ---
@@ -50,17 +52,26 @@ title: The title
 summary: Two sentences that say what the chapter is about.
 part: idea            # idea | structure | change | verification | building
 order: 5              # position within the part
+points:               # two to four takeaways, shown at the top. Quote them.
+  - "The first takeaway."
+  - "The second takeaway."
 related: [primitives, evidence]
 ---
 
 ## A heading
 
-Body text. Link to other chapters with relative links: [stories](../stories/).
+Body text. Link to other chapters with relative links: [examples](../examples/).
+
+<Figure id="layers" />
 ```
 
-The chapter appears in the guide index, the sidebar, the landing page, and gets its own `agents.txt`. Nothing else needs editing.
+The chapter appears in the sidebar and in the guide index on the landing page, and gets its own `agents.txt`. Nothing else needs editing.
 
-Chapters are plain Markdown on purpose. The same source renders the HTML page and the agent-readable text, so the two cannot drift apart.
+### Figures
+
+Three components are available inside a chapter without importing them: `<Figure id="..." />`, `<Dial />` and `<FailFirst />`.
+
+To add a figure, draw it in `src/components/Figure.astro` and register its caption and a text description in `src/data/figures.ts`. The description is what an agent reads in place of the picture, so the HTML page and the agent-readable text come from one source and cannot drift apart.
 
 ## agents.txt
 
@@ -68,12 +79,11 @@ Every page at `/x/` has a plain-text version at `/x/agents.txt`.
 
 | Page | Agent-readable twin |
 |---|---|
-| `/` | `/agents.txt`, which is also the site index |
-| `/guide/` | `/guide/agents.txt` |
+| `/` | `/agents.txt`, which is also the index of every chapter |
 | `/guide/<chapter>/` | `/guide/<chapter>/agents.txt` |
 | `/glossary/` | `/glossary/agents.txt` |
 
-Each file carries the page text in Markdown and ends with a References section that links to other `agents.txt` files: previous and next chapter, related chapters, the guide index, the glossary and the site index. Every HTML page advertises its twin with `<link rel="alternate" type="text/plain">` and a visible link in the header.
+Each file carries the page text in Markdown, with key points at the top and each figure replaced by its description. It ends with a References section that links to other `agents.txt` files: previous and next chapter, related chapters, the glossary and the site index. Every HTML page advertises its twin with `<link rel="alternate" type="text/plain">` and a visible link in the header.
 
 `pnpm check:links` fails the build if a page has no twin or a reference points nowhere.
 
@@ -96,14 +106,16 @@ SITE_URL=https://example.com BASE_PATH=/canonball/ pnpm build
 
 ## Vocabulary used on the site
 
-The site uses plain words where the underlying specification has its own. The glossary shows both.
+The site uses established engineering terms where they exist, and plain words otherwise. The glossary shows the specification's term beside each, and the chapter "Where the words come from" cites the source of every term.
 
 | On the site | In the specification |
 |---|---|
 | promise | requirement |
-| limit | envelope |
-| story | example |
+| constraint | envelope |
+| example | story |
+| change proposal | change.md |
 | release | landing |
+| release candidate | candidate present |
 | recorded failure | red proof |
 | injected fault | seeded fault |
 | decision logic, adapter | pure core, door |

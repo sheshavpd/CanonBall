@@ -1,0 +1,96 @@
+---
+title: What is still a bet
+summary: Parts of this method rest on technology that is decades old. Parts rest on things nobody has yet measured. This chapter separates the two, and says where the method does not fit.
+part: building
+order: 4
+points:
+  - "The central bet is cost. Agents must make this rigor as cheap as ordinary software."
+  - "A missing clause defeats every level of verification. Examples and incidents reduce that risk and do not remove it."
+  - "The method suits logic-heavy, long-lived systems. It suits prototypes and interface-heavy products poorly."
+related: [why, start, delegation]
+---
+
+## What is solid
+
+These pieces use established technology and can be relied on today.
+
+- **Decision logic kept apart from side effects,** with recorded inputs and exact replay.
+- **A canon as plain Markdown** with examples, stable IDs and ownership by path. It needs no new tooling.
+- **Evidence at the lower levels, produced by agents:** property-based tests against fakes, and scenarios against real processes and a local database. This assumes the builder and verifier are kept apart.
+- **Proofs for small pieces of decision logic,** with a person checking only the examples.
+- **A first-week environment** built as the [previous chapter](../start/) describes.
+
+## The bets
+
+### Cost
+
+The whole method rests on this one.
+
+Assurance cases, arguments and treatments are expensive to write and to keep current. CanonBall assumes agents bring that cost down to the cost of ordinary software.
+
+Suppose agents only make the writing faster, while people still review every clause change, every critical argument, every adapter and every example. The result then has the cost profile of certified avionics software without the regulation that justifies it.
+
+Only measurement settles this: setup cost apart from recurring cost, a person's minutes per critical case, and how often an argument went stale.
+
+### Missing clauses
+
+When the canon misses a case, every level of verification checks the wrong thing perfectly. A complete proof of an incomplete specification is still incomplete.
+
+Examples and incidents reduce the problem. Nothing known solves it.
+
+### The quality of arguments
+
+An agent can draft an assurance case. Whether it reliably notices the obligation that is missing, such as braking distance in a safety argument, is untested. The same doubt applies to what an environment claims about its own realism.
+
+Until there is data, a person reviews critical arguments and any change that would weaken an environment.
+
+### Evidence across teams
+
+A parent's status depends on the contract tests its providers must pass. Tests that miss something the protocol relies on give a green result and a wrong promise. The approach is sound in principle and unproven in practice.
+
+### Comparing behavior before and after
+
+Replaying recorded inputs through the old and new versions is a useful backstop, in the spirit of a characterization test. It is overrated as a replacement for review. It measures first-order effects only. It produces long lists that people stop reading. And an empty comparison does not prove a refactoring safe.
+
+### Things nobody can monitor
+
+Some assumptions cannot be checked from the observations available. Some failures show up too late to matter. For physical systems, most of the effort goes into treatments other than monitoring.
+
+### Agents that share a blind spot
+
+Splitting the builder from the verifier makes them independent in what they can change. It does not make them independent in how they read. Two agents built on the same model can misread a clause the same way. Whether a different model family for the verifier is worth its cost is an open question.
+
+## Not yet
+
+The method does not make these claims.
+
+| Claim | Why not |
+|---|---|
+| "People never read code." | Security and permission bugs live on inputs nobody recorded. Adapters keep their review. |
+| "The physical levels run without people." | Agents can plan a hardware test and interpret its results. People still run the rig and inspect the weld. |
+| "Reorganize the company around it." | That assumes a reliability agents have not yet demonstrated. Measure escaped defects first. |
+| "It works for any software." | The fit is specific. See below. |
+
+## Where it fits
+
+| Fits well | Fits poorly |
+|---|---|
+| Business rules, workflows, services | Products that are mostly user interface |
+| Systems that will be changed for years | Prototypes and throwaway code |
+| Supervisory control | Hot numeric code |
+| Anything with money, safety or irreversible actions | Work where the promise itself is still unknown |
+
+## Open questions
+
+- How should an agent judge its own uncertainty well enough to know when to ask?
+- When is a new case "materially different" from every precedent?
+- How should the canon change while old data and running instances still follow the previous version?
+- What weight should evidence get when a model, and not a mechanical check, is the oracle?
+- Clauses can interact. Two cases can each be valid while their combination fails, through a shared assumption or a contested resource. No answer has been designed yet.
+- Can the agents' own behavior be governed by a canon, with the same gates?
+
+## How to read all this
+
+The individual mechanisms are mostly borrowed, and the [next chapter](../sources/) says from where. The new parts are the combination, and the claim that agents make it affordable.
+
+That claim can be tested cheaply on one system. If the numbers from a first pilot are bad, you will still have ten clauses, a vocabulary and one trustworthy test environment. That is a fair return on a week.

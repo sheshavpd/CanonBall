@@ -1,0 +1,105 @@
+---
+title: People and agents
+summary: Five agent roles do the work, each with its own permissions. People keep the decisions that cannot be checked by a machine. Two gates mark where a person must act.
+part: change
+order: 2
+points:
+  - "The agent that writes the code never writes the checks that judge it. File permissions enforce this."
+  - "The agreement gate decides meaning and always needs a person. The release gate decides accountability and needs one only when there is risk."
+  - "People own by capability. Agents build across every component."
+related: [change, delegation, evidence]
+---
+
+## The dividing line
+
+What separates people from agents here is the kind of decision, and seniority has nothing to do with it.
+
+An agent may make any decision that can be verified and reversed, within bounds people set. People keep five kinds.
+
+| Kind | Why it stays with a person |
+|---|---|
+| **Goals and trade-offs** | There is no correct answer, only values. |
+| **Accountability** | Someone must answer for an action that cannot be undone. |
+| **Judgment nobody can check** | Taste, ethics, usability. |
+| **Novelty** | A situation the canon does not cover. |
+| **Trust with other people** | Customers, regulators, partners. |
+
+## Five agent roles
+
+| Role | Does | Writes |
+|---|---|---|
+| **Elicitor** | Drafts clauses and change proposals from conversations. Files questions when something is ambiguous. | Proposed clauses |
+| **Planner** | Writes the design, the assurance case for each clause, and the predicted change in behavior. | The blueprint |
+| **Builder** | Writes the code. | `src/` |
+| **Verifier** | Builds environments, checks, proofs and monitors. | `verify/` |
+| **Holdout keeper** | Maintains scenarios and faults the others never see. | A separate repository |
+
+A sixth participant is a program. The **orchestrator** is a state machine that computes the state of every change and task from what exists in the repository. Agents do the work inside each state. They are allowed to be unreliable, because the thing that decides what state the work is in is deterministic.
+
+## Why the roles are separate
+
+The builder and the verifier are split for one reason: the agent that writes code must not write the checks that judge it.
+
+A second agent can easily share the first one's misreading of a clause. So independence rests on permissions, which can be enforced, and never on the second agent's intentions, which cannot.
+
+<Figure id="walls" />
+
+Each role runs under its own identity, with write access limited by path. Three things follow.
+
+- **No agent can write the policy.** The rules that decide what counts as evidence belong to people.
+- **Neither building agent can read the held-out scenarios.** They report only pass or fail, so they cannot be learned.
+- **The builder cannot fix a check it dislikes.** It can attach a proposed correction to a task, and the verifier applies or rejects it. A wrong check costs one review, and the separation holds.
+
+## Two gates
+
+A **gate** is a point where a person must act before work proceeds. There are two.
+
+| | Agreement gate | Release gate |
+|---|---|---|
+| **The question** | Is this what we want the system to promise? | Does someone accept the remaining risk of releasing this? |
+| **Decides** | Meaning | Accountability |
+| **When** | Once per change, on its proposal and examples | At release |
+| **Needs a person** | Always, when a clause is added or altered | Only when there is risk to accept |
+
+The policy names the cases in which the release gate needs a person:
+
+- the release touches a constraint or an irreversible action;
+- the status of some clause got worse;
+- the remaining risk changed;
+- the actual change in behavior differs from what was predicted, and the difference is not a bug.
+
+Otherwise the release is automatic. A refactoring that changes no clause and no behavior needs nobody.
+
+## Every point where a person acts
+
+| When | What a person does | In what form |
+|---|---|---|
+| Once, at the start | Owns the purpose, a capability, or the constraints | A page |
+| Per change | Agrees to the proposal and approves its examples | A page and some examples |
+| Per change, for critical clauses | Reviews the argument in the assurance case | A short argument |
+| Daily | Answers questions, mostly while a proposal is being drafted | A question with options |
+| Per release, when the policy asks | Accepts it | One line |
+| On an incident | Approves the new example and the proposed invariant | An example |
+| When adapter code changes | Reviews the code | A diff |
+| Weekly | Reads the risk view and ranks the roadmap | A grid and a list |
+
+If a person is handed a test file or a log to read, the system has failed. The only code a person is asked to read is the code that touches the outside world: adapters and permission checks.
+
+## Ownership
+
+People own by **capability**: a named thing the system provides to someone. Components have no owners. A capability has exactly one owner, the person who knows its consumer best. Most people own more than one.
+
+A team of five on one system might look like this.
+
+- A product owner, who owns the purpose and one or two capabilities.
+- An owner of the constraints, who is closest to the irreversible risks and holds the veto.
+- Three others, each owning one or two capabilities.
+- One or two of the five are also named reviewers of critical cases. They are chosen for skill in verification, and they never review a case for a capability they own.
+
+Ownership is a right to approve. It does not fence off the work. Agents build across every component.
+
+## What changes over time
+
+Of the things people provide, three shrink as the system matures. Agents draft more of the canon from incidents and hazards, propose the examples themselves, and settle questions about definitions from earlier answers. People are left with trade-offs, ranking and release.
+
+Ranking stays because it is a trade-off. Release acceptance stays as long as accountability does. How the rest is handed over is the subject of the [next chapter](../delegation/).

@@ -1,0 +1,107 @@
+---
+title: Handing over decisions
+summary: Some domains need a person in most decisions. Others are repeatable enough for agents to make them. CanonBall keeps a level of automation for each kind of decision and moves it on track record, so one method serves both.
+part: change
+order: 3
+points:
+  - "Each kind of decision has its own level of automation, from 0 to 5."
+  - "A level moves up on measured track record and down on a single failure. A new model release does not move it."
+  - "Promises and constraints stay with people at every level."
+related: [people-and-agents, primitives, open-bets]
+---
+
+## One method, many settings
+
+A team building billing rules and a team building robot safety software should not give agents the same freedom. Most methods force a choice. Write the process for the cautious team and slow everyone down, or write it for the fast team and exclude the careful ones.
+
+CanonBall keeps the lifecycle the same everywhere and varies one thing: a level, kept per kind of decision, that says how much of that decision an agent may take.
+
+<Dial />
+
+## Six levels of automation
+
+Human-factors researchers have described the handover from operator to machine as a scale of *levels of automation* since the 1970s. This is a short version of that scale.
+
+| Level | The agent | A person |
+|---|---|---|
+| 0 | Analyzes | Decides |
+| 1 | Recommends, with reasons and stated confidence | Decides |
+| 2 | Decides | Approves before anything happens |
+| 3 | Acts | Reviews afterwards, every time |
+| 4 | Acts | Audits a sample |
+| 5 | Acts | Watches the metrics |
+
+A new team starts every kind of decision at level 1. Agents recommend. People decide.
+
+## Classify the decision, not the topic
+
+A decision is classified by three properties.
+
+| Property | The question |
+|---|---|
+| **Reversibility** | What would it cost to undo, and who would have to agree? |
+| **Blast radius** | How much breaks if it is wrong? |
+| **Verifiability** | Can a machine check the result? |
+
+These give a small number of classes, from "reversible, local, checkable" to "irreversible, broad, uncheckable". The class decides where the level starts. The subject matter does not.
+
+That explains why domains differ. A billing service has many decisions in the first class. A robot fleet has many in the last. Each ends up with different levels without anyone arguing about the method.
+
+## How a level moves
+
+| Direction | What moves it | Detail |
+|---|---|---|
+| **Up** | Track record | At level 1 the agent runs in shadow mode: it records what it would have decided. Enough agreement with the person, over enough cases, moves the class up one level. |
+| **Down** | One failure | A single escaped defect drops that class one level. |
+| **Neither** | A model release | A better model usually earns the move faster. It still has to earn it. |
+
+The thresholds are written in advance in the policy, which no agent can edit. For example: "promote after 50 cases with at least 98% agreement and no severe disagreement."
+
+A level works like a credit score. It is earned slowly and lost quickly.
+
+## What never moves
+
+Two kinds of decision stay with people at every level.
+
+- **What the system promises.** Agents may draft promises and examples. People approve them. A machine cannot verify meaning, so meaning cannot be delegated.
+- **What is never allowed.** Constraints have their own owner, with a veto.
+
+## How decisions connect to design
+
+"How much of the design should agents own?" is the question teams argue about most. CanonBall turns it into three small controls.
+
+| Control | What it does |
+|---|---|
+| **The clause state** | A clause is *decided*, *deferred* to the agents within bounds, or *open*. Deferring a clause hands the choice over. |
+| **Promotion** | Any design choice an agent recorded in the blueprint can be promoted to a decision in the canon. From then on a person owns it. |
+| **The level for the class** | Low-level design in a well-understood domain can reach level 4 or 5. High-level design in a new domain may stay at level 1 for a long time. |
+
+Whatever the level, every decision still traces to a clause, and every clause to a promise. The level changes who decides. It never changes what a decision must answer to.
+
+## Precedents carry judgment
+
+When an agent meets a case no clause covers, it asks. The person's answer is recorded as a **precedent**: the case, the ruling, and the reason.
+
+> Order 4471, a bundle with one late item: refund the late item only, because the rest delivered value.
+
+The agent applies precedents to similar cases and asks again when a case is materially different. When several precedents point the same way, the agent proposes a general rule, and a person approves it as a decision.
+
+Delegation therefore grows as the body of precedent grows. A short ranked list of values covers the one thing precedents cannot: which goal wins when two conflict.
+
+## An illustration
+
+| Kind of decision | Day one | Billing service, later | Robot fleet, later |
+|---|---|---|---|
+| What the system promises | 1 | 1 | 1 |
+| What is never allowed | 1 | 1 | 1 |
+| Choices a customer would notice | 1 | 2 | 1 |
+| Internal design | 1 | 4 | 3 |
+| Decision logic | 1 | 5 | 4 |
+| Adapters and permission checks | 1 | 2 | 2 |
+| Releasing with no clause changed | 1 | 5 | 2 |
+
+These numbers are an example. Your thresholds are yours to write.
+
+## What is unproven
+
+Agreement measures imitation, and imitation is only as good as the person imitated. An agent that matches a person 98% of the time is as right as that person was. For classes where a wrong decision is severe, set the threshold higher. Some classes are so rare that they will never reach fifty cases, and those stay with people.

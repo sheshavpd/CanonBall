@@ -3,6 +3,7 @@
 import { site, parts, written, computed, steps, dial } from '../data/site';
 import { rows, pathOf } from '../data/repo';
 import { glossary } from '../data/glossary';
+import { figures } from '../data/figures';
 import { url } from './links';
 import type { Chapter } from './guide';
 
@@ -37,9 +38,8 @@ function footer(lines: string[], s: Site): string {
     '## References',
     '',
     ...lines,
-    `- Guide index: ${txt('/guide/', s)}`,
     `- Glossary: ${txt('/glossary/', s)}`,
-    `- Site index and overview: ${txt('/', s)}`,
+    `- Site overview and index of every chapter: ${txt('/', s)}`,
     '',
   ].join('\n');
 }
@@ -47,6 +47,20 @@ function footer(lines: string[], s: Site): string {
 /** Chapter links are written relative (../slug/). Point them at the text twin instead. */
 function retarget(body: string): string {
   return body.replace(/\]\(\.\.\/([a-z0-9-]+)\/(#[^)]*)?\)/g, '](../$1/agents.txt)');
+}
+
+/** Chapters embed a few components. In text they become a labeled description. */
+const interactive: Record<string, string> = {
+  Dial: '[Interactive figure: levels of automation] Seven kinds of decision, each on a scale from 0 (agent analyzes, a person decides) to 5 (agent acts, people watch the metrics), shown for three scenarios: day one, a billing service later, and a robot fleet later. The table that follows gives the same values.',
+  FailFirst: '[Interactive figure: a check must fail before its pass counts] Three checks for INV-004 pass. The third has never been seen to fail, so the computed status is "unsupported". After a fault is injected, the third check fails as it should, and that failing run is kept. Run again on the real build, all three pass and the status becomes "accepted".',
+};
+function describeComponents(body: string): string {
+  return body
+    .replace(/<Figure id="([^"]+)" \/>/g, (_, id: string) => {
+      const f = figures[id];
+      return f ? `[Figure: ${f.caption}]\n${f.text}` : '';
+    })
+    .replace(/<(Dial|FailFirst) \/>/g, (_, name: string) => interactive[name] ?? '');
 }
 
 export function chapterText(chapter: Chapter, all: Chapter[], s: Site): string {
@@ -65,23 +79,11 @@ export function chapterText(chapter: Chapter, all: Chapter[], s: Site): string {
   return (
     header(chapter.data.title, chapter.data.summary, path, s) +
     `Guide part: ${part.title}. Chapter ${i + 1} of ${all.length}.\n\n` +
-    retarget((chapter.body ?? '').trim()) +
+    (chapter.data.points.length ? `Key points:\n${chapter.data.points.map((p) => `- ${p}`).join('\n')}\n\n` : '') +
+    describeComponents(retarget((chapter.body ?? '').trim())) +
     '\n' +
     footer(refs, s)
   );
-}
-
-export function guideIndexText(all: Chapter[], s: Site): string {
-  const out = [header('The CanonBall guide', 'CanonBall, one concept per chapter. Read in order the first time.', '/guide/', s)];
-  let n = 0;
-  for (const p of parts) {
-    out.push(`## ${p.title}`, '', p.blurb, '');
-    for (const c of all.filter((x) => x.data.part === p.id)) {
-      n += 1;
-      out.push(`${n}. ${c.data.title}`, `   ${c.data.summary}`, `   ${txt(`/guide/${c.id}/`, s)}`, '');
-    }
-  }
-  return out.join('\n') + footer([], s);
 }
 
 export function glossaryText(s: Site): string {
@@ -99,7 +101,7 @@ export function homeText(all: Chapter[], s: Site): string {
     '## How to use this site as an agent',
     '',
     'Every page has a plain-text twin at the same path with agents.txt appended.',
-    'This file is the overview and the index. Chapter files contain the full chapter text in Markdown.',
+    'This file is the overview and the index of every chapter. Chapter files contain the full chapter text in Markdown, with each figure replaced by a description.',
     'References at the end of each file link to other agents.txt files, never to HTML.',
     '',
     '## Why now',
@@ -122,7 +124,7 @@ export function homeText(all: Chapter[], s: Site): string {
   }
   out.push(
     '',
-    'A promise, an invariant, a decision, a limit and an assumption are each a kind of clause: one file with an ID and its stories. The approved clauses together are the canon.',
+    'A promise, an invariant, a decision, a constraint and an assumption are each a kind of clause: one file with an ID and its examples. The approved clauses together are the canon.',
     '',
     '## The structure',
     '',
@@ -143,19 +145,18 @@ export function homeText(all: Chapter[], s: Site): string {
     '',
     '## A recommended architecture',
     '',
-    'Keep decisions apart from side effects. Decision logic takes explicit inputs and returns what should happen, with no database, network or clock. Side effects go out through adapters. This is a recommendation, not a requirement. It is also known as functional core, imperative shell, or ports and adapters.',
+    'Keep decisions apart from side effects. Decision logic, the functional core, takes explicit inputs and returns what should happen, with no database, network or clock. Side effects go out through adapters, the imperative shell. This is a recommendation, not a requirement. Ports and adapters is the same idea.',
     `More: ${txt('/guide/architecture/', s)}`,
     '',
     '## Handing over decisions',
     '',
-    'Each kind of decision has its own setting, from 0 to 5:',
+    'Each kind of decision has its own level of automation, from 0 to 5:',
     '',
   );
   dial.levels.forEach((l, i) => out.push(`${i}. ${l}`));
   out.push('', 'A team starts at level 1 everywhere. Settings move on track record, never on a model release. Illustrative settings (day one / billing service later / robot fleet later):', '');
   for (const r of dial.rows) out.push(`- ${r.name}: ${r.v.join(' / ')}${r.lock ? ' (stays with people)' : ''}`);
   out.push(`More: ${txt('/guide/delegation/', s)}`, '', '## All pages', '');
-  out.push(`- Guide index: ${txt('/guide/', s)}`);
   all.forEach((c, i) => out.push(`- Chapter ${i + 1}. ${c.data.title}: ${txt(`/guide/${c.id}/`, s)}`, `  ${c.data.summary}`));
   out.push(`- Glossary: ${txt('/glossary/', s)}`, '');
   return out.join('\n');

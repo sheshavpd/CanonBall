@@ -40,9 +40,15 @@ const toc = headings.filter((h) => h.depth === 2);
     </aside>
 
     <article class="article">
-      <p class="crumb"><a href={url('/guide/')}>Guide</a> / {part.title}</p>
+      <p class="crumb"><a href={url('/') + '#guide'}>Guide</a> / {part.title}</p>
       <h1>{chapter.data.title}</h1>
       <p class="summary">{chapter.data.summary}</p>
+      {chapter.data.points.length > 0 && (
+        <aside class="points">
+          <h2>In this chapter</h2>
+          <ul>{chapter.data.points.map((p) => <li>{p}</li>)}</ul>
+        </aside>
+      )}
       <div class="prose"><slot /></div>
 
       {related.length > 0 && (

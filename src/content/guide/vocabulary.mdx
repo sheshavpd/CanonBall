@@ -1,0 +1,78 @@
+---
+title: Vocabulary
+summary: A team that uses two words for one thing, or one word for two, will build the wrong system twice. vocabulary.md defines each noun once, and people and agents both work from it.
+part: idea
+order: 3
+points:
+  - "One word per concept, defined once, in a file agents read before anything else."
+  - "The same word then appears unchanged in the promise, the code, the check and the incident report."
+  - "Most open questions turn out to be about an undefined word."
+related: [primitives, examples, composition]
+---
+
+## The problem with "delivery"
+
+Take the promise "a customer can request a refund within 30 days of delivery". It looks complete. Now ask three people when delivery happens.
+
+- The warehouse lead says it is when the parcel leaves the building.
+- The support lead says it is when the carrier scans it at the door.
+- The engineer finds a `delivered_at` column and uses it, without knowing which of the two it records.
+
+All three will read the promise and nod. The system that gets built will satisfy one of them. The other two will find out from a customer complaint on day 29.
+
+Agents make this both worse and better. Worse, because an agent picks a meaning without telling you. Better, because an agent follows a written definition every time.
+
+## The file
+
+`vocabulary.md` is part of the canon. It lists the nouns the team uses and gives each one a single definition.
+
+```text
+Order      One purchase by one customer.
+Delivery   The carrier's delivered scan for the last item
+           of an order. Not the dispatch.
+Refund     Money returned to the customer for an order.
+           Not store credit.
+Payout     One transfer of money through the payment gateway.
+```
+
+Three rules make it work.
+
+1. **One word per concept.** If "refund" is defined, nobody writes "reimbursement" or "return of funds".
+2. **No undefined nouns.** A clause that uses a noun missing from the vocabulary is blocked until the word is defined.
+3. **Agents read it first.** Before drafting a clause, planning a change, or writing a check, the agent loads the vocabulary.
+
+## One language from promise to incident
+
+Eric Evans called this a *ubiquitous language*: one vocabulary shared by the domain experts, the code, and the tests. Once the file exists, the same word appears at every step of the work with the same meaning.
+
+<Figure id="word-chain" />
+
+The last row matters as much as the first. The people who operate the system describe what went wrong in the words that were used to specify it. An incident report can then become an example and a check without anyone translating.
+
+## Where entries come from
+
+Most entries start as questions. While drafting a clause, the agent meets a word it cannot define and files a question:
+
+```text
+Q-044  What is a delivery?
+       a) The parcel leaves our warehouse.
+       b) The carrier's delivered scan.
+       c) The customer confirms receipt.
+```
+
+A person picks an answer. The answer becomes the definition, and the question is kept as history. Undefined words are the most common source of open questions, so a vocabulary that is filling up shows a team converging.
+
+## Alignment across teams
+
+A vocabulary belongs to a [unit](../composition/), which is a separately owned part of a larger system. A unit inherits its parent's vocabulary and may add to it.
+
+Sometimes two teams mean different things by one word, and both are right. "Account" in billing differs from "account" in identity. A unit may redefine an inherited word only by writing an explicit translation at its interface: what we call it, what you call it, and how one maps to the other. Readers of Evans will recognize a bounded context and its context map. The disagreement remains, and it is no longer silent.
+
+## What it costs
+
+A vocabulary is cheap to start and takes discipline to keep.
+
+| When | The friction | Why it is worth it |
+|---|---|---|
+| Early | The first ten clauses raise a dozen questions about words. | The questions were always there. They now arrive when they are cheapest to answer. |
+| Later | People want synonyms, because "refund" feels repetitive. | Elegant variation is a virtue in essays and a defect in specifications. |

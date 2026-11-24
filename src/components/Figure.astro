@@ -1,0 +1,218 @@
+---
+import Logo from './Logo.astro';
+import { figures } from '../data/figures';
+interface Props { id: string }
+const { id } = Astro.props;
+const fig = figures[id];
+if (!fig) throw new Error(`Unknown figure "${id}". Add it to src/data/figures.ts.`);
+const dots = (people: number) => Array.from({ length: 12 }, (_, i) => (i < people ? 'p' : 'a'));
+---
+<figure class="fig" data-fig={id}>
+  <div class="fbody" role="img" aria-label={fig.text}>
+
+    {id === 'bottleneck' && (
+      <div class="f-2">
+        <div class="f-lane"><b>Review every change</b><div class="f-dots">{dots(12).map((c) => <i class={c}></i>)}</div><p>Twelve changes, twelve reviews by a person.</p><em class="bad">The queue grows, or the reading stops.</em></div>
+        <div class="f-lane"><b>Review the promises</b><div class="f-dots">{dots(2).map((c) => <i class={c}></i>)}</div><p>Two alter a promise. Ten are checked by machines.</p><em class="ok">People decide meaning. Machines check the rest.</em></div>
+      </div>
+    )}
+
+    {id === 'clause-anatomy' && (
+      <div class="f-anno">
+        <code>id: INV-004</code><span>A stable identifier. Checks and evidence refer to it.</span>
+        <code>kind: invariant</code><span>One of the five kinds.</span>
+        <code>state: decided</code><span>How much freedom agents have.</span>
+        <code>owner: aisha</code><span>The one person who can approve a change.</span>
+        <code>traces: [REQ-012]</code><span>The promise this clause exists for.</span>
+        <code class="say">A refund is never issued twice for the same order.</code><span>The statement. One sentence, in the team's vocabulary.</span>
+        <code>Satisfies: ...<br />Violates: ...</code><span>The examples. These are what a person approves.</span>
+      </div>
+    )}
+
+    {id === 'clause-kinds' && (
+      <div class="f-kinds">
+        <div class="k-env">
+          <span class="k-lbl">Constraints: what is never allowed</span>
+          <div class="k-row">
+            <div class="k main"><b>Promise</b><small>what someone gets</small></div>
+            <span class="k-arrow">kept by</span>
+            <div class="k-col"><div class="k"><b>Invariant</b><small>what must stay true</small></div><div class="k"><b>Decision</b><small>a choice, written down</small></div></div>
+          </div>
+        </div>
+        <div class="k-bottom"><span class="k-arrow">all of it relies on</span><div class="k out"><b>Assumption</b><small>how the outside world behaves</small></div></div>
+      </div>
+    )}
+
+    {id === 'word-chain' && (
+      <ol class="f-chain">
+        <li><b>Promise</b><span>A customer can request a refund within 30 days of <mark>delivery</mark>.</span></li>
+        <li><b>Example</b><span>Given order 4471 had its <mark>delivery</mark> on 3 March, when a refund is requested on 1 April, then it is accepted.</span></li>
+        <li><b>Code</b><code>days_since(<mark>delivery</mark>.scanned_at)</code></li>
+        <li><b>Check</b><code>rig.order(<mark>delivery</mark>_days_ago=31)</code></li>
+        <li><b>Incident</b><span>Refund refused on day 29. The <mark>delivery</mark> date was read from dispatch.</span></li>
+      </ol>
+    )}
+
+    {id === 'example-flow' && (
+      <div class="f-flow">
+        <div class="f-step p"><b>Example</b><span>Given order 4471 was refunded once, when a second request arrives, then it is rejected.</span><small>a person approves</small></div>
+        <i class="f-ar" aria-hidden="true"></i>
+        <div class="f-step v"><b>Check</b><span>Code that sets up the given, performs the when, and asserts the then.</span><small>the verifier agent writes</small></div>
+        <i class="f-ar" aria-hidden="true"></i>
+        <div class="f-step v"><b>Evidence</b><span>One line per run: which example, which commit, which outcome.</span><small>produced by running it</small></div>
+      </div>
+    )}
+
+    {id === 'layers' && (
+      <div class="f-layers">
+        <span class="rail down">constrains</span>
+        <div class="stack">
+          <div class="p"><b>Canon</b><span>What must be true</span><small>people approve</small></div>
+          <div class="a"><b>Blueprint</b><span>How it will be made true</span><small>agents write</small></div>
+          <div class="a"><b>Build</b><span>What actually runs</span><small>agents write</small></div>
+          <div class="v"><b>Record</b><span>Whether it is true</span><small>computed</small></div>
+        </div>
+        <span class="rail up">is discharged by</span>
+      </div>
+    )}
+
+    {id === 'folders' && (
+      <div class="f-grid3">
+        <div class="f-card p"><code>spec/canon/</code><b>What does the system promise?</b><small>people approve</small></div>
+        <div class="f-card a"><code>spec/blueprint/</code><b>How do we keep those promises?</b><small>agents write</small></div>
+        <div class="f-card p"><code>roadmap/</code><b>What is proposed?</b><small>people rank it</small></div>
+        <div class="f-card a"><code>src/</code><b>What runs?</b><small>builder agent</small></div>
+        <div class="f-card v"><code>verify/</code><b>How do we know?</b><small>verifier agent</small></div>
+        <div class="f-card"><code>incidents/</code><b>What went wrong?</b><small>kept permanently</small></div>
+        <div class="f-card v dash"><code>the Record</code><b>Is it true?</b><small>computed, outside the repository</small></div>
+        <div class="f-card v dash"><code>held-out scenarios</code><b>Would it catch a fault it has not seen?</b><small>no building agent can read them</small></div>
+      </div>
+    )}
+
+    {id === 'balls' && (
+      <div class="f-balls">
+        <div><Logo /><b>CanonBall 12</b><span>The system before this change. Four clauses, all accepted.</span></div>
+        <i class="f-ar" aria-hidden="true"></i>
+        <div class="now"><Logo /><b>CanonBall 13</b><span>A milestone is released.<br /><code>+ DEC-031</code></span></div>
+        <i class="f-ar" aria-hidden="true"></i>
+        <div><Logo /><b>CanonBall 14</b><span>An incident is repaired.<br /><code>+ INV-009</code></span></div>
+      </div>
+    )}
+
+    {id === 'path' && (
+      <ol class="f-path">
+        <li><i></i><b>Words</b></li>
+        <li class="p"><i></i><b>Propose</b></li>
+        <li class="gate"><em>Agreement gate</em><small>always a person</small></li>
+        <li class="a"><i></i><b>Plan</b></li>
+        <li class="a pair"><i></i><b>Build</b></li>
+        <li class="v pair"><i></i><b>Verify</b></li>
+        <li class="v"><i></i><b>Record</b></li>
+        <li class="gate"><em>Release gate</em><small>when there is risk</small></li>
+        <li class="p"><i></i><b>Release</b></li>
+        <li><i></i><b>Operate</b></li>
+      </ol>
+    )}
+
+    {id === 'release' && (
+      <div class="f-rel">
+        <div class="f-col"><small>Before</small><code>spec/canon/</code><ul><li>REQ-012</li><li>INV-004</li><li>ENV-003</li></ul><code>roadmap/M2/diff/</code><ul><li class="new">DEC-031</li></ul></div>
+        <i class="f-ar" aria-hidden="true"></i>
+        <div class="f-col"><small>After the release</small><code>spec/canon/</code><ul><li>REQ-012</li><li>INV-004</li><li>ENV-003</li><li class="new">DEC-031</li></ul><span class="f-ball"><Logo />CanonBall 13 published</span></div>
+      </div>
+    )}
+
+    {id === 'walls' && (
+      <div class="f-walls" role="presentation">
+        <span></span><b>People</b><b>Elicitor</b><b>Planner</b><b>Builder</b><b>Verifier</b>
+        <code>canon/</code><em class="p">approve</em><em class="a">drafts</em><em></em><em></em><em></em>
+        <code>policy/</code><em class="p">write</em><em class="x">no</em><em class="x">no</em><em class="x">no</em><em class="x">no</em>
+        <code>blueprint/</code><em class="p">review critical</em><em></em><em class="a">writes</em><em></em><em class="v">plan</em>
+        <code>src/</code><em class="p">review edges</em><em></em><em></em><em class="a">writes</em><em class="r">reads</em>
+        <code>verify/</code><em></em><em></em><em></em><em class="r">reads, runs</em><em class="v">writes</em>
+        <code>held-out</code><em class="p">write</em><em></em><em></em><em class="x">no access</em><em class="x">no access</em>
+        <code>the Record</code><em class="r">read</em><em></em><em></em><em></em><em></em>
+      </div>
+    )}
+
+    {id === 'case' && (
+      <div class="f-case">
+        <div class="top"><small>ENV-002 &middot; constraint &middot; tier 2</small><b>No robot moves while a person is in its zone.</b></div>
+        <div class="parts">
+          <div><i>0</i><b>P1</b><span>The move gate refuses motion</span><small>model check</small></div>
+          <div><i>3</i><b>P2</b><span>A person is detected within 200 ms</span><small>test on the real sensor</small></div>
+          <div><i>4</i><b>P3</b><span>Stopping distance at rated speed</span><small>brake tests</small></div>
+          <div><i>3</i><b>P4</b><span>Sensors cover every shared zone</span><small>coverage sweep</small></div>
+        </div>
+        <div class="arg"><b>Argument</b>Together they cover motion during detection, command latency, braking and coverage.</div>
+      </div>
+    )}
+
+    {id === 'levels' && (
+      <div class="f-levels">
+        {[['0', 'Pure logic'], ['1', 'Real code, fake surroundings'], ['2', 'Real processes, local database'], ['3', 'Real infrastructure'], ['4', 'Production']].map(([n, t], i) => (
+          <div><span class="bars"><i class="real" style={`height:${20 + i * 20}%`}></i><i class="ctl" style={`height:${100 - i * 20}%`}></i></span><b>{n}</b><small>{t}</small></div>
+        ))}
+        <p><i class="real"></i>realism <i class="ctl"></i>control over timing and failure</p>
+      </div>
+    )}
+
+    {id === 'environment' && (
+      <div class="f-env">
+        <div class="world"><small>World &middot; real or faked</small>
+          <div class="line">
+            <div class="io"><b>Stimulus</b><span>how it is driven</span></div>
+            <i class="f-ar" aria-hidden="true"></i>
+            <div class="sut"><small>Boundary</small><b>System under test</b></div>
+            <i class="f-ar" aria-hidden="true"></i>
+            <div class="io"><b>Probes</b><span>what can be observed</span></div>
+          </div>
+        </div>
+        <div class="under">
+          <div><b>Control</b><span>seed, clock, start and teardown</span></div>
+          <div><b>Coverage</b><span>what was exercised</span></div>
+          <div class="or"><b>Oracle</b><span>reads the probes, decides pass or fail</span></div>
+        </div>
+      </div>
+    )}
+
+    {id === 'rollup' && (
+      <div class="f-roll">
+        <div class="c1"><span class="ok">check 1 passed</span><span class="ok">check 2 passed</span><span class="ok">check 3 passed, seen to fail</span><span class="bad">no evidence</span></div>
+        <div class="c2"><span class="ok">P1 evidenced</span><span class="bad">P4 lacks evidence</span></div>
+        <div class="c3"><b class="bad">Unsupported</b><span>open obligation: P4</span></div>
+      </div>
+    )}
+
+    {id === 'core-shell' && (
+      <div class="f-flow">
+        <div class="f-step"><b>Inputs come in as data</b><span>The request, the current time, a sensor reading.</span></div>
+        <i class="f-ar" aria-hidden="true"></i>
+        <div class="f-step a fill"><b>Decision logic</b><span>No database, no network, no clock. The same inputs always give the same answer.</span><small>the functional core</small></div>
+        <i class="f-ar" aria-hidden="true"></i>
+        <div class="f-step p"><b>Adapters</b><span>Paying out, sending an email, writing a row.</span><small>the imperative shell</small></div>
+      </div>
+    )}
+
+    {id === 'roles' && (
+      <div class="f-roles">
+        <div class="parent"><small>parent unit</small><b>post-purchase</b><div class="sockets"><span>ROLE-orderbook</span><span>ROLE-payer</span><span>ROLE-gateway</span></div></div>
+        <div class="bind"><small>assembly.md binds each role to a provider</small></div>
+        <div class="kids"><div><b>orders</b><small>passes the contract tests</small></div><div><b>payments</b><small>passes the contract tests</small></div><div class="ext"><b>acme-pay</b><small>outside vendor, documented</small></div></div>
+      </div>
+    )}
+
+    {id === 'week' && (
+      <div class="f-week">
+        <span class="hd">Mon</span><span class="hd">Tue</span><span class="hd">Wed</span><span class="hd">Thu</span><span class="hd">Fri</span>
+        <div class="p" style="grid-column:1/3">Vocabulary and ten clauses</div>
+        <div class="p" style="grid-column:2/3">Policy, traceability check</div>
+        <div class="v" style="grid-column:3/6">One verification environment, checks, recorded failures</div>
+        <div class="v" style="grid-column:5/6">The Record</div>
+        <div class="a" style="grid-column:1/6">Separate agent identities</div>
+      </div>
+    )}
+
+  </div>
+  <figcaption>{fig.caption}</figcaption>
+</figure>

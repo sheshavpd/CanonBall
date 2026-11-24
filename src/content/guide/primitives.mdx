@@ -1,0 +1,109 @@
+---
+title: The primitives
+summary: People steer agents with a small set of written statements called clauses. There are five kinds. This chapter says what each one is, why it exists, and how to tell them apart.
+part: idea
+order: 2
+points:
+  - "A clause is one statement the system is held to, in one file, with worked examples."
+  - "There are five kinds. A promise, an invariant, a decision, a constraint, an assumption."
+  - "Each clause also says how much freedom agents have around it."
+related: [examples, vocabulary, layers]
+---
+
+## Why primitives at all
+
+Tell an agent to "build a refunds service" and it will build one. Along the way it makes several hundred decisions you never see: what counts as a duplicate, how long the refund window lasts, what happens when the payment gateway times out. A few of those decisions are yours to make. Most are not worth your time.
+
+The primitives are how you draw that line. Each one is a short statement in plain language. An agent may do anything that respects them, and nothing it does may lack a path back to one of them.
+
+## A clause
+
+A **clause** is one statement the system is held to. It lives in one file, has a stable ID, and carries worked [examples](../examples/). The approved clauses together are the **canon**.
+
+<Figure id="clause-anatomy" />
+
+There are five kinds of clause. Each answers a different question.
+
+<Figure id="clause-kinds" />
+
+## Promise
+
+**What the system does for someone.**
+
+> A customer can request a refund within 30 days of delivery.
+
+A promise is the reason any code exists. If part of the system cannot be traced back to a promise, nobody can say why it is there.
+
+Requirements engineering calls this a *requirement*, and so does the specification behind this guide. The guide says *promise* because that is how the customer experiences it.
+
+## Invariant
+
+**What must always be true.**
+
+> A refund is never issued twice for the same order.
+
+A promise says what the system does. An invariant says what it must never get wrong while doing it. Invariants make promises safe to offer.
+
+They are also where experience accumulates. Nobody can list every invariant in advance. They come from asking "what must never happen?" of each promise, and from incidents. When something breaks in production, the repair adds an invariant, so the same failure cannot come back unnoticed.
+
+## Decision
+
+**A choice that could have gone another way, written down.**
+
+> Refunds under $100 are approved automatically.
+
+Nothing forces the threshold to be $100. Someone chose it. If the choice is not recorded, an agent will make it again the next time it touches that code, and may choose differently.
+
+Teams that keep architecture decision records will recognize the idea. Here it applies to any choice a person cares about, large or small. A design choice an agent made can be promoted to a decision at any time, and from then on it is fixed until a person changes it.
+
+## Constraint
+
+**What is never allowed, whatever the goal.**
+
+> No payout above $10,000 without review.
+
+A constraint protects people, money, and actions that cannot be undone. Safety engineers call statements like this *safety constraints*, and the set of them the system's *operating envelope*.
+
+A constraint differs from an invariant in who may change it. If the product team could change the statement after a trade-off discussion, it is an invariant. If the answer to "can we change this?" is "that is not our call", it is a constraint. Every constraint has its own owner, who holds a veto.
+
+## Assumption
+
+**A fact about the outside world that the system relies on.**
+
+> The payment gateway pays at most once per request key.
+
+A system cannot prove things about a world it does not control. It can state plainly what it is relying on. Every assumption comes with a treatment: how it is watched, how quickly a failure would be noticed, and what the system does when it fails. Evidence for a clause holds only while its assumptions do.
+
+## Telling them apart
+
+| If the statement is about | It is | Who can change it |
+|---|---|---|
+| What someone gets from the system | A promise | The owner of that capability |
+| What must stay true inside the system | An invariant | The owner, after a trade-off |
+| A choice between workable options | A decision | The owner |
+| What must never happen, at any price | A constraint | The constraint's own owner |
+| How the outside world behaves | An assumption | Nobody. It is true or it is not |
+
+## Decided, deferred, open
+
+Every clause also says how much freedom agents have around it.
+
+| State | Meaning |
+|---|---|
+| **Decided** | The clause is binding as written. |
+| **Deferred** | The agents may choose, within stated bounds. |
+| **Open** | Nobody has decided. Agents must ask a person and may not guess. |
+
+This one field is the most direct control you have. Marking a clause *deferred* hands a decision over. Marking it *open* stops an agent from filling a gap with a guess.
+
+## Changes go one way
+
+Every change to a clause is classified. **Strengthening** promises more or assumes less. **Weakening** does the reverse. Strengthening is free. Weakening a clause that other people rely on is a breaking change, and each of them must agree to it.
+
+Incidents follow the same rule. Each one adds an example, and usually an invariant, before the fix is released. The set of guarded failures only grows. It shrinks only when a person removes a clause on purpose.
+
+## What belongs in the canon
+
+Only what a person would need to approve: external promises, safety, money, irreversible actions, and the trade-offs between them. Design choices stay in the [blueprint](../layers/), where agents may revise them.
+
+If the canon grows until people can no longer read it, it has absorbed the design. One question settles any line: would a person need to approve a change to it?

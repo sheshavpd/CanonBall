@@ -1,0 +1,97 @@
+---
+title: Examples, and writing clauses agents read correctly
+summary: A plain sentence hides decisions. A worked example exposes them. People approve examples, and each check is written from one.
+part: idea
+order: 4
+points:
+  - "An example is one concrete case of a clause, written as given, when, then."
+  - "People approve examples. They do not approve formal statements or code."
+  - "Every example becomes one check, and every check names its example."
+related: [primitives, vocabulary, evidence]
+---
+
+## A sentence is not a specification
+
+"No two robots in the same zone" reads as a complete rule. It leaves at least three things open. Does "in" mean any overlap of the robot's footprint, its center point, or a safety margin around it? What about a robot that has been granted the zone and has not yet arrived? What about one that is powered off?
+
+Each answer is a decision. If the sentence is all you approve, an agent makes those decisions for you.
+
+## What an example is
+
+An **example** is one concrete case of a clause, written in a fixed shape: *given* a starting state, *when* something happens, *then* an outcome.
+
+```gherkin
+Given order 4471 was refunded once
+When a second refund request arrives for order 4471
+Then the request is rejected with "already refunded"
+```
+
+The practice is known as specification by example, and behavior-driven development calls each case a *scenario*. Every clause has examples of two kinds.
+
+| Kind | Shows |
+|---|---|
+| **Satisfies** | A situation in which the clause holds. |
+| **Violates** | A situation the clause forbids. |
+
+The violating examples do most of the work. "Two concurrent requests both pay out" tells the reader more about what "never twice" means than the sentence does.
+
+## People approve examples
+
+In CanonBall a person never approves a formal statement, and never approves a bare sentence. A person approves examples. The sentence is accepted only through the cases that pin it down.
+
+This puts human attention where it counts. The step from prose to a precise property is the one step no tool can check. If the property is wrong, every check built on it verifies the wrong thing perfectly. Examples let a person confirm the meaning before any of that machinery is built.
+
+It also keeps approval quick. Reading four examples and saying "yes, that is what I meant" takes a minute. Reading a formal property takes an expert.
+
+## From an example to a check
+
+<Figure id="example-flow" />
+
+Each example becomes one check, and the check names the example it encodes. That link is enforced. An example with no check shows up as a gap. A check with no example has no reason to exist.
+
+For every violating example, the check must also be seen to fail once, against a deliberately broken build. The chapter on [evidence](../evidence/) explains why.
+
+## Conventions that help agents read
+
+Compression works only when the writer and the reader share a codebook. These conventions fix the codebook. An agent enforces them while drafting and points out where a clause departs from them.
+
+### Sentence shapes for promises
+
+Five shapes cover nearly every promise. They come from a requirements notation called EARS, the Easy Approach to Requirements Syntax.
+
+| Shape | Pattern |
+|---|---|
+| Always | The system shall ... |
+| On an event | When *trigger*, the system shall ... |
+| In a state | While *state*, the system shall ... |
+| Unwanted case | If *condition*, then the system shall ... |
+| Optional feature | Where *feature* is present, the system shall ... |
+
+### Words with one meaning
+
+**Must**, **must not**, **should** and **may** each mean one thing, as they do in internet standards. *Must* is binding. *Should* marks a default that can be overridden for a recorded reason. *May* marks an option.
+
+### Plain prose
+
+- One idea per sentence.
+- Active voice.
+- Quantities with units: "within 200 ms", never "quickly".
+- No elastic words. "Appropriate", "robust", "as needed" and "etc." each hide a decision.
+
+### Say it back
+
+After drafting a clause, the agent restates it in its own words. If the restatement surprises the author, the clause lost something in compression, and it is reworked before anyone approves it.
+
+## When a formal property is derived
+
+For clauses that matter enough, an agent later derives a precise property that a tool can check or prove. Three safeguards keep that property faithful to the clause.
+
+1. It is checked against every example. A property that disagrees with an approved example is wrong.
+2. It is translated back into prose and compared with the clause.
+3. A deliberately violating case is fed in, and the property must reject it.
+
+## What an example cannot do
+
+Examples pin down meaning at the points you thought to write. They say nothing about the points you did not. A clause with five examples can still be wrong in a sixth situation.
+
+Two things reduce that risk. The agent proposes extra examples and files the ambiguities it finds as questions. And every incident adds the example that was missing. Examples make a missing case cheap to add. They do not tell you it is missing.
