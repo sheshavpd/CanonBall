@@ -89,7 +89,11 @@ Each file carries the page text in Markdown, with key points at the top and each
 
 ## Deploying
 
-The build is a static folder, `dist/`. It runs on any static host.
+The site is published at [canonball.org](https://canonball.org) by GitHub Pages. Every push to `main` runs `.github/workflows/deploy.yml`, which type checks, builds, checks links and deploys `dist/`.
+
+The domain's DNS lives in Cloudflare. `.github/workflows/domain.yml` is run by hand and points the apex and `www` at GitHub Pages through the Cloudflare API, using the repository secret `CF_API_KEY`. With `apply` off it prints the existing records and the plan and changes nothing. It only touches A, AAAA and CNAME records on `canonball.org` and `www.canonball.org`, and leaves them unproxied so that GitHub can issue the certificate.
+
+The build itself is a static folder and runs on any static host.
 
 Two environment variables shape the build:
 

@@ -1,0 +1,51 @@
+name: Configure domain
+
+# Run by hand. Points canonball.org at GitHub Pages through the Cloudflare API.
+# With apply off it only prints what it would change.
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: Make the changes (off prints the plan only)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  pages: write
+
+jobs:
+  dns:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Cloudflare DNS records
+        env:
+          CF_API_KEY: ${{ secrets.CF_API_KEY }}
+          CF_API_EMAIL: ${{ secrets.CF_API_EMAIL }}
+          DOMAIN: canonball.org
+          PAGES_HOST: ${{ github.repository_owner }}.github.io
+          APPLY: ${{ inputs.apply }}
+        run: node scripts/cloudflare-dns.mjs
+
+  pages:
+    runs-on: ubuntu-latest
+    if: ${{ inputs.apply }}
+    steps:
+      # The workflow token may lack the right to change Pages settings.
+      # If it does, the step says so and the settings are made by hand once.
+      - name: Pages source and custom domain
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh api "repos/$REPO/pages" --jq '{build_type, cname, https_enforced, status}' \
+            || gh api -X POST "repos/$REPO/pages" -f build_type=workflow --jq '{build_type, html_url}' \
+            || echo "::warning::Could not enable Pages with the workflow token. Set Settings > Pages > Source to GitHub Actions."
+          gh api -X PUT "repos/$REPO/pages" -f cname=canonball.org -f build_type=workflow \
+            && echo "Custom domain set to canonball.org" \
+            || echo "::warning::Could not set the custom domain with the workflow token. Enter canonball.org under Settings > Pages > Custom domain."
