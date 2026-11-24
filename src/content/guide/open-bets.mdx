@@ -4,7 +4,7 @@ summary: "Parts of this method rest on decades-old technology, and parts rest on
 part: building
 order: 4
 points:
-  - "The central bet is cost. Agents must make this rigor as cheap as ordinary software."
+  - "The central bet is cost: agents must make this rigor as cheap as ordinary software."
   - "A missing clause defeats every verification level. Examples and incidents reduce that risk and do not remove it."
   - "Three bets about how work moves are unmeasured: milestones over tickets, an agent as the reviewer, and observability built for agents."
   - "The method suits logic-heavy, long-lived systems. It suits prototypes and interface-heavy products poorly."
@@ -13,11 +13,11 @@ related: [why, start, delegation, review]
 
 ## What is solid
 
-These pieces use established technology and can be relied on today.
+The following pieces use established technology and can be relied on today.
 
 - **Decision logic kept apart from side effects,** with recorded inputs and exact replay.
-- **A canon as plain Markdown** with examples, stable IDs and ownership by path. It needs no new tooling.
-- **Evidence at the lower verification levels, produced by agents:** property-based tests against fakes, and scenarios against real processes and a local database. This assumes the builder and the verifier are separate accounts with separate paths.
+- **A canon as plain Markdown** with examples, stable IDs and ownership by path, which needs no new tooling.
+- **Evidence at the lower verification levels, produced by agents:** property-based tests against fakes, and scenarios against real processes and a local database, provided the builder and the verifier are separate accounts with separate paths.
 - **Proofs for small pieces of decision logic,** with a person checking only the examples.
 - **A first verification environment,** built in a week as described under [starting](../start/).
 
@@ -25,25 +25,25 @@ These pieces use established technology and can be relied on today.
 
 ### Cost
 
-The whole method rests on this bet. Assurance cases, arguments and treatments are expensive to write and to keep current, and CanonBall assumes that agents bring that cost down to the cost of ordinary software.
+The whole method rests on this bet. Assurance cases, arguments and treatments are expensive to write and to keep current, and CanonBall assumes that agents bring that cost down to that of ordinary software.
 
-Suppose agents only make the writing faster, while people still review every clause change, every critical argument, every adapter and every example. The result then has the cost profile of certified avionics software without the regulation that justifies it.
+If agents only make the writing faster, while people still review every clause change, every critical argument, every adapter and every example, the result has the cost profile of certified avionics software without the regulation that justifies it.
 
-Only measurement settles this: setup cost apart from recurring cost, a person's time per critical case, and how often an argument went stale.
+Only measurement can settle this: setup cost apart from recurring cost, a person's time per critical case, and how often an argument went stale.
 
 ### Milestones over tickets
 
-CanonBall gathers related requests into a milestone before anything is built. The bet is that agents build better from a milestone than from a stream of single tickets, because promises are settled once for the batch and the agents work on a coherent whole.
+CanonBall gathers related requests into a milestone before anything is built, on the expectation that agents build better from a milestone than from a stream of single tickets, because promises are settled once for the batch and the agents work on a coherent whole.
 
-This has not been measured, and research on product flow mostly argues for small batches, because a large batch delays feedback and makes a mistake more expensive. The method answers with the sizing rules, which keep a milestone small, and with [unplanned work](../collect/), which lets incident repairs, bug fixes, refactorings and upkeep skip the batch because they change no promise. Whether those answers are enough is a question for a pilot, which should compare the time from request to release, and the amount of rework, under both ways of working.
+This has not been measured, and research on product flow mostly argues for small batches, because a large batch delays feedback and makes a mistake more expensive. The method responds with the sizing rules, which keep a milestone small, and with [unplanned work](../collect/), which lets incident repairs, bug fixes, refactorings and upkeep skip the batch because they add or change no promise. Whether that is enough is a question for a pilot, comparing the time from request to release and the amount of rework under both ways of working.
 
 ### Missing clauses
 
-When the canon misses a case, every verification level checks the wrong thing perfectly, and a complete proof of an incomplete specification is still incomplete. Incident INC-007 in [Operate](../operate/) is an instance: REQ-012 showed as accepted while no check used an order whose dispatch and delivery dates differed. Examples and incidents reduce the problem, and no known technique removes it.
+When the canon misses a case, every verification level checks the wrong thing thoroughly, and a complete proof of an incomplete specification is still incomplete. Incident INC-007 in [Operate](../operate/) is an instance: REQ-012 showed as accepted while no check used an order whose dispatch and delivery dates differed. Examples and incidents reduce the problem, and no known technique removes it.
 
 ### The quality of arguments
 
-An agent can draft an assurance case. Whether it reliably notices the obligation that is missing, such as braking distance in a safety argument, is untested. The same doubt applies to what an environment claims about its own realism.
+An agent can draft an assurance case, but whether it reliably notices a missing obligation, such as braking distance in a safety argument, is untested. The same doubt applies to what an environment claims about its own realism.
 
 Until there is data, a person reads the argument of every tier 2 clause and reviews any change that would weaken an environment.
 
@@ -53,31 +53,31 @@ A parent's status depends on the contract tests its providers must pass, and tes
 
 ### Comparing behavior before and after
 
-Replaying recorded inputs through the old and new versions is a useful backstop, in the spirit of a characterization test. It is overrated as a replacement for review: it measures first-order effects only, it produces long lists that people stop reading, and an empty comparison does not prove a refactoring safe.
+Replaying recorded inputs through the old and new versions is a useful backstop, in the spirit of a characterization test, but a poor replacement for review: it measures first-order effects only, it produces long lists that people stop reading, and an empty comparison does not prove a refactoring safe.
 
 ### Things nobody can monitor
 
-Some assumptions cannot be checked from the observations available, and some failures show up too late to matter. For physical systems, most of the effort goes into treatments other than monitoring.
+Some assumptions cannot be checked from the observations available, and some failures show up too late to matter. For physical systems, most of the effort can be expected to go into treatments other than monitoring.
 
 ### Observability built for agents
 
-The method asks a team to log every decision with its clause and its inputs, and to give agents tools for reading logs, traces and state. The bet is that the cost of this [observability](../observability/) is repaid, because agents that can look inside the system build, verify and diagnose with less guessing.
+The method asks a team to log every decision with its clause and its inputs, and to give agents tools for reading logs, traces and state, on the expectation that the cost of this [observability](../observability/) is repaid because agents that can look inside the system build, verify and diagnose with less guessing.
 
-That is plausible and unmeasured, whereas the costs are certain: signals to design and keep current, tools to maintain, and data to store. A pilot should measure how long a diagnosis takes and how often the first diagnosis was right.
+The return is plausible and unmeasured, whereas the costs are certain: signals to design and keep current, tools to maintain, and data to store. A pilot should measure how long a diagnosis takes and how often the first one was right.
 
 ### Agents that share a blind spot
 
-Giving the builder and the verifier separate accounts makes them independent in what they can change, but not in how they read: two agents built on the same model can misread a clause in the same way. Whether a different model family for the verifier is worth its cost is an open question.
+Separate accounts make the builder and the verifier independent in what they can change, but not in how they read: two agents built on the same model can misread a clause in the same way. Whether a different model family for the verifier is worth its cost is an open question.
 
 ### An agent as the reviewer
 
-An agent [reviews](../review/) every change. A person reviews as well only when the policy lists the change as critical or the reviewer rates its blast radius as large. The bet is that the agent catches enough for every other change to go without a person.
+An agent [reviews](../review/) every change, and a person joins only for the changes the policy lists as critical or the reviewer rates as large in blast radius. The bet is that the agent catches enough for every other change to be released without a person.
 
-The bet is unmeasured, and the doubt about a shared blind spot applies in full: a reviewer can share the builder's misreading of a clause and approve the mistake it was there to catch. The way to find out is for a person to review a sample of the changes that went through on the agent's review alone, and to count what the agent missed.
+The bet is unmeasured, and the doubt about a shared blind spot applies in full: a reviewer can share the builder's misreading of a clause and approve the mistake it was there to catch. To find out, a person should review a sample of the changes released on the agent's review alone and count what the agent missed.
 
 ## Not yet
 
-The method does not make these claims.
+The method does not make the following claims.
 
 | Claim | Why not |
 |---|---|
@@ -106,6 +106,6 @@ The method does not make these claims.
 
 ## What a pilot settles
 
-The individual mechanisms are established practice, and [their sources](../sources/) are listed. What remains to be shown is that agents make the combination affordable.
+The individual mechanisms are established practice, as [their sources](../sources/) show. What remains to be shown is that agents make the combination affordable.
 
-That can be tested cheaply on one system. If the numbers from a first pilot are bad, the team still has ten clauses, a vocabulary and one trustworthy verification environment, which is a fair return on a week.
+That can be tested cheaply on one system. If the numbers from a first pilot are poor, the team still has ten clauses, a vocabulary and one trustworthy verification environment, which is a fair return on a week.

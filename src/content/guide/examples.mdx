@@ -10,7 +10,7 @@ points:
 related: [primitives, vocabulary, shape, evidence]
 ---
 
-## A sentence is not a specification
+## What a sentence leaves open
 
 "A refund is never issued twice for the same order" reads as a complete rule, yet it leaves several things open. Is a second, partial refund on the same order "twice", or only a repeat of the same refund? What about two requests that arrive together, before either has been paid? What about a payout that went through while its reply was lost, so the client tries again?
 
@@ -42,7 +42,7 @@ The violating example tells the reader more about what "never twice" means than 
 
 In CanonBall a person approves examples, never a formal statement and never a bare sentence. The sentence is accepted only through the cases that pin it down.
 
-This puts human attention where it counts. The step from prose to a precise property is the one step no tool can check, and if the property is wrong, every check built on it verifies the wrong thing perfectly. Examples let a person confirm the meaning before any of that machinery is built.
+This directs human attention to the step that most needs it. The step from prose to a precise property is the one step no tool can check, and if the property is wrong, every check built on it verifies the wrong thing perfectly. Examples let a person confirm the meaning before any of that machinery is built.
 
 The approval happens at the [Shape station](../shape/), where an agent drafts the examples for a milestone and people settle them. The station ends at the **agreement gate**, where a person agrees to what the system will promise.
 
@@ -56,11 +56,11 @@ Every check must also be seen to fail once, against a build broken on purpose, b
 
 ## Conventions that help agents read
 
-A short clause can be read correctly only when the writer and the reader share conventions for what its words and sentence shapes mean. The conventions below supply them. An agent enforces them while drafting and points out where a clause departs from them.
+A short clause can be read correctly only when the writer and the reader share conventions for what its words and sentence shapes mean. An agent applies these conventions while drafting and points out where a clause departs from them.
 
 ### Sentence shapes for promises
 
-Five shapes cover nearly every promise. They come from a requirements notation called EARS, the Easy Approach to Requirements Syntax.
+Most promises fit one of the shapes of EARS, the Easy Approach to Requirements Syntax, a requirements notation.
 
 | Shape | Pattern |
 |---|---|
@@ -82,6 +82,4 @@ After drafting a clause, the agent restates it in its own words. If the restatem
 
 ## What an example cannot do
 
-Examples pin down meaning at the points you thought to write and say nothing about the points you did not, so a clause with five examples can still be wrong in a sixth situation.
-
-The agent proposes extra examples, and every incident adds the one that was missing. Examples make a missing case cheap to add, and they cannot tell you that it is missing.
+Examples pin down meaning at the points you thought to write and say nothing about the points you did not, so a clause with five examples can still be wrong in a sixth situation. The agent proposes extra examples, and every incident adds the one that was missing. Examples make a missing case cheap to add, and they cannot tell you that it is missing.
