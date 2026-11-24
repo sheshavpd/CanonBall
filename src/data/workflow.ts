@@ -74,7 +74,7 @@ export const stations: Station[] = [
 
 export const stationById = (id: StationId): Station => stations.find((s) => s.id === id)!;
 
-/** The three ideas that set this apart from a conventional software lifecycle. Numbered on the conveyor. */
+/** The three practices that let agents do most of the work reliably. Marked 1 to 3 on the conveyor. */
 export const ideas = [
   {
     n: 1, slug: 'collect', title: 'Work moves in milestones',

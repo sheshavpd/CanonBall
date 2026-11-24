@@ -4,7 +4,7 @@
 <div class="box" id="failfirst">
   <h3>A check must fail once before its pass counts</h3>
   <div class="ck"><span>The same request sent twice pays once</span><em class="tag">passed, seen to fail</em></div>
-  <div class="ck"><span>A retry after a timeout pays once</span><em class="tag">passed, seen to fail</em></div>
+  <div class="ck"><span>A retry after a lost reply pays once</span><em class="tag">passed, seen to fail</em></div>
   <div class="ck"><span>Two requests at once pay once</span><em class="tag warn" data-ck>passed, never seen to fail</em></div>
   <div class="verdict bad" data-verdict><small>Computed status of INV-004</small><b data-status>Unsupported</b><p data-why>The third check has never failed, so its pass is not evidence yet.</p></div>
   <button class="btn" type="button" data-go>Inject a fault and run it</button>

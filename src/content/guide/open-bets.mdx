@@ -5,7 +5,7 @@ part: building
 order: 4
 points:
   - "The central bet is cost. Agents must make this rigor as cheap as ordinary software."
-  - "A missing clause defeats every level of verification. Examples and incidents reduce that risk and do not remove it."
+  - "A missing clause defeats every verification level. Examples and incidents reduce that risk and do not remove it."
   - "Three bets about how work moves are unmeasured: milestones over tickets, an agent as the reviewer, and observability built for agents."
   - "The method suits logic-heavy, long-lived systems. It suits prototypes and interface-heavy products poorly."
 related: [why, start, delegation, review]
@@ -17,67 +17,63 @@ These pieces use established technology and can be relied on today.
 
 - **Decision logic kept apart from side effects,** with recorded inputs and exact replay.
 - **A canon as plain Markdown** with examples, stable IDs and ownership by path. It needs no new tooling.
-- **Evidence at the lower levels, produced by agents:** property-based tests against fakes, and scenarios against real processes and a local database. This assumes the builder and verifier are kept apart.
+- **Evidence at the lower verification levels, produced by agents:** property-based tests against fakes, and scenarios against real processes and a local database. This assumes the builder and the verifier are separate accounts with separate paths.
 - **Proofs for small pieces of decision logic,** with a person checking only the examples.
-- **A first-week environment** built as the [previous chapter](../start/) describes.
+- **A first verification environment,** built in a week as described under [starting](../start/).
 
 ## The bets
 
 ### Cost
 
-The whole method rests on this one.
-
-Assurance cases, arguments and treatments are expensive to write and to keep current. CanonBall assumes agents bring that cost down to the cost of ordinary software.
+The whole method rests on this bet. Assurance cases, arguments and treatments are expensive to write and to keep current, and CanonBall assumes that agents bring that cost down to the cost of ordinary software.
 
 Suppose agents only make the writing faster, while people still review every clause change, every critical argument, every adapter and every example. The result then has the cost profile of certified avionics software without the regulation that justifies it.
 
-Only measurement settles this: setup cost apart from recurring cost, a person's minutes per critical case, and how often an argument went stale.
+Only measurement settles this: setup cost apart from recurring cost, a person's time per critical case, and how often an argument went stale.
 
 ### Milestones over tickets
 
-CanonBall gathers related requests into a milestone before anything is built. The bet is that this beats a stream of single tickets when agents do the building. Promises are settled once for the batch, and the agents work on a coherent whole.
+CanonBall gathers related requests into a milestone before anything is built. The bet is that agents build better from a milestone than from a stream of single tickets, because promises are settled once for the batch and the agents work on a coherent whole.
 
-Nobody has measured it. Research on product flow mostly argues the other way, for small batches, because a large batch delays feedback and makes a mistake more expensive. The method answers with the sizing rules, which keep a milestone small, and with [unplanned work](../collect/), which lets small urgent work skip the batching. Whether those answers are enough is a question for a pilot. Compare the time from request to release, and the amount of rework, under both ways of working.
+This has not been measured, and research on product flow mostly argues for small batches, because a large batch delays feedback and makes a mistake more expensive. The method answers with the sizing rules, which keep a milestone small, and with [unplanned work](../collect/), which lets incident repairs, bug fixes, refactorings and upkeep skip the batch because they change no promise. Whether those answers are enough is a question for a pilot, which should compare the time from request to release, and the amount of rework, under both ways of working.
 
 ### Missing clauses
 
-When the canon misses a case, every level of verification checks the wrong thing perfectly. A complete proof of an incomplete specification is still incomplete.
-
-Examples and incidents reduce the problem. Nothing known solves it.
+When the canon misses a case, every verification level checks the wrong thing perfectly, and a complete proof of an incomplete specification is still incomplete. Incident INC-007 in [Operate](../operate/) is an instance: REQ-012 showed as accepted while no check used an order whose dispatch and delivery dates differed. Examples and incidents reduce the problem, and no known technique removes it.
 
 ### The quality of arguments
 
 An agent can draft an assurance case. Whether it reliably notices the obligation that is missing, such as braking distance in a safety argument, is untested. The same doubt applies to what an environment claims about its own realism.
 
-Until there is data, a person reviews critical arguments and any change that would weaken an environment.
+Until there is data, a person reads the argument of every tier 2 clause and reviews any change that would weaken an environment.
 
 ### Evidence across teams
 
-A parent's status depends on the contract tests its providers must pass. Tests that miss something the protocol relies on give a green result and a wrong promise. The approach is sound in principle and unproven in practice.
+A parent's status depends on the contract tests its providers must pass, and tests that miss something the protocol relies on give a green result and a wrong promise. The approach is sound in principle and unproven in practice.
 
 ### Comparing behavior before and after
 
-Replaying recorded inputs through the old and new versions is a useful backstop, in the spirit of a characterization test. It is overrated as a replacement for review. It measures first-order effects only. It produces long lists that people stop reading. And an empty comparison does not prove a refactoring safe.
+Replaying recorded inputs through the old and new versions is a useful backstop, in the spirit of a characterization test. It is overrated as a replacement for review: it measures first-order effects only, it produces long lists that people stop reading, and an empty comparison does not prove a refactoring safe.
 
 ### Things nobody can monitor
 
-Some assumptions cannot be checked from the observations available. Some failures show up too late to matter. For physical systems, most of the effort goes into treatments other than monitoring.
+Some assumptions cannot be checked from the observations available, and some failures show up too late to matter. For physical systems, most of the effort goes into treatments other than monitoring.
 
 ### Observability built for agents
 
-The method asks a team to log every decision with its clause and its inputs, and to give agents tools for reading logs, traces and state. The bet is that this [observability](../observability/) pays for itself, because agents that can look inside the system build, verify and diagnose with less guessing.
+The method asks a team to log every decision with its clause and its inputs, and to give agents tools for reading logs, traces and state. The bet is that the cost of this [observability](../observability/) is repaid, because agents that can look inside the system build, verify and diagnose with less guessing.
 
-That is plausible and unmeasured. The costs are certain: signals to design and keep current, tools to maintain, data to store. Measure how long a diagnosis takes, and how often the first diagnosis was right.
+That is plausible and unmeasured, whereas the costs are certain: signals to design and keep current, tools to maintain, and data to store. A pilot should measure how long a diagnosis takes and how often the first diagnosis was right.
 
 ### Agents that share a blind spot
 
-Splitting the builder from the verifier makes them independent in what they can change. It does not make them independent in how they read. Two agents built on the same model can misread a clause the same way. Whether a different model family for the verifier is worth its cost is an open question.
+Giving the builder and the verifier separate accounts makes them independent in what they can change, but not in how they read: two agents built on the same model can misread a clause in the same way. Whether a different model family for the verifier is worth its cost is an open question.
 
 ### An agent as the reviewer
 
-An agent [reviews](../review/) every milestone. A person reviews as well only when the policy calls the change critical. The bet is that the agent catches enough for every other change to go without a person.
+An agent [reviews](../review/) every change. A person reviews as well only when the policy lists the change as critical or the reviewer rates its blast radius as large. The bet is that the agent catches enough for every other change to go without a person.
 
-It is unmeasured, and the doubt above applies in full. A reviewer can share the builder's misreading of a clause and approve the mistake it was there to catch. The way to find out is for a person to review a sample of the changes the policy let through, and to count what the agent missed.
+The bet is unmeasured, and the doubt about a shared blind spot applies in full: a reviewer can share the builder's misreading of a clause and approve the mistake it was there to catch. The way to find out is for a person to review a sample of the changes that went through on the agent's review alone, and to count what the agent missed.
 
 ## Not yet
 
@@ -86,9 +82,9 @@ The method does not make these claims.
 | Claim | Why not |
 |---|---|
 | "People never read code." | Security and permission bugs live on inputs nobody recorded. Adapters keep their review. |
-| "The physical levels run without people." | Agents can plan a hardware test and interpret its results. People still run the rig and inspect the weld. |
+| "The physical verification levels run without people." | Agents can plan a hardware test and interpret its results. People still run the rig and inspect the weld. |
 | "Reorganize the company around it." | That assumes a reliability agents have not yet demonstrated. Measure escaped defects first. |
-| "It works for any software." | The fit is specific. See below. |
+| "It works for any software." | The fit is specific to logic-heavy, long-lived systems. |
 
 ## Where it fits
 
@@ -108,8 +104,8 @@ The method does not make these claims.
 - Clauses can interact. Two cases can each be valid while their combination fails, through a shared assumption or a contested resource. No answer has been designed yet.
 - Can the agents' own behavior be governed by a canon, with the same gates?
 
-## How to read all this
+## What a pilot settles
 
-The individual mechanisms are mostly borrowed, and the [next chapter](../sources/) says from where. The new parts are the combination, and the claim that agents make it affordable.
+The individual mechanisms are established practice, and [their sources](../sources/) are listed. What remains to be shown is that agents make the combination affordable.
 
-That claim can be tested cheaply on one system. If the numbers from a first pilot are bad, you will still have ten clauses, a vocabulary and one trustworthy test environment. That is a fair return on a week.
+That can be tested cheaply on one system. If the numbers from a first pilot are bad, the team still has ten clauses, a vocabulary and one trustworthy verification environment, which is a fair return on a week.

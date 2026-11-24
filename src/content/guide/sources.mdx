@@ -1,22 +1,22 @@
 ---
 title: Where the words come from
-summary: "Most of the ideas and vocabulary in CanonBall come from established work, and this chapter maps each term to its source."
+summary: "Most of the ideas and vocabulary in CanonBall come from established work, and each term is mapped here to its source."
 part: building
 order: 5
 points:
   - "Where an established term exists, the guide uses it."
-  - "Where the guide prefers a plainer word, this chapter gives the established one."
+  - "Where the guide prefers a plainer word, the tables give the established one."
   - "A handful of names are CanonBall's own, and they are listed at the end."
 related: [vocabulary, open-bets, why]
 ---
 
-## Why this chapter exists
+## Established terms first
 
-A method that invents a new word for every old idea makes its readers learn twice. This guide tries to use the words engineers already know. Where it prefers a plainer word, the table below gives the established one, so you can connect what you read here to what you have read elsewhere.
+A method that invents a new word for every old idea makes its readers learn twice, so CanonBall uses the words engineers already know. Where it prefers a plainer word, the tables give the established one and its source, so that a reader can connect the method to the literature behind it.
 
 ## Specifying
 
-| In this guide | Established term | Source |
+| In CanonBall | Established term | Source |
 |---|---|---|
 | Promise | Requirement | Requirements engineering generally |
 | Invariant | Invariant | Bertrand Meyer, *Object-Oriented Software Construction* (1988); Leslie Lamport, *Specifying Systems* (2002) |
@@ -31,13 +31,14 @@ A method that invents a new word for every old idea makes its readers learn twic
 
 ## Verifying
 
-| In this guide | Established term | Source |
+| In CanonBall | Established term | Source |
 |---|---|---|
 | Assurance case | Assurance case; safety case | Tim Kelly, "Arguing Safety" (1998), the standard reference for Goal Structuring Notation |
 | Tier | Design assurance level; integrity level | The avionics standard DO-178C and the automotive standard ISO 26262 |
 | Check | Automated test | Kent Beck, *Test-Driven Development: By Example* (2002) |
 | A check must be seen to fail | Red, then green; watch the test fail | Beck, as above; Steve Freeman and Nat Pryce, *Growing Object-Oriented Software, Guided by Tests* (2009) |
-| Injected fault | Mutant; fault injection | Richard DeMillo, Richard Lipton and Frederick Sayward, "Hints on Test Data Selection" (1978) |
+| Injected fault | Mutant, as in mutation testing | Richard DeMillo, Richard Lipton and Frederick Sayward, "Hints on Test Data Selection" (1978) |
+| A failure a fake can simulate | Fault injection | Common practice in dependability and resilience testing |
 | System under test, fake | System under test; test double | Gerard Meszaros, *xUnit Test Patterns* (2007) |
 | Oracle | Test oracle | Elaine Weyuker, "On Testing Non-Testable Programs" (1982) |
 | Property-based tests | Property-based testing | Koen Claessen and John Hughes, "QuickCheck" (2000) |
@@ -48,7 +49,7 @@ A method that invents a new word for every old idea makes its readers learn twic
 
 ## Building and releasing
 
-| In this guide | Established term | Source |
+| In CanonBall | Established term | Source |
 |---|---|---|
 | Decision logic and adapters | Functional core, imperative shell | Gary Bernhardt, "Boundaries" (2012) |
 | Adapter | Ports and adapters; hexagonal architecture | Alistair Cockburn, "Hexagonal Architecture" (2005) |
@@ -59,14 +60,14 @@ A method that invents a new word for every old idea makes its readers learn twic
 
 ## Observing
 
-| In this guide | Established term | Source |
+| In CanonBall | Established term | Source |
 |---|---|---|
 | Observability | Observability | Control theory, where a system is observable if its internal state can be worked out from its outputs, a notion due to Rudolf Kálmán. For software: Charity Majors, Liz Fong-Jones and George Miranda, *Observability Engineering* (2022) |
 | Monitor | Monitoring | Beyer and colleagues, as above |
 
 ## Composing
 
-| In this guide | Established term | Source |
+| In CanonBall | Established term | Source |
 |---|---|---|
 | Unit | Bounded context | Evans, as above |
 | Role contract | Design by contract | Meyer, as above |
@@ -77,19 +78,19 @@ A method that invents a new word for every old idea makes its readers learn twic
 
 ## Working
 
-| In this guide | Established term | Source |
+| In CanonBall | Established term | Source |
 |---|---|---|
 | Level of automation | Levels of automation | Thomas Sheridan and William Verplank, "Human and Computer Control of Undersea Teleoperators" (1978) |
 | Shadow mode | Shadow deployment | Common practice for releases |
 | Limit work in progress | WIP limits | David Anderson, *Kanban* (2010) |
 | Rank by cost of delay | Cost of delay | Donald Reinertsen, *The Principles of Product Development Flow* (2009) |
 | A milestone as a batch of requests | Batch size | Reinertsen, as above |
-| Work moving through stations | Flow; pull | Reinertsen, as above. Pull comes from the Toyota production system, in which each step takes from the step before only what it needs, when it needs it: Taiichi Ohno, *Toyota Production System* |
+| Work moving through stations | Flow | Reinertsen, as above |
 | Blast radius | Blast radius | Common usage in reliability engineering |
 | `AGENTS.md` | AGENTS.md | An open convention for a file of instructions to coding agents, kept in the repository |
 | How work moves is part of the product | Work system | Steven Alter, "Work System Theory" (2013) |
 
-Reinertsen argues for small batches. A milestone is a batch all the same. The chapter on [open bets](../open-bets/) says what that choice rests on.
+Reinertsen argues for small batches, and a milestone is a batch all the same. What that choice rests on is discussed under [open bets](../open-bets/).
 
 ## CanonBall's own names
 
@@ -100,12 +101,12 @@ A few names have no established equivalent, because the thing they name is speci
 | **Canon** | The set of approved clauses |
 | **Clause** | One statement in the canon, of any of the five kinds |
 | **Blueprint** | The agents' design for keeping the canon |
-| **Verification Record** | The computed status of every clause. The guide shortens it to the Record after first use. |
+| **Verification Record** | The computed status of every clause, shortened to "the Record" after first use |
 | **CanonBall** | One release: canon, build and Record together. Also the method. |
 | **Verification engineering** | The discipline of building environments in which a clause can be checked |
 | **Station** | One of the seven places a milestone passes, from Collect to Operate |
 | **Express belt** | The path unplanned work takes: every station, without waiting for a milestone |
 
-## A note on reading further
+## Reading further
 
-If you read only three of these, read Adzic for examples, Leveson for constraints and safety thinking, and Humble and Farley for what a release should be. Between them they cover most of what this guide asks a team to do differently.
+Three of these sources repay reading first: Adzic for examples, Leveson for constraints and safety thinking, and Humble and Farley for what a release should be. Between them they cover most of the practices the method relies on.

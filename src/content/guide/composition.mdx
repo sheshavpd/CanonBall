@@ -6,21 +6,19 @@ order: 2
 points:
   - "A unit is a separately owned part of a system with its own canon, build and Verification Record."
   - "A parent depends on roles. One file, the assembly, says who fills them."
-  - "Evidence composes through contract tests, so nobody verifies the whole system at once."
+  - "Evidence composes through contract tests, so the whole system never has to be verified at once."
 related: [canonball, repository, evidence, workflow]
 ---
 
 ## The problem with scale
 
-A promise such as "a customer is never charged twice" is not kept by one service. Checkout starts the charge, payments executes it, orders records it. No single team's canon can contain the whole promise, and nobody can verify three teams' code as one system.
-
-CanonBall handles this with two ideas: units and roles.
+A promise such as "a customer is never charged twice" is kept by several services together: checkout starts the charge, payments executes it, and orders records it. No single team's canon can contain the whole promise, and three teams' code cannot be verified as one system. CanonBall handles this with two ideas, units and roles.
 
 ## A unit
 
-A **unit** is a separately owned part of a system with its own canon, blueprint, build and Verification Record. A service is a unit. So is the subdomain that contains it, and so is the domain above that. The shape repeats at every level, and only the size differs. If you know domain-driven design, a unit is close to a bounded context.
+A **unit** is a separately owned part of a system with its own canon, blueprint, build and Verification Record. A service is a unit, and so are the subdomain that contains it and the domain above that. The shape repeats at every level of the tree, and only the size differs. In the terms of domain-driven design, a unit is close to a bounded context.
 
-Six rules keep a tree of units consistent.
+A tree of units is kept consistent by the following rules.
 
 1. **A unit exists only where there is an owner and an interface.** Anything else is a module inside someone's design.
 2. **Authority runs downward.** A child's canon may not contradict its parent's.
@@ -31,18 +29,15 @@ Six rules keep a tree of units consistent.
 
 ## Two relationships people confuse
 
-| Relationship | What it is |
-|---|---|
-| **Governance** | The parent sets rules that every descendant follows: the constraints, the policy, the vocabulary. The child adopts them. The parent does not track how. |
-| **Composition** | A parent promise is delivered by several parts working together. The parent designs how they cooperate, so it must know what it needs from each part. It does not need to know who provides it. |
+**Governance** means that the parent sets rules every descendant follows: the constraints, the policy and the vocabulary. The child adopts them, and the parent does not track how.
 
-Composition is where roles come in.
+**Composition** means that a parent promise is delivered by several parts working together. The parent designs how they cooperate, so it must know what it needs from each part, although it does not need to know who provides it. Roles exist to serve composition.
 
 ## A role
 
 A **role** is a contract that a unit defines for something it needs someone else to provide. It is written in the style of design by contract: what the provider guarantees, and what it may assume of its caller.
 
-The guide also speaks of agent roles, such as builder and reviewer. Those belong to the chapter on [people and agents](../people-and-agents/). In this chapter a role is always a contract.
+The word is also used for agent roles such as builder and reviewer, which are described under [people and agents](../people-and-agents/). A role between units is always a contract.
 
 ```markdown
 id: ROLE-payer
@@ -56,15 +51,9 @@ Assumes:
 - The caller supplies a K that is unique per order.
 ```
 
-A role is published as a package with three things in it.
+A role is published as a package. It holds the contract, which the parent designs against; the **contract tests**, which any provider must pass; and a **fake**, a stand-in built from the contract for the parent's own tests.
 
-| In the package | What it is for |
-|---|---|
-| The contract | What the parent designs against |
-| **Contract tests** | Tests any provider must pass |
-| A **fake** | A stand-in built from the contract, for the parent's own tests |
-
-Nobody refers to a concrete partner. The parent writes its design against `ROLE-payer`. One file, the **assembly**, says who fills each role.
+No design refers to a concrete partner. The parent writes its design against `ROLE-payer`, and one file, the **assembly**, says who fills each role.
 
 <Figure id="roles" />
 
@@ -76,21 +65,17 @@ bindings:
                       fallback: "queue refunds; settle on recovery" }
 ```
 
-Replacing a provider is a one-line change to that file. The parent's proofs do not move.
+Replacing a provider is a one-line change to that file, and the parent's proofs are unaffected.
 
 ## How evidence composes
 
-A promise delivered by several providers has an assurance case with three parts. None of them names a child.
+A promise delivered by several providers has an assurance case with three parts, none of which names a child.
 
-| Part | Shows | How |
-|---|---|---|
-| **Protocol** | The cooperation is correct, given the contracts. | A model check over the role contracts alone, with failures, retries and duplicates as hostile inputs |
-| **Assembly** | Every role is filled by a provider that meets it. | Computed from each provider's own Record |
-| **Integration** | The assembled system behaves. | End-to-end checks |
+- The **protocol** part shows that the cooperation is correct, given the contracts. It is a model check over the role contracts alone, with failures, retries and duplicates as hostile inputs.
+- The **assembly** part shows that every role is filled by a provider that meets it. It is computed from each provider's own Record.
+- The **integration** part shows that the assembled system behaves, through end-to-end checks.
 
-The parent's proof takes each role's guarantees as given. Each provider's Record shows that its implementation meets the contract. Nobody verifies the whole system at once.
-
-Computer scientists call this assume-guarantee reasoning. It is the kind of verification that scales with the number of teams.
+The parent's proof takes each role's guarantees as given, and each provider's Record shows that its implementation meets the contract, so the whole system never has to be verified at once. Computer scientists call this assume-guarantee reasoning, and it is the kind of verification that scales with the number of teams.
 
 ## Staleness crosses boundaries
 
@@ -98,15 +83,15 @@ Each role has a content hash computed from its contract, its tests and its fake.
 
 ## Outside dependencies are roles too
 
-A third-party payment gateway is handled the same way. Define the role you need, bind the current vendor in the assembly, and write your assumptions against the role.
+A third-party payment gateway is handled the same way: define the role you need, bind the current vendor in the assembly, and write your assumptions against the role. In the refunds canon, ASM-011 (the payment gateway pays at most once per request key) is an assumption of this kind.
 
-Your assumption is their promise. If the vendor does not publish evidence, the binding carries its documentation in place of a Record, and your treatment of the assumption has to do more of the work.
+An assumption on your side is a promise on the vendor's side. If the vendor does not publish evidence, the binding carries its documentation in place of a Record, and your treatment of the assumption has to do more of the work.
 
-Each binding is marked **hard** or **soft**. Hard means your capability fails when the provider fails. Soft means it degrades. A hard binding needs a fallback, or a risk that someone has accepted in writing.
+Each binding is marked **hard** or **soft**. A hard binding means your capability fails when the provider fails, and a soft one means it degrades. A hard binding needs a fallback, or a risk that someone has accepted in writing.
 
 ## One coordinator per protocol
 
-A cooperation among five services with no owner is a classic source of distributed failures. Assign "runs this protocol" to exactly one unit. The others promise only local guarantees.
+A cooperation among five services with no owner is a classic source of distributed failures. The responsibility for running a protocol is therefore assigned to exactly one unit, and the others promise only local guarantees.
 
 ## Teams do not wait for each other
 
@@ -114,8 +99,6 @@ Each unit moves its own milestones through the [seven stations](../workflow/) an
 
 ## What it costs
 
-Two extra artifacts: the role contracts and the assembly file. A role with a single provider feels like an interface with one implementation.
+The cost is two extra artifacts, the role contracts and the assembly file. A role with a single provider can look like an interface with one implementation, but it is still worth keeping, because the contract is the allocation of responsibility that would have had to be written in any case. The only new file is the assembly, and the first change of provider is expected to repay it.
 
-Keep it anyway. The contract is the allocation of responsibility you would have had to write in any case. The only new file is the assembly, and the first provider swap pays for it.
-
-One risk remains open. A parent's status is only as good as its providers' contract tests. A test suite that misses something the protocol relies on gives a green result and a wrong promise.
+One risk remains open: a parent's status is only as good as its providers' contract tests, and a test suite that misses something the protocol relies on gives a green result and a wrong promise.
