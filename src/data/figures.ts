@@ -30,7 +30,7 @@ export const figures: Record<string, { caption: string; text: string }> = {
   },
   balls: {
     caption: 'Progress is a sequence of CanonBalls.',
-    text: 'Three CanonBalls in a row, each drawn with the CanonBall mark. CanonBall 12 is the system before the change. CanonBall 13 adds decision DEC-031 after a milestone is released. CanonBall 14 adds invariant INV-009 after an incident is repaired.',
+    text: 'Three CanonBalls in a row, each drawn with the CanonBall mark. CanonBall 12 is the system before the milestone, with three clauses. CanonBall 13 adds decision DEC-031 after a milestone is released. CanonBall 14 adds invariant INV-009 after an incident is repaired.',
   },
   release: {
     caption: 'A release copies the proposed files into spec/ and publishes a CanonBall.',
@@ -38,7 +38,7 @@ export const figures: Record<string, { caption: string; text: string }> = {
   },
   walls: {
     caption: 'Who can write what. Independence is a matter of permissions.',
-    text: 'A grid of paths against roles. Canon: people approve, the elicitor drafts. Policy: people only. Blueprint: the planner writes, and the verifier writes the verification plan. src: the builder writes, the verifier reads. verify: the verifier writes, the builder reads and runs. Held-out scenarios: people write; neither the builder nor the verifier has access. The Verification Record: nobody writes; it is computed.',
+    text: 'A grid of paths against roles: people, and the elicitor, planner, builder, verifier, reviewer and on-call agents. Canon: people approve, the elicitor drafts, the reviewer reads. Policy: people only; no agent may write it. Blueprint: the planner writes, the verifier writes the verification plan, people review critical cases, the reviewer reads. src: the builder writes; the verifier, the reviewer and the on-call agent read; people review the code that touches the outside world. verify: the verifier writes; the builder reads and runs; the reviewer and the on-call agent read. observe: the builder and the verifier write; the reviewer and the on-call agent read; people see the same view. incidents: the on-call agent drafts, people approve. Held-out scenarios: people write; the builder, the verifier and the reviewer have no access. The Verification Record: nobody writes; it is computed, and people, the reviewer and the on-call agent read it.',
   },
   case: {
     caption: 'An assurance case splits a clause into parts and argues that the parts are enough.',

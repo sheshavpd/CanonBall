@@ -1,18 +1,18 @@
 ---
 title: Examples, and writing clauses agents read correctly
 summary: "A plain sentence hides decisions, and a worked example exposes them."
-part: idea
+part: write
 order: 4
 points:
   - "An example is one concrete case of a clause, written as given, when, then."
   - "People approve examples. They do not approve formal statements or code."
   - "Every example becomes one check, and every check names its example."
-related: [primitives, vocabulary, evidence]
+related: [primitives, vocabulary, shape, evidence]
 ---
 
 ## A sentence is not a specification
 
-"No two robots in the same zone" reads as a complete rule. It leaves at least three things open. Does "in" mean any overlap of the robot's footprint, its center point, or a safety margin around it? What about a robot that has been granted the zone and has not yet arrived? What about one that is powered off?
+"A refund is never issued twice for the same order" reads as a complete rule. It leaves at least three things open. Is a second, partial refund on the same order "twice", or only a repeat of the same refund? What about two requests that arrive together, before either has been paid? What about a payout that went through while its reply was lost, so the client tries again?
 
 Each answer is a decision. If the sentence is all you approve, an agent makes those decisions for you.
 
@@ -21,9 +21,9 @@ Each answer is a decision. If the sentence is all you approve, an agent makes th
 An **example** is one concrete case of a clause, written in a fixed shape: *given* a starting state, *when* something happens, *then* an outcome.
 
 ```gherkin
-Given order 4471 was refunded once
-When a second refund request arrives for order 4471
-Then the request is rejected with "already refunded"
+Given a $40 refund for order 4471 has been paid
+When the client sends the same refund request again
+Then the customer has been paid $40, once
 ```
 
 The practice is known as specification by example, and behavior-driven development calls each case a *scenario*. Every clause has examples of two kinds.
@@ -41,11 +41,13 @@ In CanonBall a person never approves a formal statement, and never approves a ba
 
 This puts human attention where it counts. The step from prose to a precise property is the one step no tool can check. If the property is wrong, every check built on it verifies the wrong thing perfectly. Examples let a person confirm the meaning before any of that machinery is built.
 
+The approval happens at the [Shape station](../shape/), where an agent drafts the examples for a milestone and people settle them. The station ends at the **agreement gate**, where a person agrees to what the system will promise.
+
 ## From an example to a check
 
 <Figure id="example-flow" />
 
-Each example becomes one check, and the check names the example it encodes. That link is enforced. An example with no check shows up as a gap. A check with no example has no reason to exist.
+Each example becomes one check, built at the [Verify station](../verify/), and the check names the example it encodes. That link is enforced. An example with no check shows up as a gap. A check with no example has no reason to exist.
 
 For every violating example, the check must also be seen to fail once, against a deliberately broken build. The chapter on [evidence](../evidence/) explains why.
 

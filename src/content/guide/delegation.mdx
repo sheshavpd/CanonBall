@@ -1,20 +1,21 @@
 ---
 title: Handing over decisions
 summary: "Each kind of decision has a level of automation that moves on track record, so one method serves cautious teams and fast ones."
-part: change
-order: 3
+part: structure
+order: 5
 points:
   - "Each kind of decision has its own level of automation, from 0 to 5."
   - "A level moves up on measured track record and down on a single failure. A new model release does not move it."
-  - "Promises and constraints stay with people at every level."
-related: [people-and-agents, primitives, open-bets]
+  - "Promises, product decisions, invariants and constraints are approved by people at every level."
+  - "An agent reviews every change. The level sets how often a person reviews as well."
+related: [people-and-agents, review, tenets, open-bets]
 ---
 
 ## One method, many settings
 
 A team building billing rules and a team building robot safety software should not give agents the same freedom. Most methods force a choice. Write the process for the cautious team and slow everyone down, or write it for the fast team and exclude the careful ones.
 
-CanonBall keeps the lifecycle the same everywhere and varies one thing: a level, kept per kind of decision, that says how much of that decision an agent may take.
+CanonBall keeps the [stations](../workflow/) the same everywhere and varies one thing: a level, kept per kind of decision, that says how much of that decision an agent may take.
 
 <Dial />
 
@@ -61,12 +62,27 @@ The thresholds are written in advance in the policy, which no agent can edit. Fo
 
 A level works like a credit score. It is earned slowly and lost quickly.
 
+## Levels at the stations
+
+Every team runs the same stations. The levels decide who leads the work at three of them.
+
+| Kind of work | Station | When a person leads | When an agent leads |
+|---|---|---|---|
+| **Architecture** | Shape | The architect sets the design. The planner fills in the detail. | The planner writes the design. The architect reads it by exception. |
+| **Detailed design** | Build | The architect stays at the Build station and decides the choices the builder raises. | The builder decides, and each choice is recorded as a derived decision. |
+| **Verification design** | Shape, Verify | The verification lead designs the evidence plan and the environment. The verifier builds them. | The verifier drafts both. The verification lead reads what the environment cannot show, and reviews any change that would weaken it. |
+
+Each of the three has its own level.
+
+Review follows a different rule. An agent reviews every change at the [Review](../review/) station, at every level. What moves with the level is how often a person reviews as well. At a low level a person reviews every change. As the level rises, a person reviews a sample, and then only the changes the policy calls critical. Those go to a person at every level.
+
 ## What never moves
 
-Two kinds of decision stay with people at every level.
+Promises, product decisions, invariants and constraints are approved by a person at every level. They pass the agreement gate, which closes the [Shape](../shape/) station.
 
-- **What the system promises.** Agents may draft promises and examples. People approve them. A machine cannot verify meaning, so meaning cannot be delegated.
+- **What the system promises.** Agents may draft promises, invariants and examples. People approve them. A machine cannot verify meaning, so meaning cannot be delegated.
 - **What is never allowed.** Constraints have their own owner, with a veto.
+- **Product decisions.** An agent may recommend a threshold, and with a track record it may choose one. A person still approves the choice before it takes effect.
 
 ## How decisions connect to design
 
@@ -88,7 +104,7 @@ When an agent meets a case no clause covers, it asks. The person's answer is rec
 
 The agent applies precedents to similar cases and asks again when a case is materially different. When several precedents point the same way, the agent proposes a general rule, and a person approves it as a decision.
 
-Delegation therefore grows as the body of precedent grows. A short ranked list of values covers the one thing precedents cannot: which goal wins when two conflict.
+Delegation therefore grows as the body of precedent grows. The [tenets](../tenets/) cover the one thing precedents cannot: which good thing wins when two conflict. An agent cites a tenet when it recommends.
 
 ## What is unproven
 

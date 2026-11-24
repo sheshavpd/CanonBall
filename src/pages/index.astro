@@ -4,6 +4,7 @@ import Logo from '../components/Logo.astro';
 import RepoExplorer from '../components/RepoExplorer.astro';
 import Dial from '../components/Dial.astro';
 import FailFirst from '../components/FailFirst.astro';
+import Conveyor from '../components/Conveyor.astro';
 import { written, computed } from '../data/site';
 import { url, guideUrl } from '../lib/links';
 import { chapters } from '../lib/guide';
@@ -19,8 +20,8 @@ const count = all.length;
         <p class="tagline">The lifecycle <span class="a">agents</span> can run and <span class="p">people</span> can trust.</p>
         <p class="lede">CanonBall is a method for building and operating software with AI agents. People write down what the system must do. Agents build it and produce the evidence. Every release ships all three together.</p>
         <div class="cta">
-          <a class="btn" href={guideUrl(first.id)}>Read the guide</a>
-          <a class="btn ghost" href="#primitives">Start with the primitives</a>
+          <a class="btn" href="#workflow">See how work moves</a>
+          <a class="btn ghost" href={guideUrl(first.id)}>Read the guide</a>
         </div>
       </div>
       <figure class="ballfig">
@@ -53,12 +54,24 @@ const count = all.length;
     </div>
   </section>
 
+  <section class="band" id="workflow">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">How work moves</p>
+        <h2 class="t">A milestone goes in. A CanonBall comes out.</h2>
+        <p class="sub">Requests gather into a milestone. People and agents shape it together, agents build it and prove it, an agent reviews it, and it ships as a CanonBall. Three things on this belt are not in a conventional software lifecycle. They are numbered.</p>
+      </div>
+      <Conveyor />
+      <p class="cta" style="margin-top:26px"><a class="btn" href={guideUrl('workflow')}>Walk it, station by station</a></p>
+    </div>
+  </section>
+
   <section class="band" id="primitives">
     <div class="wrap">
       <div class="head">
-        <p class="eyebrow">The primitives</p>
+        <p class="eyebrow">What gets written down</p>
         <h2 class="t">People steer agents with a few written things.</h2>
-        <p class="sub">Each one is a short file in plain language. Together they are the controls: an agent may do anything that respects them, and nothing that does not trace back to them. Each is defined here before the rest of the page uses it.</p>
+        <p class="sub">Each one is a short file in plain language, and most are written at the Shape station. Together they are the controls: an agent may do anything that respects them, and nothing that does not trace back to them.</p>
       </div>
       <p class="group"><span class="pill p">People write</span></p>
       <div class="prims">
@@ -98,9 +111,9 @@ const count = all.length;
   <section class="band" id="structure">
     <div class="wrap">
       <div class="head">
-        <p class="eyebrow">The structure</p>
-        <h2 class="t">A repository organized around moving a change.</h2>
-        <p class="sub">Every folder answers one question and has one kind of writer. Open any of them, or follow a small change from a one-page proposal to a release.</p>
+        <p class="eyebrow">The repository</p>
+        <h2 class="t">Every station writes to its own place.</h2>
+        <p class="sub">The repository is laid out by the work. Each folder answers one question and has one kind of writer. Follow milestone M2 through it one station at a time, or open any folder.</p>
       </div>
       <RepoExplorer />
       <p class="cap">The example is a refunds service. Dots show who writes each file: <span class="p">people</span>, <span class="a">agents that build</span>, <span class="v">agents and programs that verify</span>.</p>
@@ -112,7 +125,7 @@ const count = all.length;
       <div class="head">
         <p class="eyebrow">Verification engineering</p>
         <h2 class="t"><span class="v">Verification engineering</span> is where the work is now.</h2>
-        <p class="sub">When people wrote the code, most of the effort went into the product and testing came second. With agents writing it, that ratio turns over. The discipline that matters is engineering the environments in which a promise can be checked.</p>
+        <p class="sub">When people wrote the code, most of the effort went into the product and testing came second. With agents writing it, that ratio turns over. The discipline that matters is engineering the environments in which a promise can be checked, and designing them with a person. People can trust evidence only if they understand how it is produced.</p>
       </div>
       <div class="two">
         <div class="box">
@@ -131,6 +144,39 @@ const count = all.length;
         <FailFirst />
       </div>
       <p class="cap"><a class="more" href={guideUrl('verification-engineering')}>Verification engineering</a> &nbsp; <a class="more" href={guideUrl('environments')}>Verification environments</a></p>
+    </div>
+  </section>
+
+  <section class="band" id="observability">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">Observability</p>
+        <h2 class="t">Agents work by looking. Give them something to see.</h2>
+        <p class="sub">A person can debug on intuition and a dashboard. An agent cannot. Shown what the system did, it finds the cause in minutes. Left without it, it guesses and patches the symptom. So observability is built first, and built for the agents.</p>
+      </div>
+      <div class="two">
+        <div class="box">
+          <h3>Three rules</h3>
+          <ul class="anat">
+            <li><b>Decisions</b><span>Every decision the system makes is logged with the clause it applied and the inputs it used.</span></li>
+            <li><b>Traces</b><span>One trace follows each request through every adapter.</span></li>
+            <li><b>Tools</b><span>Agents have commands to read logs, traces, metrics and state, and to replay a request.</span></li>
+          </ul>
+          <div class="cannot"><b>One investment, three uses.</b> The builder sees what its code does. The verifier explains every failure. The on-call agent diagnoses an incident. People see the same view.</div>
+        </div>
+        <div class="box">
+          <h3>What the on-call agent saw</h3>
+          <pre class="obs">$ observe decisions --order 5512
+
+REQ-012  refund window
+  result        refused
+  reason        day 31 of 30
+  counted from  dispatch, 2 March
+  delivered     4 March</pre>
+          <p class="obsnote">A customer was refused on day 29. The log shows why without anyone guessing: the window was counted from dispatch, and the vocabulary says delivery.</p>
+        </div>
+      </div>
+      <p class="cap"><a class="more" href={guideUrl('observability')}>Observability: letting agents see</a></p>
     </div>
   </section>
 
@@ -162,7 +208,7 @@ const count = all.length;
       <div class="head">
         <p class="eyebrow">Adoption</p>
         <h2 class="t">Hand over decisions as agents earn them.</h2>
-        <p class="sub">Each kind of decision has its own level of automation. A team starts with agents recommending and people deciding. Settings move one at a time, on track record, and where they end up depends on the domain.</p>
+        <p class="sub">Each kind of decision has its own level of automation. A team starts with agents recommending and people deciding. Settings move one at a time, on track record, and where they end up depends on the domain. Agent review stays on at every setting. What moves is how often a person looks as well.</p>
       </div>
       <Dial />
       <p class="cap">An illustration. Each team writes its own thresholds in advance. A new model release does not move a setting. Agreement with people over many cases does, and one failure that gets through moves it back. <a class="more" href={guideUrl('delegation')}>Handing over decisions</a></p>
@@ -174,8 +220,8 @@ const count = all.length;
       <div class="head">
         <p class="eyebrow">The guide</p>
         <h2 class="t">Read the rest in {count} short chapters.</h2>
-        <p class="sub">This page is the overview. Each chapter takes one concept, defines its terms before using them, and works through the refunds service as its example.</p>
-        <p class="cta" style="margin-top:22px"><a class="btn" href={guideUrl(first.id)}>Start with chapter one</a><a class="btn ghost" href={url('/glossary/')}>Glossary</a></p>
+        <p class="sub">This page is the overview. The guide follows one milestone of a refunds service through every station, then takes each concept in turn.</p>
+        <p class="cta" style="margin-top:22px"><a class="btn" href={guideUrl(first.id)}>Start with chapter one</a><a class="btn ghost" href={guideUrl('workflow')}>Jump to the walkthrough</a><a class="btn ghost" href={url('/glossary/')}>Glossary</a></p>
       </div>
     </div>
   </section>

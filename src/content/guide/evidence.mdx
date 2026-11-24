@@ -7,7 +7,8 @@ points:
   - "Status is computed from evidence. No person and no agent can write it."
   - "A check must be seen to fail before its pass counts."
   - "The weakest link is named. Nothing is averaged."
-related: [verification-engineering, environments, canonball]
+  - "The reviewer agent and the person at the release gate read the same Verification Record."
+related: [verification-engineering, environments, review, operate, canonball]
 ---
 
 ## Status is computed
@@ -16,7 +17,9 @@ In most projects, "done" is something a person says. In CanonBall a program work
 
 The **Verification Record** is the computed status of every clause. A program reads the assurance cases and the results of the checks, applies rules that people own, and publishes the outcome. No agent and no person can write a status into it, because it is not a file in the repository.
 
-The rule extends to the work itself. Whether a task is finished, or a change is ready to release, is also computed from what exists.
+The Record has two readers. The reviewer agent reads it for every milestone. When the change is critical, the person at the release gate reads it as well. The chapter on [review](../review/) describes both.
+
+The rule extends to the work itself. Whether a task is finished, or a change is ready to [release](../release/), is also computed from what exists.
 
 ## A check must fail before its pass counts
 
@@ -115,10 +118,10 @@ A clause that depends on the outside world cannot be fully proven. Its assumptio
 
 A monitor that raises an alarm is a treatment. It does not show that the clause holds. At best it supports "accepted, with stated risk".
 
-When a monitor fires, an incident opens. The incident becomes a small [change](../change/), with a new example and usually a new invariant. Operating the system improves the canon this way.
+When a monitor fires, an incident opens. The repair comes back as a small piece of unplanned work, with a new example and usually a new invariant. Operating the system improves the canon this way, and the chapter on [operating](../operate/) follows one incident from the alarm to the release.
 
 ## The policy
 
 The rules that turn evidence into status live in `spec/canon/policy/`. People write them. No agent can.
 
-They say what counts as evidence for each tier, what counts as an independent check, which kinds of oracle are trusted, and when a person must accept a release. A change that would lower the bar is reviewed explicitly.
+They say what counts as evidence for each tier, what counts as an independent check, which kinds of oracle are trusted, and which changes are critical enough that a person must review them before release. A change that would lower the bar is reviewed explicitly.

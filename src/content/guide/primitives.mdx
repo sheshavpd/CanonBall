@@ -1,13 +1,14 @@
 ---
 title: The primitives
 summary: "People steer agents with five kinds of written statement, called clauses."
-part: idea
-order: 2
+part: write
+order: 1
 points:
   - "A clause is one statement the system is held to, in one file, with worked examples."
   - "There are five kinds. A promise, an invariant, a decision, a constraint, an assumption."
   - "Each clause also says how much freedom agents have around it."
-related: [examples, vocabulary, layers]
+  - "A tenet is not a clause. It says which good thing wins when two conflict, and nothing checks it."
+related: [vocabulary, tenets, examples, shape, layers]
 ---
 
 ## Why primitives at all
@@ -103,3 +104,17 @@ Every change to a clause is classified. **Strengthening** promises more or assum
 ## What belongs in the canon
 
 Only what a person would need to approve: external promises, safety, money, irreversible actions, and the trade-offs between them. Design choices stay in the [blueprint](../layers/), where agents may revise them. One question settles any line: would a person need to approve a change to it?
+
+## Tenets are not clauses
+
+A clause is checked. The system keeps it or it does not. People write one more kind of statement to steer agents, and nothing checks it: the **tenet**.
+
+A tenet says which good thing wins when two conflict. It is written "X over Y".
+
+> A person's review over speed, when money moves.
+
+When an agent meets a choice that no clause settles, it cites a tenet in its recommendation, and a person decides. The answer is then recorded as a decision, which is a clause. The tenet stays what it was: a ranking with no examples and no checks. The chapter on [tenets](../tenets/) covers how to write them.
+
+## Where clauses get written
+
+Work passes seven stations on its way from a request to a running system, as [How work moves](../workflow/) describes. Clauses are written at the second one, [Shape](../shape/). There an agent drafts the clauses for a milestone, which is a batch of related requests, and people settle them with examples. A settled clause joins the canon only at [release](../release/).

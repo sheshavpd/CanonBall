@@ -6,8 +6,9 @@ order: 4
 points:
   - "The central bet is cost. Agents must make this rigor as cheap as ordinary software."
   - "A missing clause defeats every level of verification. Examples and incidents reduce that risk and do not remove it."
+  - "Three bets about how work moves are unmeasured: milestones over tickets, an agent as the reviewer, and observability built for agents."
   - "The method suits logic-heavy, long-lived systems. It suits prototypes and interface-heavy products poorly."
-related: [why, start, delegation]
+related: [why, start, delegation, review]
 ---
 
 ## What is solid
@@ -31,6 +32,12 @@ Assurance cases, arguments and treatments are expensive to write and to keep cur
 Suppose agents only make the writing faster, while people still review every clause change, every critical argument, every adapter and every example. The result then has the cost profile of certified avionics software without the regulation that justifies it.
 
 Only measurement settles this: setup cost apart from recurring cost, a person's minutes per critical case, and how often an argument went stale.
+
+### Milestones over tickets
+
+CanonBall gathers related requests into a milestone before anything is built. The bet is that this beats a stream of single tickets when agents do the building. Promises are settled once for the batch, and the agents work on a coherent whole.
+
+Nobody has measured it. Research on product flow mostly argues the other way, for small batches, because a large batch delays feedback and makes a mistake more expensive. The method answers with the sizing rules, which keep a milestone small, and with [unplanned work](../collect/), which lets small urgent work skip the batching. Whether those answers are enough is a question for a pilot. Compare the time from request to release, and the amount of rework, under both ways of working.
 
 ### Missing clauses
 
@@ -56,9 +63,21 @@ Replaying recorded inputs through the old and new versions is a useful backstop,
 
 Some assumptions cannot be checked from the observations available. Some failures show up too late to matter. For physical systems, most of the effort goes into treatments other than monitoring.
 
+### Observability built for agents
+
+The method asks a team to log every decision with its clause and its inputs, and to give agents tools for reading logs, traces and state. The bet is that this [observability](../observability/) pays for itself, because agents that can look inside the system build, verify and diagnose with less guessing.
+
+That is plausible and unmeasured. The costs are certain: signals to design and keep current, tools to maintain, data to store. Measure how long a diagnosis takes, and how often the first diagnosis was right.
+
 ### Agents that share a blind spot
 
 Splitting the builder from the verifier makes them independent in what they can change. It does not make them independent in how they read. Two agents built on the same model can misread a clause the same way. Whether a different model family for the verifier is worth its cost is an open question.
+
+### An agent as the reviewer
+
+An agent [reviews](../review/) every milestone. A person reviews as well only when the policy calls the change critical. The bet is that the agent catches enough for every other change to go without a person.
+
+It is unmeasured, and the doubt above applies in full. A reviewer can share the builder's misreading of a clause and approve the mistake it was there to catch. The way to find out is for a person to review a sample of the changes the policy let through, and to count what the agent missed.
 
 ## Not yet
 

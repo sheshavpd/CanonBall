@@ -6,10 +6,11 @@ export const site = {
 };
 
 export const parts = [
-  { id: 'idea', title: 'The idea', blurb: 'Why the work changed, and the few things people write to steer it.' },
-  { id: 'structure', title: 'The structure', blurb: 'How a repository is organized so that people and agents always know where they stand.' },
-  { id: 'change', title: 'How a change moves', blurb: 'From one page of intent to a release, and who does what along the way.' },
-  { id: 'verification', title: 'Verification engineering', blurb: 'Where most of the engineering now goes: showing that a clause holds.' },
+  { id: 'start', title: 'Start here', blurb: 'Why the work changed, and the one picture that explains the method.' },
+  { id: 'walkthrough', title: 'One milestone, station by station', blurb: 'A milestone of a refunds service, followed from the first request to the running system.' },
+  { id: 'write', title: 'What people write', blurb: 'The few written things people use to steer agents.' },
+  { id: 'structure', title: 'How it is organized', blurb: 'The layers, the repository, the release, and who does what.' },
+  { id: 'verification', title: 'Verification and observability', blurb: 'Where most of the engineering now goes: showing that a clause holds, and seeing inside the system.' },
   { id: 'building', title: 'Building with it', blurb: 'A recommended architecture, larger systems, a first week, and the open bets.' },
 ] as const;
 
@@ -22,6 +23,12 @@ export const written = [
     what: 'The words the team uses, each defined once.',
     example: 'Delivery: the carrier’s delivered scan for the last item of an order.',
     why: 'So that a person, an agent and a check all mean the same thing by the same word.',
+  },
+  {
+    id: 'tenet', name: 'Tenet', slug: 'tenets',
+    what: 'Which good thing wins when two conflict.',
+    example: 'A person reviews before money moves, when in doubt.',
+    why: 'An agent facing an undecided choice recommends the way the team would, and says which tenet it used.',
   },
   {
     id: 'promise', name: 'Promise', slug: 'primitives',
@@ -56,7 +63,7 @@ export const written = [
   {
     id: 'example', name: 'Example', slug: 'examples',
     what: 'One worked case of a clause: given, when, then.',
-    example: 'Given order 4471 was refunded once, when a second request arrives, then it is rejected.',
+    example: 'Given a $40 refund for order 4471 has been paid, when the same request arrives again, then the customer has been paid $40, once.',
     why: 'Plain sentences hide decisions. People approve examples, and each check is written from one.',
   },
 ] as const;
@@ -80,15 +87,15 @@ export const computed = [
   },
 ] as const;
 
+/** The milestone M2, followed through the repository one station at a time. */
 export const steps = [
-  { n: 'Words', k: '', say: 'Agree on the words first. Agents read vocabulary.md before anything else.', ids: ['vocab'], focus: 'vocab' },
-  { n: 'Propose', k: 'p', say: 'A person agrees to a one-page change proposal that answers "what changes in the system?".', ids: ['index', 'm2', 'change'], focus: 'change' },
-  { n: 'Plan', k: 'a', say: 'Agents write the proposed clauses, the design, and the plan for evidence beside the page. Nothing in spec/ changes yet.', ids: ['m2', 'diff', 'tasks'], focus: 'diff' },
-  { n: 'Build', k: 'a', say: 'One agent writes the code.', ids: ['src'], focus: 'src' },
-  { n: 'Verify', k: 'v', say: 'Verification engineering. A different agent builds the environment, the checks and the injected faults.', ids: ['verify', 'envs', 'checks', 'red', 'faults', 'holdout'], focus: 'verify' },
-  { n: 'Compute status', k: 'v', say: 'A program computes the Verification Record: the status of every clause, with the change applied.', ids: ['record'], focus: 'record' },
-  { n: 'Release', k: 'p', say: 'The proposed files are copied into spec/. The spec now describes the new system, and a CanonBall is published.', ids: ['spec', 'canon', 'dec', 'bp', 'ball'], focus: 'ball' },
-  { n: 'Operate', k: '', say: 'A monitor fires. The incident becomes a small change and follows the same path.', ids: ['monitors', 'inc', 'unpl'], focus: 'inc' },
+  { n: 'Collect', k: 'p', say: 'Three requests gather into one milestone. An agent drafts a one-page proposal, and a person agrees to it and ranks it.', ids: ['notes', 'index', 'm2', 'change'], focus: 'change' },
+  { n: 'Shape', k: 'p', say: 'People and agents settle the decision and its examples, the design and the evidence plan. They are written as whole files beside the proposal. Nothing in spec/ changes yet.', ids: ['agents', 'tenets', 'vocab', 'm2', 'diff', 'tasks'], focus: 'diff' },
+  { n: 'Build', k: 'a', say: 'The builder writes the code, and uses the observability tools to see what it does.', ids: ['src', 'observe'], focus: 'src' },
+  { n: 'Verify', k: 'v', say: 'Verification engineering. A different agent extends the environment, writes the checks, and shows each one failing first.', ids: ['verify', 'envs', 'checks', 'red', 'faults', 'holdout'], focus: 'verify' },
+  { n: 'Review', k: 'a', say: 'An agent reviews the milestone against its clauses and the Verification Record. This one is on the path that moves money, so its owner reviews it too.', ids: ['record', 'policy', 'case'], focus: 'record' },
+  { n: 'Release', k: 'v', say: 'A program copies the proposed files into spec/. The spec now describes the new system, and CanonBall 13 is published.', ids: ['spec', 'canon', 'dec', 'bp', 'ball'], focus: 'ball' },
+  { n: 'Operate', k: '', say: 'A customer is wrongly refused. The on-call agent reads the decision log, and the fix comes back on the express belt.', ids: ['observe', 'monitors', 'inc', 'unpl'], focus: 'inc' },
 ] as const;
 
 export const dial = {

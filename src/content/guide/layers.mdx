@@ -24,22 +24,22 @@ When two layers disagree, the higher one is right by definition, and the change 
 
 ## Canon
 
-The canon is the set of approved [clauses](../primitives/), plus a few pages that give them context: the purpose of the system, who it serves, the [vocabulary](../vocabulary/), and the order of values to apply when two goals conflict.
+The canon is the set of approved [clauses](../primitives/), plus a few pages that give them context: the purpose of the system, who it serves, the [vocabulary](../vocabulary/), and the [tenets](../tenets/), which say which good thing wins when two conflict.
 
 It is written in plain language, and it is the only layer people must read in full. Everything else they read by exception.
 
 ## Blueprint
 
-The blueprint is where the agents' choices are written down, so that they are visible and can be reversed. It holds:
+The blueprint is where design choices are written down, so that they are visible and can be reversed. It holds:
 
 - the architecture and the contracts between internal modules;
 - **derived decisions**, which are design choices an agent made and recorded with its reasons;
 - one **assurance case** per clause, saying how that clause will be shown true;
-- the verification plan and the design of each verification environment.
+- the evidence plan and the design of each verification environment.
 
 The canon leaves gaps on purpose. The blueprint records how they were filled. Agents may revise it as often as they like, on one condition: it must never contradict the canon.
 
-A person can move a derived decision up into the canon at any time. That is how you take a design choice back from the agents. Promote it to a [decision](../primitives/#decision), and it is yours.
+A person can move a derived decision up into the canon at any time. That is how you take a design choice back from the agents. Promote it to a [decision](../primitives/#decision), and it is yours. A team can also keep parts of the design with a person from the start. The chapter on [handing over decisions](../delegation/) covers that choice.
 
 ## Build
 
@@ -47,10 +47,12 @@ The build has two halves.
 
 | Folder | Holds | Written by |
 |---|---|---|
-| `src/` | The code that runs | The builder agent |
-| `verify/` | Everything that produces evidence: environments, checks, proofs, monitors | The verifier agent |
+| `src/` | The code that runs | The builder agent, at the [Build](../build/) station |
+| `verify/` | Everything that produces evidence: environments, checks, proofs, monitors | The verifier agent, at the [Verify](../verify/) station |
 
 The agent that writes `src/` can run what is in `verify/` and cannot change it. The chapter on [people and agents](../people-and-agents/) explains why.
+
+Both agents work by looking inside the running system. Beside the two halves sits `observe/`, which lists what the system emits and holds the tools that read it. The chapter on [observability](../observability/) covers it.
 
 The build is replaceable, with one restriction that surprises people. You may not regenerate it from the spec. The spec leaves many things open, and a fresh generation would decide each of them again, differently. The build changes only as a sequence of checked changes.
 
@@ -58,7 +60,7 @@ The build is replaceable, with one restriction that surprises people. You may no
 
 The Record states, for every clause, whether the evidence supports it. A program computes it from the assurance cases and the results of the checks, according to rules that people own.
 
-Nobody writes "done" or "verified" into the Record, because it is not a file in the repository. It is recomputed on every push and published.
+Nobody writes "done" or "verified" into the Record, because it is not a file in the repository. It is recomputed on every push and published. The [release rule](../release/) is stated in terms of it.
 
 ## Two rules that make it mechanical
 

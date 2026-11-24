@@ -1,0 +1,86 @@
+---
+title: "Observability: letting agents see"
+summary: "An agent can build, verify and operate only what it can see inside, so the system is built to show every decision it makes."
+part: verification
+order: 4
+points:
+  - "An agent that cannot see inside a running system guesses, and patches symptoms."
+  - "Every decision is logged with the clause it applied and the inputs it used, and one trace follows each request."
+  - "One investment serves three stations: Build, Verify and Operate."
+  - "People see the same view, so they can check an agent's evidence and its diagnoses."
+related: [build, verify, operate, environments, architecture]
+---
+
+## An agent that cannot see, guesses
+
+A customer is refused a refund on day 29. The promise says 30 days from delivery. This is incident INC-031, and the on-call agent must find the cause.
+
+Suppose the agent can read only the code and the complaint. The code looks right. So the agent forms a theory about time zones and widens the window by a day. The complaint stops and the cause remains. That is a patched symptom.
+
+A person could get by here. They remember how the orders table was filled, glance at a dashboard, and have a hunch. An agent starts each task cold, with no memory of the system and no hunch. What it cannot read, it does not know.
+
+**Observability** is how much you can tell about what a system is doing inside from what it emits.
+
+## Why it needs more investment now
+
+When people did the debugging, thin logs were enough, because intuition filled the gaps. Teams under-invested and got away with it.
+
+Agents now build, verify and operate, many times a day, and every task starts by looking. Observability stops being an operations extra. It is part of the product, and agents are its first readers.
+
+## What to build
+
+Three rules cover it.
+
+1. **Every decision is logged.** Each time the system decides something, it writes one line with the clause it applied and the inputs it used.
+2. **One trace follows each request.** A trace is the record of one request's path, under one ID, through every adapter. An adapter is the code that touches the outside world.
+3. **Agents have commands.** They read logs, traces, metrics and state, and they replay a request.
+
+Keeping the logic that decides [apart from the code that acts](../architecture/) makes the first rule cheap, because every input is already explicit.
+
+## The observe/ folder
+
+| Path | Holds |
+|---|---|
+| `observe/signals.md` | What the system emits: the decision log, the traces, the metrics |
+| `observe/tools/` | The commands agents run |
+
+For INC-031 the on-call agent runs two of them.
+
+```text
+$ observe decisions --order 5512
+
+REQ-012  refund window
+  result        refused
+  reason        day 31 of 30
+  counted from  dispatch, 2 March
+  delivered     4 March
+
+$ observe replay --order 5512
+REQ-012  refused  day 31 of 30
+```
+
+The decision log says the window was counted from 2 March, and names that date as the dispatch. The delivery came on 4 March. The 30-day window was counted from dispatch, and the vocabulary says delivery. The replay reproduces the refusal in a verification environment, so the repair can be checked against the same request.
+
+## One investment, three uses
+
+| Station | Who looks | What for |
+|---|---|---|
+| [Build](../build/) | Builder | It sees what its code does when it runs, and does not have to infer that from the source. |
+| [Verify](../verify/) | Verifier | The [probes](../environments/) of an environment are these tools. A failed check is explained from the decision log and the trace. |
+| [Operate](../operate/) | On-call agent | Diagnosis, as above. |
+
+The tools are the same in a verification environment and in production.
+
+## The same view for people
+
+People read the same signals through the same tools. When the on-call agent reports "counted from dispatch", it cites the log line and the trace, and the refunds owner can open both. Evidence and diagnoses that a person can check need no trust in the agent that produced them.
+
+## Limits and cost
+
+| Limit | What it means |
+|---|---|
+| **Read-only in production** | The tools read and change nothing. A replay runs in a verification environment. |
+| **No personal data in logs** | Decision inputs can include names, addresses and card numbers. `signals.md` lists the fields that may be logged. Log the order ID and the amount, never the person. |
+| **Signals are part of the interface** | Agents and monitors depend on the field names. A renamed field breaks them, so a change to `signals.md` is reviewed like a change to an interface. |
+
+A new decision that writes no log line, or a new adapter that joins no trace, is unfinished work.

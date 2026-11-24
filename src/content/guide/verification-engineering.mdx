@@ -1,13 +1,14 @@
 ---
 title: Verification engineering
-summary: "When agents write the code, most of the engineering goes into showing that a clause holds."
+summary: "When agents write the code, most of the engineering goes into verification environments, and each one is designed with a person so that its evidence can be trusted."
 part: verification
 order: 1
 points:
   - "Verification engineering is the work of building environments in which a promise can be checked, and can be seen to fail."
+  - "An environment is engineered like product code and designed with a person. People can trust evidence only if they understand how it is produced."
   - "Each clause has an assurance case. It splits the clause into parts and argues that the parts are enough."
   - "The weakest thing a part depends on decides how it is verified."
-related: [environments, evidence, why]
+related: [environments, evidence, observability, shape, verify]
 ---
 
 ## The inversion
@@ -20,7 +21,17 @@ When people wrote the code, the product took most of the effort and testing came
 2. Build [environments](../environments/) in which that evidence can be produced.
 3. Keep the evidence trustworthy as the system changes.
 
-An environment is designed, it has known limits, and it can be wrong. That is why this is engineering and not housekeeping.
+## Engineered, and designed with a person
+
+A verification environment is part of the product. It has a design, known limits and defects of its own, and it is reviewed, versioned and repaired like the code it tests. That is why this is engineering and not housekeeping.
+
+It is also designed with a person. An agent can produce a thousand passing checks in an afternoon. They are worth something only if a person understands how they were produced: what was real, what was faked, which failures were tried, and what the environment could never have shown.
+
+> **People can trust evidence only if they understand how it is produced.** A passing check from an environment nobody can explain is a green light with no meaning.
+
+That person is the **verification lead**, who works with the verifier agent at two stations. At [Shape](../shape/) they agree the evidence plan before any code exists: what will count as evidence for each clause, and which environment will produce it. At [Verify](../verify/) they build the environment, the checks and the injected faults.
+
+Which of the two drafts the design is [the team's choice](../delegation/). Either way, people decide what counts as evidence, read the arguments for critical clauses, and review any change that would weaken an environment.
 
 ## What a test suite does not tell you
 
@@ -80,11 +91,11 @@ Two consequences follow.
 
 A full case for every clause would cost too much. Safety standards scale rigor to criticality, and so does CanonBall.
 
-| Tier | Which clauses | The case | Review |
+| Tier | Which clauses | The case | A person reads the argument |
 |---|---|---|---|
-| 0 | Most. Logic with no side effects | One part, generated | None |
-| 1 | A few parts | A short argument | None |
-| 2 | Safety, money, irreversible actions | A full argument, assumptions with treatments | A person |
+| 0 | Most. Logic with no side effects | One part, generated | No |
+| 1 | A few parts | A short argument | No |
+| 2 | Safety, money, irreversible actions | A full argument, assumptions with treatments | Yes |
 
 Most clauses are tier 0. A person reads only the tier 2 arguments.
 
@@ -101,7 +112,7 @@ Step 6 has a trap. Moving logic to where it can be checked is progress. Relabeli
 
 ## Cases go stale on their own
 
-Every case lists the code its clause depends on, with a content hash of that code. When the code changes, the clause shows as *unknown* until the case is checked again. The chapter on [evidence](../evidence/) describes the mechanism.
+Every case lists the code its clause depends on. When that code changes, the clause shows as *unknown* until the case is checked again. The chapter on [evidence](../evidence/) describes the mechanism.
 
 ## What a proof does not give you
 
@@ -116,6 +127,6 @@ A proof shows that the logic satisfies a property for every input. Four things r
 
 In the Record, "proven" always appears with its property, its model, its bounds, and its assumptions.
 
-## Who does this work
+## Seeing inside
 
-The verifier agent builds the environments and checks. People decide what counts as evidence, review the arguments for critical clauses, and review any change that would weaken an environment.
+Building an environment and explaining a failed check both depend on seeing inside the running system. The chapter on [observability](../observability/) says what to build for that.

@@ -7,7 +7,7 @@ points:
   - "A unit is a separately owned part of a system with its own canon, build and Verification Record."
   - "A parent depends on roles. One file, the assembly, says who fills them."
   - "Evidence composes through contract tests, so nobody verifies the whole system at once."
-related: [canonball, repository, evidence]
+related: [canonball, repository, evidence, workflow]
 ---
 
 ## The problem with scale
@@ -41,6 +41,8 @@ Composition is where roles come in.
 ## A role
 
 A **role** is a contract that a unit defines for something it needs someone else to provide. It is written in the style of design by contract: what the provider guarantees, and what it may assume of its caller.
+
+The guide also speaks of agent roles, such as builder and reviewer. Those belong to the chapter on [people and agents](../people-and-agents/). In this chapter a role is always a contract.
 
 ```markdown
 id: ROLE-payer
@@ -108,7 +110,7 @@ A cooperation among five services with no owner is a classic source of distribut
 
 ## Teams do not wait for each other
 
-A consumer's change can be released while the provider's is still being built. The affected clauses show as *pending* until the provider passes the contract tests.
+Each unit moves its own milestones through the [seven stations](../workflow/) and releases its own CanonBalls. A consumer's milestone can be released while the provider's is still being built. The affected clauses show as *pending* until the provider passes the contract tests.
 
 ## What it costs
 

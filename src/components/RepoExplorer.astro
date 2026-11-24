@@ -6,7 +6,7 @@ const firstOutside = rows.findIndex((r) => r.outside);
 ---
 <div class="bench" id="bench" data-steps={JSON.stringify(steps)}>
   <div class="bench-steps">
-    <span class="lbl">Follow a change</span>
+    <span class="lbl">Follow the milestone</span>
     <button class="play" type="button" data-play>Play</button>
     {steps.map((s, i) => (
       <button type="button" class={s.k} data-step={i} aria-pressed="false"><i></i>{s.n}</button>
@@ -63,7 +63,7 @@ const firstOutside = rows.findIndex((r) => r.outside);
     };
     const paint = () => {
       const lit = step >= 0 ? steps[step]!.ids : [];
-      const released = step >= 6;
+      const released = step >= 5;
       rows.forEach((r) => {
         r.classList.toggle('lit', lit.includes(r.dataset.id!));
         if (r.querySelector('[data-tag]')) r.classList.toggle('dim', !released);
@@ -74,7 +74,7 @@ const firstOutside = rows.findIndex((r) => r.outside);
       if (step >= 0) {
         narr.replaceChildren();
         const b = document.createElement('b');
-        b.textContent = `Step ${step + 1} of ${steps.length}: ${steps[step]!.n}. `;
+        b.textContent = `Station ${step + 1} of ${steps.length}: ${steps[step]!.n}. `;
         narr.append(b, steps[step]!.say);
       }
     };

@@ -1,0 +1,80 @@
+---
+title: "Verify: prove it in an engineered environment"
+summary: "A different agent builds the place where the milestone is tested, with a person who understands how each clause is checked."
+part: walkthrough
+order: 4
+station: verify
+points:
+  - "The verification environment is designed and maintained like product code."
+  - "A person can explain how each clause is checked. Evidence nobody understands is not evidence."
+  - "Each example has one check, and each check is seen to fail before its pass counts."
+  - "The agent that built the code cannot change what judges it."
+related: [verification-engineering, environments, evidence]
+---
+
+## What arrives
+
+Code for the milestone, and the evidence plan agreed at Shape.
+
+This station is where most of the engineering now goes. Writing the rule took the builder an afternoon. Showing that it holds, and that the showing can be trusted, is the larger job. It is called **verification engineering**.
+
+## The environment is a product
+
+The refunds service is tested in a **verification environment** named VE-002: the service itself, a real local database, and a fake payment gateway, started and destroyed by one command.
+
+Nobody improvised it. The verification lead and the verifier agent designed it, and they keep a page that says what it is.
+
+```text
+id: VE-002  payments-sandbox
+boundary   the refunds service, at this commit
+world      real local store; a fake payment gateway
+faults     the gateway can refuse, pay twice, or pay and then time out
+cannot     show real gateway timing
+```
+
+The last line matters as much as the others. Evidence counts only inside what the environment can show.
+
+For this milestone they extend it with the fault agreed at Shape: the gateway pays, and then times out.
+
+The verification lead does not write the environment. The lead has to be able to say, in a sentence, how each clause is checked: "the split-refund rule is tested by making two requests against a real store and reading what the fake gateway paid." If no person can say that, the green result means nothing to anyone. That is why the environment is designed with a person.
+
+## One check per example
+
+Each approved example becomes one check, and the check names the example it encodes.
+
+```python
+@example_of("DEC-031#satisfies/2", "Two $60 refunds on one order")
+def test_second_small_refund_goes_to_review(world):
+    order = world.rig.order(amount_cents=15000).result
+    world.act.api.refund(order, amount_cents=6000)
+    second = world.act.api.refund(order, amount_cents=6000)
+    assert second.state == "in_review"
+    assert world.observe.gateway.payouts(order) == 1
+```
+
+An example with no check is visible, and so is a check with no example.
+
+## Fail first
+
+A check that has never failed proves nothing. It may be asserting something that is always true.
+
+So the verifier breaks the code on purpose, in a scratch copy. One small patch makes the limit apply to each refund instead of the order's total. The check must fail against it.
+
+```text
+verify/faults/limit-per-refund.patch     applied to a scratch copy
+test_second_small_refund_goes_to_review  FAILED   kept in verify/checks/red/
+```
+
+The failing run is kept. Only then is the check run against the real build, and only then does its pass count. [Evidence](../evidence/) covers the rule in full.
+
+## What the builder cannot touch
+
+The builder can run everything in `verify/` and change none of it. The agent that writes the code must not write what judges it. A few scenarios are also kept where neither agent can read them. They report only pass or fail, so they cannot be learned.
+
+## When a check fails on the real build
+
+It goes back to [Build](../build/). No person is involved, because the clause is clear and the code is wrong. The verifier does not hand over a bare failure. It reads the trace and the decision log and says what happened, so the builder is not left guessing.
+
+## What leaves
+
+One line of evidence for every run of every check. From these lines a program computes the Verification Record: the status of every clause with this milestone applied. The milestone and its Record go to [Review](../review/).

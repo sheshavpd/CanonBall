@@ -1,13 +1,14 @@
 ---
 title: Verification environments
-summary: "A verification environment is a designed thing with seven parts, a stated limit, and a measure of whether it can be trusted."
+summary: "A verification environment is designed by a person and an agent together, with seven parts, a stated limit, and a measure of whether it can be trusted."
 part: verification
 order: 2
 points:
   - "Every environment has the same seven parts, whatever it tests."
   - "It states what it cannot show, and evidence counts only inside that."
   - "It must catch faults it was not tuned on, or its evidence is discounted."
-related: [verification-engineering, evidence, architecture]
+  - "The verification lead and the verifier agent design it, and it is kept like product code: reviewed, versioned, and improved after every escaped defect."
+related: [verification-engineering, evidence, observability, verify, architecture]
 ---
 
 ## What an environment is
@@ -20,6 +21,7 @@ Every environment, at every level, has the same seven parts. Hardware verificati
 
 <Figure id="environment" />
 
+One part needs a note. The **probes** are not special test code. They are the system's [observability](../observability/) tools pointed at the test world: the commands that read logs, traces, metrics and state in production read the same things here. A check sees the system through them, and when a check fails, the verifier agent uses them to explain why.
 
 ## It states what it cannot show
 
@@ -104,7 +106,47 @@ A check about a race that never actually opened the window proves nothing, and i
 
 ## Designing one
 
-Collect the parts of assurance cases that need this boundary at this level. Write the declaration first, starting with what the environment cannot show. Then make it start and stop with one command each, expose the verbs, pin the fakes to the real thing's contract tests, and inject faults to measure what gets caught. The chapter on [starting](../start/) walks through a first one.
+An environment is designed before it is built, and a person is part of the design.
+
+### Who designs it
+
+The verification lead and the verifier agent design it together. Which of them leads is [the team's choice](../delegation/). One condition holds in every team.
+
+> **A person can always explain how each clause is checked.** If nobody can, the design is not finished, however many checks pass.
+
+### What they decide
+
+The design answers three questions. Here they are for VE-002.
+
+| Question | For the payments sandbox |
+|---|---|
+| **Which failures must the system survive under test?** | A lost reply. A refusal. The gateway pays and then times out. Each becomes a `perturb` action. |
+| **What is faked, and how faithfully?** | The payment gateway is a fake that passes the real gateway's contract tests. The store is real and local. |
+| **What can the environment not show?** | Real gateway timing, database contention, production request shapes. |
+
+A failure left off the first list is never tried. A fake described too generously supports claims it should not. The lead reads all three answers before any check is written.
+
+### The order of work
+
+1. Collect the parts of assurance cases that need this boundary at this level.
+2. Write the declaration, starting with what the environment cannot show.
+3. List the failures and build the fakes. Pin each fake to the real thing's contract tests.
+4. Make the environment start and stop with one command each, and expose the verbs.
+5. Inject faults and measure what gets caught.
+
+The chapter on [starting](../start/) walks through a first one.
+
+### It is kept like product code
+
+| Like product code, it is | For an environment |
+|---|---|
+| **Reviewed** | The verification lead reads the declaration. Any change that weakens the environment is reviewed by a person, under the rule above. |
+| **Versioned** | The declaration lives in `spec/blueprint/environments/` and the code in `verify/envs/`. A change to either makes the evidence it produced [stale](../evidence/#how-staleness-works). |
+| **Improved after every escaped defect** | An **escaped defect** is one that reached production past every check. Each one asks why the environment did not catch it. |
+
+The answer to that question is a new starting state, a new `perturb` action, or a new line under "What it cannot show".
+
+Take a customer refused a refund on day 29, because the 30-day window was counted from dispatch. The repair adds an example, and the example needs an order whose dispatch date and delivery date differ. The environment gains that starting state and keeps it.
 
 ## What is hard
 

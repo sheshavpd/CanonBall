@@ -1,0 +1,69 @@
+---
+title: "Build: write the code"
+summary: "The builder agent writes the code from the agreed milestone, and uses the observability tools to see what the code does."
+part: walkthrough
+order: 3
+station: build
+points:
+  - "The builder works from the agreed clauses. No clause, no code."
+  - "It looks at what the code did, through logs and traces, instead of guessing."
+  - "It can run the checks and cannot change them."
+  - "Nobody waits. People are already shaping the next milestone."
+related: [architecture, observability, people-and-agents]
+---
+
+## What arrives
+
+An agreed milestone: one decision with three examples, a design, and three named tasks.
+
+The builder starts every task the same way. It reads `AGENTS.md`, `tenets.md` and `vocabulary.md`, then the files in the milestone's `diff/`. Those are its instructions. It does not need the conversation that produced them.
+
+## Named tasks
+
+The planner has sliced the milestone into tasks.
+
+```text
+tasks/
+  01-total-refunded    read everything already refunded on an order
+  02-auto-approve      apply DEC-031 in the decision logic
+  03-decision-log      log each decision with its clause and inputs
+```
+
+A program computes the state of each task from what exists in the repository. Nobody marks a task done.
+
+## Looking instead of guessing
+
+The builder writes the rule, starts the service in the verification environment, and tries the split-refund example by hand. The second $60 refund is approved. It should have gone to review.
+
+The builder does not reread its own code and reason about what might be wrong. It asks the system what happened.
+
+```text
+$ observe decisions --order 7731
+
+DEC-031  auto-approve under $100
+  result          approved
+  refund amount   $60
+  total refunded  $60
+```
+
+The total is wrong. It should read $120. The lookup from the first task counted only the current request. The fix takes a minute, because the cause was read from the log.
+
+This works only because the third task exists. Logging each decision with the clause it applied and the inputs it used is part of the milestone, not something added after an incident. [Observability](../observability/) explains what to build and why agents need it more than people did.
+
+## What the builder cannot do
+
+- **Change a check.** It can run every check the verifier writes. If it thinks one is wrong, it attaches a proposed correction, and the verifier applies or rejects it.
+- **Change the canon.** If a clause cannot be met as written, the milestone goes back to [Shape](../shape/) with a question. A quiet workaround is the one thing the builder must not produce.
+- **Add behavior nobody asked for.** Code that traces to no clause is found at [Review](../review/).
+
+## Where a person comes in
+
+On this team, nowhere. The architect made the one design decision at Shape and reads what the agents decided when the milestone is released.
+
+A team that keeps detailed design with a person would have the architect set the module boundaries and interfaces first. That is a setting, described in [Handing over decisions](../delegation/).
+
+Either way the product manager is not watching this station. They are shaping the store-credit milestone.
+
+## What leaves
+
+Code in `src/` for all three tasks. In practice Build and Verify run side by side from the same plan. The belt shows them in order because nothing counts as built until it is [verified](../verify/).

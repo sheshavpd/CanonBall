@@ -4,6 +4,7 @@ import Guide from '../../../layouts/Guide.astro';
 import Figure from '../../../components/Figure.astro';
 import Dial from '../../../components/Dial.astro';
 import FailFirst from '../../../components/FailFirst.astro';
+import Conveyor from '../../../components/Conveyor.astro';
 import { chapters, type Chapter } from '../../../lib/guide';
 export async function getStaticPaths() {
   return (await chapters()).map((chapter) => ({ params: { slug: chapter.id }, props: { chapter } }));
@@ -12,4 +13,4 @@ interface Props { chapter: Chapter }
 const { chapter } = Astro.props;
 const { Content, headings } = await render(chapter);
 ---
-<Guide chapter={chapter} headings={headings}><Content components={{ Figure, Dial, FailFirst }} /></Guide>
+<Guide chapter={chapter} headings={headings}><Content components={{ Figure, Dial, FailFirst, Conveyor }} /></Guide>

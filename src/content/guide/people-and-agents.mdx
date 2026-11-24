@@ -1,16 +1,19 @@
 ---
 title: People and agents
-summary: "Five agent roles do the work under separate permissions, and people keep the decisions a machine cannot check."
-part: change
-order: 2
+summary: "Seven agent roles do the work under separate permissions, and people keep the decisions a machine cannot check."
+part: structure
+order: 4
 points:
   - "The agent that writes the code never writes the checks that judge it. File permissions enforce this."
-  - "The agreement gate decides meaning and always needs a person. The release gate decides accountability and needs one only when there is risk."
+  - "The agreement gate decides meaning and always needs a person. An agent reviews every change, and a person reviews as well only when the policy says the change is critical."
+  - "People's roles are hats, and one person may wear several."
   - "People own by capability. Agents build across every component."
-related: [change, delegation, evidence]
+related: [workflow, shape, review, delegation]
 ---
 
 ## The dividing line
+
+A change passes [seven stations](../workflow/), and people and agents work together at most of them. This chapter says who they are, what each may write, and where a person must act.
 
 What separates people from agents here is the kind of decision, and seniority has nothing to do with it.
 
@@ -24,17 +27,33 @@ An agent may make any decision that can be verified and reversed, within bounds 
 | **Novelty** | A situation the canon does not cover. |
 | **Trust with other people** | Customers, regulators, partners. |
 
-## Five agent roles
+## Five hats for people
 
-| Role | Does | Writes |
+The people's roles are hats. On a small team one person wears several.
+
+| Hat | Answers for | Works at |
 |---|---|---|
-| **Elicitor** | Drafts clauses and change proposals from conversations. Files questions when something is ambiguous. | Proposed clauses |
-| **Planner** | Writes the design, the assurance case for each clause, and the predicted change in behavior. | The blueprint |
-| **Builder** | Writes the code. | `src/` |
-| **Verifier** | Builds environments, checks, proofs and monitors. | `verify/` |
-| **Holdout keeper** | Maintains scenarios and faults the others never see. | A separate repository |
+| **Product manager** | Which requests form a milestone, the order of the roadmap, and what the system promises | Collect, Shape |
+| **Architect** | The architecture, and the detailed design where the team keeps it | Shape, sometimes Build |
+| **Verification lead** | The evidence plan and the design of each verification environment | Shape, Verify |
+| **Constraint owner** | What is never allowed. Holds a veto. | Shape |
+| **Operator** | The running system, and anything risky or irreversible done to it | Operate |
 
-A sixth participant is a program. The **orchestrator** is a state machine that computes the state of every change and task from what exists in the repository. Agents do the work inside each state. They are allowed to be unreliable, because the thing that decides what state the work is in is deterministic.
+The Review station has no hat of its own. The person who reviews there is the owner of what is at risk. When a change touches the path that moves money, that is the owner of refunds.
+
+## Seven agent roles
+
+| Role | Does | Writes | Works at |
+|---|---|---|---|
+| **Elicitor** | Drafts change proposals and clauses from conversations. Files questions when something is ambiguous. | Proposals and proposed clauses, under `roadmap/` | Collect, Shape |
+| **Planner** | Writes the design, the assurance case for each clause, and the predicted change in behavior. | The blueprint, as proposed files | Shape |
+| **Builder** | Writes the code. | `src/` | Build |
+| **Verifier** | Writes the evidence plan. Builds environments, checks, injected faults and monitors. | `verify/`, and the evidence plan as a proposed file | Shape, Verify |
+| **Reviewer** | Reads everything in a change and rates its blast radius. | Nothing but its review | Review |
+| **On-call agent** | Watches the monitors, diagnoses with the [observability](../observability/) tools, and drafts the incident and the unplanned change that repairs it. | `incidents/`, and a draft under `roadmap/unplanned/` | Operate |
+| **Holdout keeper** | Maintains scenarios and faults the others never see. | A separate repository | Apart from the stations |
+
+One more participant is a program. The **orchestrator** is a state machine that computes the state of every change and task from what exists in the repository. Agents do the work inside each state. They are allowed to be unreliable, because the thing that decides what state the work is in is deterministic.
 
 ## Why the roles are separate
 
@@ -44,11 +63,13 @@ A second agent can easily share the first one's misreading of a clause. So indep
 
 <Figure id="walls" />
 
-Each role runs under its own identity, with write access limited by path. Three things follow.
+Each role runs under its own identity, with write access limited by path. Five things follow.
 
 - **No agent can write the policy.** The rules that decide what counts as evidence belong to people.
 - **Neither building agent can read the held-out scenarios.** They report only pass or fail, so they cannot be learned.
 - **The builder cannot fix a check it dislikes.** It can attach a proposed correction to a task, and the verifier applies or rejects it. A wrong check costs one review, and the separation holds.
+- **The reviewer cannot repair what it finds.** It can read every folder and write to none. A problem goes back to the role that owns the file.
+- **The on-call agent drafts and does not decide.** A person decides anything risky or irreversible.
 
 ## Two gates
 
@@ -56,40 +77,52 @@ A **gate** is a point where a person must act before work proceeds. There are tw
 
 | | Agreement gate | Release gate |
 |---|---|---|
-| **The question** | Is this what we want the system to promise? | Does someone accept the remaining risk of releasing this? |
+| **The question** | Is this what we want the system to promise? | Does someone accept the risk of releasing this? |
 | **Decides** | Meaning | Accountability |
-| **When** | Once per change, on its proposal and examples | At release |
-| **Needs a person** | Always, when a clause is added or altered | Only when there is risk to accept |
+| **Where** | The end of the [Shape](../shape/) station | The [Review](../review/) station |
+| **A person reads** | The change proposal, the proposed clauses and their examples | The Verification Record, the predicted change in behavior against the actual one, and the assurance cases for critical clauses |
+| **Needs a person** | Always, when a clause is added or altered | Only when the policy says the change is critical |
 
-The policy names the cases in which the release gate needs a person:
+An agent reviews every change. The reviewer works at the Review station whatever the change is, and rates its **blast radius**: how much breaks if the change is wrong.
 
-- the release touches a constraint or an irreversible action;
+The release gate is a person reviewing as well. The policy names the changes that are critical enough to need it:
+
+- the change touches a constraint or an irreversible action;
+- it touches a [tier 2 clause](../verification-engineering/#tiers-how-much-rigor), which means safety or money;
+- it changes adapter code, the code that touches the outside world;
 - the status of some clause got worse;
-- the remaining risk changed;
-- the actual change in behavior differs from what was predicted, and the difference is not a bug.
+- the actual change in behavior differs from the predicted one.
 
-Otherwise the release is automatic. A refactoring that changes no clause and no behavior needs nobody.
+A change whose blast radius the reviewer rates as large also goes to a person.
+
+Otherwise the agent's review is the only one. A refactoring that changes no clause and no behavior needs nobody. After Review, a program applies the [release rule](../release/), and no person acts there.
 
 ## Every point where a person acts
 
 | When | What a person does | In what form |
 |---|---|---|
-| Once, at the start | Owns the purpose, a capability, or the constraints | A page |
-| Per change | Agrees to the proposal and approves its examples | A page and some examples |
-| Per change, for critical clauses | Reviews the argument in the assurance case | A short argument |
-| Daily | Answers questions, mostly while a proposal is being drafted | A question with options |
-| Per release, when the policy asks | Accepts it | One line |
-| On an incident | Approves the new example and the proposed invariant | An example |
-| When adapter code changes | Reviews the code | A diff |
+| Once, at the start | Owns the purpose, a capability, or the constraints. Writes the [tenets](../tenets/). | A page |
+| At Collect | Confirms which requests form the next milestone | A one-page proposal |
+| At Shape, daily | Answers questions while clauses are drafted | A question with options |
+| At Shape and Verify | Designs the verification environment with the verifier, and reviews any change that would weaken one | A short declaration |
+| At the agreement gate | Agrees to the proposal and approves its examples | A page and some examples |
+| At Build, where the team keeps detailed design | Decides the design choices the team has kept | A question with options |
+| At the release gate, when the policy asks | Reads the Record, the predicted change in behavior against the actual one, and the cases for critical clauses. Accepts the change or sends it back. | A short argument and one line |
+| At the release gate, when adapter code changed | Reviews the code | A diff |
+| On an incident | Decides anything risky or irreversible. Approves the new example and the proposed invariant. | An example |
 | Weekly | Reads the risk view and ranks the roadmap | A grid and a list |
 
 If a person is handed a test file or a log to read, the system has failed. The only code a person is asked to read is the code that touches the outside world: adapters and permission checks.
+
+## What people do meanwhile
+
+People do not wait while agents build. While milestone M2 is at the Build and Verify stations, the product manager is collecting and shaping the next one: agreeing to proposals, answering questions, and ranking `roadmap/index.md` by cost of delay. A person's attention is the scarce resource, so work in progress is limited by it.
 
 ## Ownership
 
 People own by **capability**: a named thing the system provides to someone. Components have no owners. A capability has exactly one owner, the person who knows its consumer best. Most people own more than one.
 
-On a team of five, one person owns the purpose, one owns the constraints and holds the veto, and everyone owns a capability or two. One or two are also named reviewers of critical cases. They are chosen for skill in verification, and they never review a case for a capability they own.
+On a team of five, one person owns the purpose and wears the product manager's hat. One owns the constraints and holds the veto. One or two wear the architect's and the verification lead's hats. Everyone owns a capability or two.
 
 Ownership is a right to approve. It does not fence off the work. Agents build across every component.
 

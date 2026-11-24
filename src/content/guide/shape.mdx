@@ -1,0 +1,99 @@
+---
+title: "Shape: settle what the milestone promises"
+summary: "People and agents settle the milestone's promises, decisions and invariants, how it will be built and how it will be proven, before any code exists."
+part: walkthrough
+order: 2
+station: shape
+points:
+  - "The agent brings questions, examples and a recommendation. The person makes the decision."
+  - "Promises, decisions and invariants are recorded as clause files with examples, beside the proposal."
+  - "The plan for evidence is agreed before the code is written."
+  - "The station ends at the agreement gate: people approve the examples."
+related: [primitives, tenets, examples, delegation]
+---
+
+## What arrives
+
+A one-page proposal: refunds under $100 are approved automatically. It reads clearly. It hides two decisions.
+
+## A word nobody defined
+
+Before drafting anything, the elicitor checks every noun in the proposal against `vocabulary.md`. One is missing. Under $100 of what: the order, or the refund?
+
+It asks the product manager, with the two readings side by side. The answer goes into the vocabulary.
+
+```text
+Refund amount   The money returned by one refund. Not the order total.
+```
+
+An agent that guessed would have built one of the two readings, and nobody would have known which until a customer complained.
+
+## An example exposes a choice
+
+The elicitor writes examples for the proposed decision. The third one has no obvious answer.
+
+> Given an order of $150, when the customer asks for $60 back, and later for another $60, then what?
+
+Each refund is under $100. Together they are not. The proposal does not say.
+
+The agent does not pick. It recommends, and says why. The team's `tenets.md` has a line for this: *a person reviews before money moves, when in doubt.* So the recommendation is that the limit counts everything refunded on the order. The product manager agrees.
+
+The decision is recorded as a clause, with the example that fixes its meaning.
+
+```markdown
+id: DEC-031
+kind: decision
+traces: [REQ-012]
+---
+Refunds under $100 are approved automatically.
+
+Satisfies:
+- Delivered order of $40: approved without review.
+- Two $60 refunds on one order: the second goes to review.
+Violates:
+- Order of $250: approved without review.
+```
+
+The risk team's request is now an example that a check will enforce.
+
+## How it will be built
+
+Who leads the design is each team's choice. This team's architect keeps the architecture and leaves detailed design to the agents.
+
+The architect makes one call: the new rule belongs in the decision logic, and the code that pays out is not touched. The planner agent writes the rest of the design, and a **predicted change in behavior**:
+
+> Refunds move from review to automatic approval while the total refunded on the order stays under $100. Nothing else changes.
+
+Later, a program compares this prediction with what actually changed.
+
+## How it will be proven
+
+The plan for evidence is written now, before the code. Scientists register a hypothesis before an experiment for the same reason: a test written after the code can be shaped to fit it.
+
+The verification lead and the verifier agent decide what the test must survive. The existing environment, VE-002, has a fake payment gateway. They add one fault to it: the gateway pays, and then times out. An automatic approval that retries carelessly would pay twice, and INV-004 forbids that.
+
+## The agreement gate
+
+A **gate** is a point where a person must act before work moves on. This one closes the station.
+
+| Who | Approves |
+|---|---|
+| Product manager | The examples for DEC-031 |
+| Constraint owner | That ENV-003, the payout limit, is untouched |
+| Verification lead | The argument for INV-004, because it concerns money |
+
+People approve examples. They do not approve code, and there is none yet.
+
+## What leaves
+
+The milestone folder now holds whole files in their final form.
+
+```text
+roadmap/M2-faster-small-refunds/
+  change.md            status: agreed
+  diff/canon/          DEC-031, the new vocabulary entry
+  diff/blueprint/      the design, the evidence plan
+  tasks/               three named tasks
+```
+
+Nothing in `spec/` has changed. These files become the specification only at [Release](../release/). First the milestone is [built](../build/).

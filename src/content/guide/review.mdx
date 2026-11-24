@@ -1,0 +1,79 @@
+---
+title: "Review: an agent every time, a person when it matters"
+summary: "An agent reviews every milestone, and a person reviews as well when the change is critical or its blast radius is large."
+part: walkthrough
+order: 5
+station: review
+points:
+  - "Agent review is always on, for milestones and for express work."
+  - "The reviewer checks the change against its clauses. It does not check style."
+  - "A person reviews as well when the policy says the change is critical. That is the release gate."
+  - "The person reads the Verification Record and the behavior that changed, not the whole diff."
+related: [people-and-agents, delegation, evidence]
+---
+
+## What arrives
+
+A milestone that is built and verified, and the Verification Record computed for it.
+
+Two reviews can happen here. The first always does.
+
+## The agent review
+
+The **reviewer** is an agent with its own identity. It can read everything and write nothing but its review. It did not build the code and did not write the checks.
+
+It reviews every milestone and every piece of express work. It asks five questions.
+
+1. **Does every behavior trace to a clause?** Code that does something no clause asked for is a finding.
+2. **Does the actual change in behavior match the predicted one?** A program computes the difference. The reviewer explains each mismatch as a bug, a gap in the canon, or a wrong prediction.
+3. **Are the design choices written down?** A choice the agents made silently cannot be revisited.
+4. **Is the evidence honest?** Each check encodes its example, each has a recorded failure, and nothing in `verify/` was weakened.
+5. **How large is the blast radius?** What can break if this is wrong, for whom, and can it be undone?
+
+## What it found
+
+The predicted change was: small refunds move from review to automatic approval, and nothing else changes.
+
+The actual change has a second line. The builder raised the number of payout retries from three to five while it was in that file. No clause asks for it, and retries are exactly where a refund gets paid twice.
+
+The reviewer sends it back. The builder removes it. If someone wants five retries, that is a request, and it goes to [Collect](../collect/).
+
+## When a person reviews too
+
+The fifth question decides whether a person is needed. The team's policy lists the cases.
+
+| A person reviews when the change | Why |
+|---|---|
+| touches a constraint or an action that cannot be undone | Someone must answer for it |
+| alters a clause about safety or money | The cost of being wrong is high |
+| changes code that touches the outside world | It is the code evidence covers least |
+| makes the status of any clause worse | Something was traded away |
+| behaves differently from what was predicted, and it is not a bug | Nobody agreed to the difference |
+
+This person-review is the **release gate**. When none of the cases apply, the milestone goes straight to release on the agent review alone.
+
+M2 changes which refunds are paid without a person looking. That is money, so the owner of refunds reviews it.
+
+## What the person reads
+
+Not the diff. The owner reads three things, and it takes about ten minutes.
+
+- **The Verification Record.** DEC-031 is accepted: three checks, each seen to fail. No other clause got worse.
+- **Predicted against actual behavior.** After the fix, they match.
+- **The argument for INV-004**, since money is involved: why a refund still cannot be paid twice when the gateway times out.
+
+The owner accepts. That acceptance is recorded on the milestone, and it is what the gate records: a named person took responsibility for the remaining risk.
+
+The one kind of code a person is asked to read is code that touches the outside world. M2 changed none.
+
+## Why both
+
+The reviewer reads everything, every time, and does not get tired. It can also share the builder's misreading of a clause, because both are models reading the same words.
+
+A person reads little and reads slowly, but brings judgment and can be held to account. So the agent covers everything, and people are spent where the consequences are.
+
+How often a person looks is a setting each team moves on track record. [Handing over decisions](../delegation/) describes it. The agent review does not move.
+
+## What leaves
+
+A reviewed milestone, accepted by its owner. It is ready for [Release](../release/).

@@ -1,13 +1,13 @@
 ---
 title: Writing got cheap. Knowing did not.
 summary: "An agent can write a change in minutes, but finding out what the change does takes as long as it ever did."
-part: idea
+part: start
 order: 1
 points:
   - "The scarce skill is no longer producing a change. It is knowing what a change does."
   - "A specification helps an agent build the right thing. It does not tell you how well that thing was checked."
   - "Most of the engineering on an agent-built system goes into verification."
-related: [primitives, verification-engineering, open-bets]
+related: [workflow, primitives, verification-engineering, open-bets]
 ---
 
 ## A familiar afternoon
@@ -51,9 +51,15 @@ If the bet holds, the shape of the work changes.
 |---|---|---|
 | Most effort goes to | Writing the product | Showing that the product keeps its promises |
 | People review | Code, one change at a time | Promises and worked examples |
-| "Done" means | Merged, with a green build | Every clause has evidence, and the weakest one is named |
+| "Done" means | Merged, with a green build | Every promise has evidence, and the weakest one is named |
 | An incident produces | A fix | A fix and a permanent example |
 
-The work in the right-hand column has a name in this guide: **verification engineering**. It means building places where a promise can be shown to hold, and shown to fail when it should. On an agent-built system, most of the engineering goes there.
+The work in the right-hand column has a name in this guide: [verification engineering](../verification-engineering/). It means building places where a promise can be shown to hold, and shown to fail when it should. On an agent-built system, most of the engineering goes there.
 
 > **A claim to resist.** Current models can do most of this labor. That does not make the result trustworthy. Trust comes from running the method on a real system and measuring what gets through.
+
+## Three ideas to carry forward
+
+The rest of the guide rests on three ideas. Work moves in **milestones**, which are batches of related requests, and not in single tickets. **Verification environments** are engineered like any other part of the product, and **observability**, the means of looking inside a running system, is built for the agents.
+
+The next chapter, [How work moves](../workflow/), puts all three on one picture: a conveyor that carries a milestone through seven stations, from the first request to the running system.

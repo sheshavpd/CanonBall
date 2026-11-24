@@ -6,15 +6,16 @@ order: 1
 points:
   - "This is a recommendation. Everything else in the method works on any codebase."
   - "Logic with no side effects can be tested exhaustively, replayed exactly, and rewritten safely."
+  - "The same split makes observability cheap: each decision can be logged with the clause it applied and the inputs it used."
   - "People stop reading the logic and keep reading the thin layer that touches the outside world."
-related: [environments, verification-engineering, delegation]
+related: [build, observability, environments, delegation]
 ---
 
 ## Agents need structure more than people do
 
 A person can hold a messy system in their head, because they were there when it got messy. An agent starts each task cold. What it can do well depends on how much of the system it can reason about from the files in front of it.
 
-Good architecture has always made software easier to change. With agents it also decides how cheaply you can find out whether a change is right.
+Good architecture has always made software easier to change. With agents it also decides how cheaply you can find out whether a change is right, and what the running system did.
 
 ## A recommendation, not a requirement
 
@@ -32,12 +33,10 @@ Pull the rule out.
 
 ```python
 # Decides. No database, no network, no clock.
-def decide_refund(order, already_refunded, amount_cents, today):
-    if already_refunded:
-        return Reject("already refunded")
+def decide_refund(order, refunded_cents, amount_cents, today):
     if (today - order.delivered_on).days > 30:
         return Reject("outside the refund window")
-    if amount_cents < 100_00:
+    if refunded_cents + amount_cents < 100_00:
         return Approve(payout=amount_cents)
     return SendToReview()
 ```
@@ -47,14 +46,16 @@ def decide_refund(order, already_refunded, amount_cents, today):
 def handle_refund_request(request):
     order = orders.load(request.order_id)
     decision = decide_refund(
-        order, refunds.exists(order.id), request.amount_cents, clock.today()
+        order, refunds.total_for(order.id), request.amount_cents, clock.today()
     )
     if isinstance(decision, Approve):
         gateway.pay_out(order.id, decision.payout)
     ...
 ```
 
-The first function contains every rule about refunds and touches nothing. The second contains no rules and touches everything.
+The first function contains every rule about who gets a refund and touches nothing. The second contains no rules and touches everything.
+
+The walkthrough uses this split at the [Build station](../build/). The rule for small refunds goes into the first function, and the code that pays out is left alone.
 
 ## Two terms
 
@@ -88,16 +89,33 @@ The last row matters more than it looks. Every [assurance case](../verification-
 
 Adapters help in a different way. Each one is a narrow point through which an effect must pass. That makes it the natural place to enforce a [constraint](../primitives/#constraint), add an extra check, or require a person's approval before something irreversible happens.
 
+## Why it makes observability cheap
+
+Agents build, verify and operate by looking inside the system. The same split keeps that affordable.
+
+Decision logic receives everything it uses as an argument, so nothing it relied on is hidden. Have each decision also name the clause it applied.
+
+```python
+    if (today - order.delivered_on).days > 30:
+        return Reject("outside the refund window", clause="REQ-012")
+```
+
+The handler already holds the inputs and now holds the clause. It writes one log line per decision: the clause, the inputs, the outcome. The decision logic itself still performs no output.
+
+Suppose a customer is refused a refund on day 29. An agent reads the line for that order and sees which clause refused it and which dates the decision was given. It can then replay the decision from the same inputs.
+
+In code that decides and acts at once, the inputs are spread across queries and calls, and every handler has to assemble that line by hand. The chapter on [observability](../observability/) covers what a system emits and the tools agents use to read it.
+
 ## What people still control
 
-Agents write the design and may revise it. People keep five levers on it.
+Who leads the architecture is a team's choice. An architect may write it, or agents may write it and revise it. The chapter on [handing over decisions](../delegation/) covers how a team sets that. Wherever it is set, people keep five levers on the design.
 
 | Lever | What it gives a person |
 |---|---|
 | **The interface** | What consumers depend on is a promise, and changing it needs approval. |
 | **The constraints** | They have their own owner. |
 | **How the product is divided** | Capabilities are split by whom they serve. This is decided early and sets how much work can run in parallel. |
-| **The edges** | A small, fixed menu of deployment choices, and review of adapter code. |
+| **The edges** | A small, fixed menu of deployment choices. A person [reviews](../review/) every change to adapter code. |
 | **Anything they choose** | Any design choice can be promoted to a [decision](../primitives/#decision) in the canon. |
 
 ## Where it does not fit

@@ -10,7 +10,7 @@
   --line: #e1e4ea; --line-2: #c9ced8;
   --people: #a8461a; --people-soft: #faede5; --agents: #2253c4; --agents-soft: #e6edfb; --verify: #156f46; --verify-soft: #e1f2e8;
   --mark-people: #d2622b; --mark-agents: #2f63dd; --mark-verify: #1f8f5c;
-  --hl: #fff4cc; --bad: #b8332a;
+  --hl: #fff4cc; --bad: #b8332a; --warn: #c98a00;
   --display: 'Manrope Variable', 'Manrope', 'Helvetica Neue', Arial, sans-serif;
   --sans: 'Figtree Variable', 'Figtree', 'Helvetica Neue', Arial, sans-serif;
   --mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -23,7 +23,7 @@
     --line: #272c36; --line-2: #3a404c;
     --people: #ffa173; --people-soft: #2d1c13; --agents: #90acff; --agents-soft: #172240; --verify: #70d299; --verify-soft: #12271b;
     --mark-people: #ff9a66; --mark-agents: #7fa0ff; --mark-verify: #5fcf90;
-    --hl: #3a3212; --bad: #ff857a; color-scheme: dark;
+    --hl: #3a3212; --bad: #ff857a; --warn: #f2c14e; color-scheme: dark;
   }
 }
 :root[data-theme='dark'] {
@@ -31,7 +31,7 @@
   --line: #272c36; --line-2: #3a404c;
   --people: #ffa173; --people-soft: #2d1c13; --agents: #90acff; --agents-soft: #172240; --verify: #70d299; --verify-soft: #12271b;
   --mark-people: #ff9a66; --mark-agents: #7fa0ff; --mark-verify: #5fcf90;
-  --hl: #3a3212; --bad: #ff857a; color-scheme: dark;
+  --hl: #3a3212; --bad: #ff857a; --warn: #f2c14e; color-scheme: dark;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -50,6 +50,12 @@ h1, h2, h3, h4, .wordmark, .tagline, .verdict b, .pager b { font-family: var(--d
 
 .pill { display: inline-block; font-size: 12.5px; font-weight: 600; line-height: 1.5; padding: 2px 10px; border-radius: 999px; white-space: nowrap; background: var(--soft); color: var(--ink-2); }
 .pill.p { background: var(--people-soft); color: var(--people); } .pill.a { background: var(--agents-soft); color: var(--agents); } .pill.v { background: var(--verify-soft); color: var(--verify); }
+
+/* Who does the work: a person, an agent or a program. Used on the conveyor and in the guide. */
+.who { --who: var(--ink-2); display: inline-flex; align-items: center; gap: 5px; font: 600 12.5px/1.3 var(--sans); padding: 3px 9px 3px 6px; border-radius: 999px; background: var(--who); color: var(--card); white-space: nowrap; }
+.who.p { --who: var(--people); } .who.a { --who: var(--agents); } .who.v { --who: var(--verify); }
+.who svg { width: 13px; height: 13px; flex: none; fill: currentColor; }
+.who svg .cut { fill: var(--who); } .who svg .cutline { fill: none; stroke: var(--who); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
 
 .btn { display: inline-flex; align-items: center; gap: 8px; background: var(--ink); color: var(--bg); border: 0; border-radius: 10px; padding: 11px 18px; font-size: 16px; font-weight: 600; text-decoration: none; cursor: pointer; }
 .btn:hover { opacity: 0.88; }
@@ -367,7 +373,7 @@ h2.t { font-size: clamp(28px, 3.6vw, 46px); line-height: 1.06; font-weight: 800;
 .f-col li { font-family: var(--mono); font-size: 12.5px; background: var(--card); border: 1px solid var(--line); border-radius: 7px; padding: 3px 8px; }
 .f-col li.new { background: var(--agents-soft); border-color: var(--agents); color: var(--agents); }
 .f-ball { display: inline-flex; align-items: center; gap: 8px; margin-top: 12px; font-weight: 600; font-size: 14px; } .f-ball .mark { width: 22px; height: 22px; }
-.f-walls { display: grid; grid-template-columns: minmax(104px, 1.3fr) repeat(5, minmax(72px, 1fr)); gap: 4px; min-width: 520px; }
+.f-walls { display: grid; grid-template-columns: minmax(104px, 1.3fr) repeat(7, minmax(70px, 1fr)); gap: 4px; min-width: 660px; }
 .f-walls b { font-size: 12.5px; text-align: center; padding-bottom: 4px; } .f-walls code { align-self: center; }
 .f-walls em { font-style: normal; font-size: 12.5px; text-align: center; border-radius: 7px; padding: 6px 2px; background: var(--soft); color: var(--ink-3); min-height: 30px; }
 .f-walls em.p { background: var(--people-soft); color: var(--people); font-weight: 600; } .f-walls em.a { background: var(--agents-soft); color: var(--agents); font-weight: 600; }
@@ -416,3 +422,21 @@ h2.t { font-size: clamp(28px, 3.6vw, 46px); line-height: 1.06; font-weight: 800;
   .f-case .parts::before { display: none; } .k-row { flex-direction: column; align-items: stretch; } .k-arrow { text-align: center; }
   .f-layers .stack div { grid-template-columns: 1fr; gap: 2px; }
 }
+
+/* ---------- observability sample ---------- */
+.obs { margin: 0; background: var(--soft); border-radius: 10px; padding: 14px 16px; font-size: 13.5px; line-height: 1.55; overflow-x: auto; }
+.obsnote { margin: 12px 0 0; font-size: 15.5px; color: var(--ink-2); }
+
+/* ---------- station card at the top of a walkthrough chapter ---------- */
+.stations { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; padding: 0; list-style: none; font: 600 13.5px var(--sans); }
+.stations a { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; padding: 5px 11px; border-radius: 999px; background: var(--soft); color: var(--ink-2); }
+.stations a:hover { color: var(--ink); }
+.stations a[aria-current='page'] { background: var(--ink); color: var(--bg); }
+.stations a i { font: 500 11px var(--mono); font-style: normal; opacity: 0.7; }
+.station { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 16px 18px; margin: 22px 0 6px; display: grid; gap: 12px; }
+.station dl { margin: 0; display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 9px 14px; font-size: 15.5px; align-items: baseline; }
+.station dt { font: 500 11.5px var(--mono); letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-3); }
+.station dd { margin: 0; display: flex; flex-wrap: wrap; gap: 5px 6px; min-width: 0; color: var(--ink-2); }
+.station dd code { font-size: 13px; background: var(--soft); border-radius: 6px; padding: 2px 7px; overflow-wrap: anywhere; }
+.station .gate { font-size: 15px; color: var(--ink-2); border-top: 1px solid var(--line); padding-top: 11px; margin: 0; }
+.station .gate b { color: var(--ink); }

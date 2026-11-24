@@ -1,0 +1,74 @@
+---
+title: How work moves
+summary: "Requests gather into a milestone, the milestone passes seven stations where people and agents work together, and it leaves as a CanonBall."
+part: start
+order: 2
+points:
+  - "Work moves in milestones. A milestone passes seven stations: Collect, Shape, Build, Verify, Review, Release, Operate."
+  - "A person and an agent work together at most stations. People decide what is promised. Agents do the building and the proving."
+  - "Small urgent work takes an express belt through the same stations."
+  - "Three things set this apart from a conventional lifecycle: milestones, engineered verification environments, and observability built for agents."
+related: [collect, people-and-agents, repository]
+---
+
+## The picture
+
+<Conveyor compact />
+
+Read it left to right. Requests arrive as cards. Related cards drop into a tray, and the tray is a **milestone**. The milestone rides the belt through seven **stations**. At the sixth it becomes a ball: a **CanonBall**, which is one release of the system. At the seventh it is running.
+
+## Seven stations
+
+| Station | What happens | Who |
+|---|---|---|
+| [Collect](../collect/) | Requests gather into a milestone. A one-page proposal says what it will change. | Product manager, elicitor agent |
+| [Shape](../shape/) | The promises, decisions and invariants are settled and written down, with the design and the plan for evidence. | Product manager, architect, verification lead, planner agent |
+| [Build](../build/) | The code is written. | Builder agent |
+| [Verify](../verify/) | The verification environment and the checks are built, and each check is seen to fail before its pass counts. | Verifier agent, verification lead |
+| [Review](../review/) | An agent reviews every milestone. A person reviews as well when the change is critical. | Reviewer agent, and the owner of what is at risk |
+| [Release](../release/) | The proposed files become the specification, and a CanonBall is published. | A program |
+| [Operate](../operate/) | The system runs. What breaks comes back as work. | On-call agent, operator |
+
+Each of the next seven chapters takes one station.
+
+## Two pressures
+
+Work enters the belt from two directions.
+
+**Forward pressure** is people asking for something new: a customer need, a number finance wants to move, an idea.
+
+**Back pressure** is the running system asking for upkeep: an incident, a bug, a reliability problem. A system that is not maintained stops keeping its promises, so this work is not optional and cannot be scheduled.
+
+Both ride the same stations. Planned work rides the main belt as a milestone. Urgent small work rides the **express belt** underneath: it skips the wait for a batch, and none of the stations.
+
+## Three things that are new
+
+A conventional software lifecycle has stages much like these. Three things here are different, and each exists because agents now do the building.
+
+1. **Work moves in milestones, not tickets.** An agent can build a ticket in minutes, so tickets are no longer the unit that needs managing. People's attention is. Gathering requests into a milestone lets people settle its promises, decisions and invariants once, and gives agents a coherent whole to build. [Collect](../collect/) explains how a milestone is sized and when small work may skip the batch.
+2. **Verification environments are engineered.** The place where a promise is tested is designed with a person, like any other part of the product. People can trust evidence only if they understand how it is produced. [Verify](../verify/) shows one being extended.
+3. **Observability is built for the agents.** Agents build, verify and operate by looking inside the system. Without logs, traces and state they can read, they guess. [Observability](../observability/) says what to build.
+
+## People and agents at the same station
+
+This is not a relay in which people write a specification, hand it over and wait. At each station a person and an agent bring different things to the same piece of work.
+
+| Station | The person brings | The agent brings |
+|---|---|---|
+| Collect | What matters most, and in what order | Every request, gathered and drafted into one page |
+| Shape | The decisions | The questions, the examples and a recommendation for each choice |
+| Verify | What would convince them | The environment, the checks and the injected faults |
+| Review | Accountability for the risk | A reading of everything that changed |
+| Operate | The call on anything risky | The diagnosis |
+
+Nobody waits at the end of the belt. While agents build this milestone, people shape the next one.
+
+## The example
+
+The seven station chapters follow one milestone of a refunds service for an online shop. When it starts, the service is at CanonBall 12 and keeps three clauses:
+
+- **REQ-012.** A customer can request a refund within 30 days of delivery.
+- **INV-004.** A refund is never issued twice for the same order.
+- **ENV-003.** No payout above $10,000 without review.
+
+The first station is [Collect](../collect/).

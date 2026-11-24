@@ -23,6 +23,8 @@ A method that invents a new word for every old idea makes its readers learn twic
 | Decision | Architecture decision record | Michael Nygard, "Documenting Architecture Decisions" (2011) |
 | Constraint | Safety constraint; operating envelope | Nancy Leveson, *Engineering a Safer World* (2011) |
 | Vocabulary | Ubiquitous language | Eric Evans, *Domain-Driven Design* (2003) |
+| Tenet | Tenet | Amazon's practice of having each team write down its tenets |
+| A tenet written "X over Y" | Value statements of the form "X over Y" | "Manifesto for Agile Software Development" (2001) |
 | Example | Key example; scenario | Gojko Adzic, *Specification by Example* (2011); Dan North, "Introducing BDD" (2006) |
 | Sentence shapes for promises | EARS | Alistair Mavin and colleagues, "Easy Approach to Requirements Syntax" (2009) |
 | Must, should, may | Requirement levels | Scott Bradner, RFC 2119 (1997) |
@@ -55,6 +57,13 @@ A method that invents a new word for every old idea makes its readers learn twic
 | Content hash | Content-addressed build inputs | Build systems such as Bazel and Nix |
 | Incident, and what follows it | Postmortem | Betsy Beyer and colleagues, *Site Reliability Engineering* (2016) |
 
+## Observing
+
+| In this guide | Established term | Source |
+|---|---|---|
+| Observability | Observability | Control theory, where a system is observable if its internal state can be worked out from its outputs, a notion due to Rudolf Kálmán. For software: Charity Majors, Liz Fong-Jones and George Miranda, *Observability Engineering* (2022) |
+| Monitor | Monitoring | Beyer and colleagues, as above |
+
 ## Composing
 
 | In this guide | Established term | Source |
@@ -74,7 +83,13 @@ A method that invents a new word for every old idea makes its readers learn twic
 | Shadow mode | Shadow deployment | Common practice for releases |
 | Limit work in progress | WIP limits | David Anderson, *Kanban* (2010) |
 | Rank by cost of delay | Cost of delay | Donald Reinertsen, *The Principles of Product Development Flow* (2009) |
+| A milestone as a batch of requests | Batch size | Reinertsen, as above |
+| Work moving through stations | Flow; pull | Reinertsen, as above. Pull comes from the Toyota production system, in which each step takes from the step before only what it needs, when it needs it: Taiichi Ohno, *Toyota Production System* |
+| Blast radius | Blast radius | Common usage in reliability engineering |
+| `AGENTS.md` | AGENTS.md | An open convention for a file of instructions to coding agents, kept in the repository |
 | How work moves is part of the product | Work system | Steven Alter, "Work System Theory" (2013) |
+
+Reinertsen argues for small batches. A milestone is a batch all the same. The chapter on [open bets](../open-bets/) says what that choice rests on.
 
 ## CanonBall's own names
 
@@ -85,9 +100,11 @@ A few names have no established equivalent, because the thing they name is speci
 | **Canon** | The set of approved clauses |
 | **Clause** | One statement in the canon, of any of the five kinds |
 | **Blueprint** | The agents' design for keeping the canon |
-| **Verification Record** | The computed status of every clause. The guide shortens it to the Verification Record after first use. |
+| **Verification Record** | The computed status of every clause. The guide shortens it to the Record after first use. |
 | **CanonBall** | One release: canon, build and Record together. Also the method. |
 | **Verification engineering** | The discipline of building environments in which a clause can be checked |
+| **Station** | One of the seven places a milestone passes, from Collect to Operate |
+| **Express belt** | The path unplanned work takes: every station, without waiting for a milestone |
 
 ## A note on reading further
 

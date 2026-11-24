@@ -1,0 +1,87 @@
+---
+title: "Collect: requests gather into a milestone"
+summary: "Requests are gathered into a milestone before anyone builds, so that their promises can be decided together."
+part: walkthrough
+order: 1
+station: collect
+points:
+  - "A request is a card. Related cards gather into one milestone, described by a one-page proposal."
+  - "A milestone delivers something a customer can use, reads in a minute, and changes at least one clause."
+  - "Urgent small work skips the batch and takes the express belt. It skips none of the stations."
+related: [workflow, shape, repository]
+---
+
+## What arrives
+
+Three requests reach the refunds team in the same week.
+
+```text
+roadmap/notes/
+  support   small refunds wait two days in review
+  finance   most review time goes to refunds under $100
+  risk      split refunds must not slip past review
+```
+
+A **request** is anything someone asks of the system before it has been shaped. The elicitor agent files each one as it arrives.
+
+## Why not build each one
+
+An agent could build the first request in an afternoon. That is the problem. The support request would have shipped before the risk request arrived, and automatic approval would have gone out with nobody having decided what a split refund is.
+
+Three things are gained by gathering requests first.
+
+- **Decisions are made once.** All three cards turn on one question: which refunds may skip review? Answered once, it covers all three.
+- **Agents get a whole.** A builder that sees the promise, the decision and the invariant together builds one coherent thing. A builder that sees one ticket builds that ticket.
+- **A release means something.** A person can accept a milestone by reading what it promises. Nobody can read forty tickets.
+
+The scarce resource is people's attention. Batching spends it once per milestone.
+
+## What makes a milestone
+
+1. **It delivers something a customer can use, end to end.** It crosses every component the change needs. Work on one component is a task inside a milestone.
+2. **It can be read in a minute.** If it cannot, it is split.
+3. **It changes at least one clause.** Work that changes no clause is not a milestone. It takes the express belt, below.
+
+A fourth request that week asks for refunds as store credit. It is a different promise with different decisions, so it is left for the next milestone.
+
+## The proposal
+
+The elicitor drafts one page from conversations with the three people who asked. The product manager agrees to it.
+
+```markdown
+# M2: Faster small refunds
+
+What changes: refunds under $100 are approved automatically.
+Nothing else changes.
+
+Gathers:   3 requests (support, finance, risk)
+Adds:      DEC-031
+Why now:   the review queue is the slowest step for small refunds.
+status:    draft
+```
+
+The page answers one question: what changes in the system? It says nothing about how. A program writes the `status` line, and nobody else does.
+
+The product manager also ranks `roadmap/index.md`, the list of milestones, by cost of delay. Ranking is the recurring human act. It decides which page is shaped next.
+
+## The express belt
+
+Some work cannot wait for a batch. It is called **unplanned work**, and it rides the express belt.
+
+| Kind | Example | What it skips | What it never skips |
+|---|---|---|---|
+| Incident repair | A customer was wrongly refused | Waiting for a milestone | Verify, the agent review, the release rule |
+| Bug fix | A total is rounded the wrong way | Waiting for a milestone | The same |
+| Refactoring | A module is split in two | Waiting, and the agreement on examples, since no clause changes | The same |
+
+The rule of thumb: if the work changes what the system promises, it waits for a milestone. If it restores what was already promised, or changes no promise, it takes the express belt.
+
+Each piece of unplanned work gets a folder under `roadmap/unplanned/` with the same shape as a milestone, only smaller. [Operate](../operate/) follows one.
+
+## Several milestones at once
+
+Two milestones that touch different clauses can be on the belt together and are released in whichever order they finish. Two that touch the same clause are one milestone, and the elicitor merges their pages.
+
+## What leaves
+
+A folder, `roadmap/M2-faster-small-refunds/`, holding one page that a person has agreed to. Next it is [shaped](../shape/).

@@ -55,7 +55,7 @@ const dots = (people: number) => Array.from({ length: 12 }, (_, i) => (i < peopl
 
     {id === 'example-flow' && (
       <div class="f-flow">
-        <div class="f-step p"><b>Example</b><span>Given order 4471 was refunded once, when a second request arrives, then it is rejected.</span><small>a person approves</small></div>
+        <div class="f-step p"><b>Example</b><span>Given a $40 refund for order 4471 has been paid, when the same request arrives again, then the customer has been paid $40, once.</span><small>a person approves</small></div>
         <i class="f-ar" aria-hidden="true"></i>
         <div class="f-step v"><b>Check</b><span>Code that sets up the given, performs the when, and asserts the then.</span><small>the verifier agent writes</small></div>
         <i class="f-ar" aria-hidden="true"></i>
@@ -91,7 +91,7 @@ const dots = (people: number) => Array.from({ length: 12 }, (_, i) => (i < peopl
 
     {id === 'balls' && (
       <div class="f-balls">
-        <div><Logo /><b>CanonBall 12</b><span>The system before this change. Four clauses, all accepted.</span></div>
+        <div><Logo /><b>CanonBall 12</b><span>The system before this milestone. Three clauses, all accepted.</span></div>
         <i class="f-ar" aria-hidden="true"></i>
         <div class="now"><Logo /><b>CanonBall 13</b><span>A milestone is released.<br /><code>+ DEC-031</code></span></div>
         <i class="f-ar" aria-hidden="true"></i>
@@ -109,14 +109,16 @@ const dots = (people: number) => Array.from({ length: 12 }, (_, i) => (i < peopl
 
     {id === 'walls' && (
       <div class="f-walls" role="presentation">
-        <span></span><b>People</b><b>Elicitor</b><b>Planner</b><b>Builder</b><b>Verifier</b>
-        <code>canon/</code><em class="p">approve</em><em class="a">drafts</em><em></em><em></em><em></em>
-        <code>policy/</code><em class="p">write</em><em class="x">no</em><em class="x">no</em><em class="x">no</em><em class="x">no</em>
-        <code>blueprint/</code><em class="p">review critical</em><em></em><em class="a">writes</em><em></em><em class="v">plan</em>
-        <code>src/</code><em class="p">review edges</em><em></em><em></em><em class="a">writes</em><em class="r">reads</em>
-        <code>verify/</code><em></em><em></em><em></em><em class="r">reads, runs</em><em class="v">writes</em>
-        <code>held-out</code><em class="p">write</em><em></em><em></em><em class="x">no access</em><em class="x">no access</em>
-        <code>Verif. Record</code><em class="r">read</em><em></em><em></em><em></em><em></em>
+        <span></span><b>People</b><b>Elicitor</b><b>Planner</b><b>Builder</b><b>Verifier</b><b>Reviewer</b><b>On-call</b>
+        <code>canon/</code><em class="p">approve</em><em class="a">drafts</em><em></em><em></em><em></em><em class="r">reads</em><em></em>
+        <code>policy/</code><em class="p">write</em><em class="x">no</em><em class="x">no</em><em class="x">no</em><em class="x">no</em><em class="x">no</em><em class="x">no</em>
+        <code>blueprint/</code><em class="p">review critical</em><em></em><em class="a">writes</em><em></em><em class="v">plan</em><em class="r">reads</em><em></em>
+        <code>src/</code><em class="p">review edges</em><em></em><em></em><em class="a">writes</em><em class="r">reads</em><em class="r">reads</em><em class="r">reads</em>
+        <code>verify/</code><em></em><em></em><em></em><em class="r">reads, runs</em><em class="v">writes</em><em class="r">reads</em><em class="r">reads</em>
+        <code>observe/</code><em class="r">same view</em><em></em><em></em><em class="a">writes</em><em class="v">writes</em><em class="r">reads</em><em class="r">reads</em>
+        <code>incidents/</code><em class="p">approve</em><em></em><em></em><em></em><em></em><em></em><em class="a">drafts</em>
+        <code>held-out</code><em class="p">write</em><em></em><em></em><em class="x">no access</em><em class="x">no access</em><em class="x">no access</em><em></em>
+        <code>Verif. Record</code><em class="r">read</em><em></em><em></em><em></em><em></em><em class="r">reads</em><em class="r">reads</em>
       </div>
     )}
 

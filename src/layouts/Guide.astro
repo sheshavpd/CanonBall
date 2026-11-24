@@ -3,6 +3,7 @@ import Base from './Base.astro';
 import { byPart, chapters, type Chapter } from '../lib/guide';
 import { guideUrl, agentsUrl } from '../lib/links';
 import { parts } from '../data/site';
+import StationCard from '../components/StationCard.astro';
 interface Props { chapter: Chapter; headings: { depth: number; slug: string; text: string }[] }
 const { chapter, headings } = Astro.props;
 const groups = await byPart();
@@ -43,6 +44,7 @@ const toc = headings.filter((h) => h.depth === 2);
       <p class="crumb"><a href={guideUrl(all[0]!.id)}>Guide</a> / {part.title}</p>
       <h1>{chapter.data.title}</h1>
       <p class="summary">{chapter.data.summary}</p>
+      {chapter.data.station && <StationCard id={chapter.data.station} />}
       {chapter.data.points.length > 0 && (
         <aside class="points">
           <h2>In this chapter</h2>

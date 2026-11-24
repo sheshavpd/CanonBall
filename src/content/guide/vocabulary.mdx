@@ -1,13 +1,13 @@
 ---
 title: Vocabulary
 summary: "vocabulary.md defines each noun once, and people and agents both work from it."
-part: idea
-order: 3
+part: write
+order: 2
 points:
-  - "One word per concept, defined once, in a file agents read before anything else."
+  - "One word per concept, defined once, in a file agents read before every task."
   - "The same word then appears unchanged in the promise, the code, the check and the incident report."
   - "Most open questions turn out to be about an undefined word."
-related: [primitives, examples, composition]
+related: [primitives, tenets, shape, composition]
 ---
 
 ## The problem with "delivery"
@@ -39,7 +39,7 @@ Three rules make it work.
 
 1. **One word per concept.** If "refund" is defined, nobody writes "reimbursement" or "return of funds".
 2. **No undefined nouns.** A clause that uses a noun missing from the vocabulary is blocked until the word is defined.
-3. **Agents read it first.** Before drafting a clause, planning a change, or writing a check, the agent loads the vocabulary.
+3. **Agents read it before every task.** An agent starts each task with three files: `AGENTS.md`, which sits at the repository root and is the first file it reads, then `tenets.md` and `vocabulary.md`. The chapter on [tenets](../tenets/) covers the second.
 
 ## One language from promise to incident
 
@@ -51,7 +51,7 @@ The last row matters as much as the first. The people who operate the system des
 
 ## Where entries come from
 
-Most entries start as questions. While drafting a clause, the agent meets a word it cannot define and files a question:
+Most entries start as questions, and most of those questions surface at the [Shape station](../shape/), where a milestone's clauses are drafted. The agent meets a word it cannot define and files a question:
 
 ```text
 Q-044  What is a delivery?
@@ -61,6 +61,8 @@ Q-044  What is a delivery?
 ```
 
 A person picks an answer. The answer becomes the definition, and the question is kept as history. Undefined words are the most common source of open questions, so a vocabulary that is filling up shows a team converging.
+
+A word can also be missing where nobody expected it. A request to approve refunds "under $100" automatically raised the question of whether $100 meant the order total or the amount being refunded. The vocabulary gained *refund amount*.
 
 ## Alignment across teams
 

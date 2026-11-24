@@ -8,7 +8,9 @@ const guide = defineCollection({
   schema: z.object({
     title: z.string(),
     summary: z.string(),
-    part: z.enum(['idea', 'structure', 'change', 'verification', 'building']),
+    part: z.enum(['start', 'walkthrough', 'write', 'structure', 'verification', 'building']),
+    /** Set on the seven walkthrough chapters: which station of the conveyor the chapter covers. */
+    station: z.enum(['collect', 'shape', 'build', 'verify', 'review', 'release', 'operate']).optional(),
     order: z.number(),
     /** Two to four takeaways, shown at the top of the chapter. */
     points: z.array(z.string()).default([]),
