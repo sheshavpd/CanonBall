@@ -1,5 +1,4 @@
 /** The conveyor: seven stations a milestone passes, who works at each, and what each reads and writes. */
-export type Kind = 'p' | 'a' | 'v';
 export type StationId = 'collect' | 'shape' | 'build' | 'verify' | 'review' | 'release' | 'operate';
 
 export interface Station {
@@ -17,11 +16,11 @@ export interface Station {
   alsoPeople?: string[];
   alsoAgents?: string[];
   /** People who take part only in some cases, with the condition. */
-  sometimes?: { who: string; short?: string; when: string }[];
+  sometimes?: { who: string; short?: string; when: string; critical?: boolean }[];
   reads: string[];
   writes: string[];
   /** The gate that closes this station, if any. */
-  gate?: string;
+  gate?: { name: string; text: string };
 }
 
 export const stations: Station[] = [
@@ -37,7 +36,7 @@ export const stations: Station[] = [
     people: ['Product manager', 'Architect', 'Verification lead'], agents: ['Elicitor'],
     alsoPeople: ['Constraint owner'], alsoAgents: ['Planner', 'Verifier'],
     reads: ['AGENTS.md', 'spec/canon/tenets.md', 'spec/canon/vocabulary.md'], writes: ['roadmap/M2-…/diff/canon/', 'roadmap/M2-…/diff/blueprint/'],
-    gate: 'Agreement gate: people approve the examples before anything is built.',
+    gate: { name: 'Agreement gate', text: 'people approve the examples before anything is built.' },
   },
   {
     id: 'build', name: 'Build', sub: 'the code',
@@ -54,9 +53,9 @@ export const stations: Station[] = [
   {
     id: 'review', name: 'Review', sub: 'an agent always, a person if critical',
     does: 'An agent reviews every milestone. A person reviews as well only when the change is critical or its blast radius is large.',
-    people: [], agents: ['Reviewer'], sometimes: [{ who: 'Owner of what is at risk', short: 'Owner', when: 'if critical' }],
+    people: [], agents: ['Reviewer'], sometimes: [{ who: 'Owner of what is at risk', short: 'Owner', when: 'if critical', critical: true }],
     reads: ['the diff', 'Verification Record', 'spec/canon/policy/'], writes: ['a review'],
-    gate: 'Release gate: a person accepts the remaining risk, only when the change is critical.',
+    gate: { name: 'Release gate', text: 'a person accepts the remaining risk, only when the change is critical.' },
   },
   {
     id: 'release', name: 'Release', sub: 'a CanonBall',
@@ -72,7 +71,6 @@ export const stations: Station[] = [
   },
 ];
 
-export const stationById = (id: StationId): Station => stations.find((s) => s.id === id)!;
 
 /** The three practices that let agents do most of the work reliably. Marked 1 to 3 on the conveyor. */
 export const ideas = [

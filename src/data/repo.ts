@@ -136,5 +136,3 @@ export function pathOf(id: string): string {
   }
   return out.join('');
 }
-
-export const writerLabel: Record<Writer, string> = { p: 'people', a: 'agents', v: 'verification', n: '' };

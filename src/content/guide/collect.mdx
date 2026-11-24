@@ -5,9 +5,9 @@ part: walkthrough
 order: 1
 station: collect
 points:
-  - "A request is a card. Related cards gather into one milestone, described by a one-page proposal."
+  - "Each request is a card, and related cards gather into one milestone, described by a one-page proposal."
   - "A milestone delivers something a customer can use, reads in a minute, and changes what the system promises."
-  - "Work that restores a promise, or changes none, takes the express belt. It skips the batch and none of the stations."
+  - "Work that restores a promise, or changes none, takes the express belt: it skips the batch and none of the stations."
 related: [workflow, shape, repository]
 ---
 
@@ -26,22 +26,18 @@ A **request** is anything someone asks of the system before it has been shaped. 
 
 ## Why not build each one
 
-An agent could build the first request in an afternoon, and that speed is the risk. The support request would have shipped before the risk request arrived, with nobody having decided what a split refund is.
+An agent could build the first request in an afternoon. Had it done so, the support request would have shipped before the risk request arrived, and nobody would have decided what a split refund is. Gathering the requests first prevents this.
 
-Gathering requests first buys three things.
+- **Decisions are made once.** All three cards turn on one question, which refunds may skip review, and a single answer covers all three.
+- **Agents get a whole.** A builder that sees the promise, the decision and the invariant together builds one coherent change, whereas one given a single ticket builds only that ticket.
+- **A release means something.** A person can accept a milestone by reading what it promises, which is impractical for forty separate tickets.
 
-- **Decisions are made once.** All three cards turn on one question: which refunds may skip review? Answered once, it covers all three.
-- **Agents get a whole.** A builder that sees the promise, the decision and the invariant together builds one coherent thing. A builder that sees one ticket builds that ticket.
-- **A release means something.** A person can accept a milestone by reading what it promises. Nobody can read forty tickets.
-
-People's attention is the scarce resource, and a milestone spends it once.
-
-This is a batch of decisions. It is not a large batch of code: M2 is three requests, one decision and a few days of agent work.
+A milestone spends people's attention, the scarce resource, once for the whole batch. The batch is of decisions, and the code stays small: M2 is three requests, one decision and a few days of agent work.
 
 ## What makes a milestone
 
 1. **It delivers something a customer can use, end to end.** It crosses every component the change needs. Work on one component is a task inside a milestone.
-2. **It can be read in a minute.** If it cannot, it is split.
+2. **It can be read in a minute.** Otherwise it is split.
 3. **It changes what the system promises.** It adds or alters a promise, a decision or a constraint. A milestone can be a single request, if that request does this.
 
 A fourth request that week asks for refunds as store credit. It is a different promise with different decisions, so it becomes the next milestone, M3.
@@ -61,13 +57,13 @@ Why now:   the review queue is the slowest step for small refunds.
 status:    draft
 ```
 
-The page answers one question: what changes in the system? It says nothing about how. The orchestrator writes the `status` line, and nobody else does.
+The page states what changes in the system and leaves how to later stations. Only the orchestrator writes the `status` line.
 
-The product manager confirms that this is the right milestone and ranks it in `roadmap/index.md` by cost of delay. That ranking decides which page is shaped next.
+The product manager confirms the milestone and ranks it in `roadmap/index.md` by cost of delay, and that ranking decides which page is shaped next.
 
 ## When work may skip the batch
 
-Some work should not wait for a milestone. It is called **unplanned work**, and it rides the express belt. Three questions sort it.
+Some work should not wait for a milestone. It is called **unplanned work**, and it travels on the express belt. What it does to the canon decides which belt it takes.
 
 | Question | If yes | Examples |
 |---|---|---|
@@ -75,9 +71,9 @@ Some work should not wait for a milestone. It is called **unplanned work**, and 
 | Does it only restore or pin down an existing promise? | Express belt. A person approves the new example. | An incident repair. A bug fix. |
 | Does it change no clause at all? | Express belt. Nothing to approve. | A refactoring. A dependency upgrade. |
 
-Size is not the test. Raising the limit is one line of code, and it waits for a milestone because it changes a decision.
+Size is not the test: raising the limit is one line of code, and it waits for a milestone because it changes a decision.
 
-Express work skips the wait for a batch. It is still verified, still reviewed by an agent, and still released by the same rule. Each piece gets a folder under `roadmap/unplanned/` with the same shape as a milestone, only smaller. [Operate](../operate/) follows one.
+Unplanned work skips the wait for a batch but is still verified, reviewed by an agent, and released by the same rule. Each piece gets a folder under `roadmap/unplanned/` shaped like a milestone's, only smaller. [Operate](../operate/) follows one.
 
 ## Several milestones at once
 
@@ -85,4 +81,4 @@ Two milestones that touch different clauses can be on the belt together and are 
 
 ## What leaves
 
-A folder, `roadmap/M2-faster-small-refunds/`, holding one page that the product manager has confirmed. Next it is [shaped](../shape/).
+The station's output is a folder, `roadmap/M2-faster-small-refunds/`, holding one page that the product manager has confirmed. The milestone is then [shaped](../shape/).

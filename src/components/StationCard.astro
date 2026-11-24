@@ -9,7 +9,7 @@ const s = stations.find((x) => x.id === id)!;
 ---
 <nav aria-label="Stations">
   <ol class="stations">
-    {stations.map((x, i) => <li><a href={guideUrl(x.id)} aria-current={x.id === id ? 'page' : undefined}><i>{i + 1}</i>{x.name}</a></li>)}
+    {stations.map((x, i) => <li><a href={guideUrl(x.id)} aria-current={x.id === id ? 'page' : undefined}><i aria-hidden="true">{i + 1}</i>{x.name}</a></li>)}
   </ol>
 </nav>
 <div class="station">
@@ -18,7 +18,7 @@ const s = stations.find((x) => x.id === id)!;
     <dd>
       {[...s.agents, ...(s.alsoAgents ?? [])].map((n) => <Who kind="a" label={n} />)}
       {[...s.people, ...(s.alsoPeople ?? [])].map((n) => <Who kind="p" label={n} />)}
-      {s.sometimes?.map((x) => <Who kind="p" label={`${x.who}, ${x.when}`} />)}
+      {s.sometimes?.map((x) => <><Who kind="p" label={x.who} /><span class="cond">{x.when}</span></>)}
       {s.program && <Who kind="v" label={s.program} />}
     </dd>
     <dt>Reads</dt>
@@ -26,5 +26,5 @@ const s = stations.find((x) => x.id === id)!;
     <dt>Writes</dt>
     <dd>{s.writes.map((w) => <code>{w}</code>)}</dd>
   </dl>
-  {s.gate && <p class="gate"><b>{s.gate.split(':')[0]}:</b>{s.gate.split(':').slice(1).join(':')}</p>}
+  {s.gate && <p class="gate"><b>{s.gate.name}:</b> {s.gate.text}</p>}
 </div>

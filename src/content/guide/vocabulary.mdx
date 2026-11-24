@@ -18,7 +18,7 @@ The promise "a customer can request a refund within 30 days of delivery" looks c
 - The support lead says it is when the carrier scans it at the door.
 - The engineer finds a `delivered_at` column and uses it, without knowing which of the two it records.
 
-All three will read the promise and agree with it. The system that gets built will satisfy one of them, and the other two will find out from a customer complaint on day 29.
+All three will read the promise and agree with it. The system that gets built will satisfy one of them, and the other two may learn of the difference from a customer complaint.
 
 Agents make this both worse and better: worse, because an agent picks a meaning without telling you, and better, because an agent follows a written definition every time.
 
@@ -35,11 +35,11 @@ Refund     Money returned to the customer for an order.
 Payout     One transfer of money through the payment gateway.
 ```
 
-The file works under three rules.
+The file is kept by these rules.
 
 1. **One word per concept.** If "refund" is defined, nobody writes "reimbursement" or "return of funds".
 2. **No undefined nouns.** A clause that uses a noun missing from the vocabulary is blocked until the word is defined.
-3. **Agents read it before every task.** It is one of the files [AGENTS.md](../agents-md/) tells an agent to start from.
+3. **Agents read it first.** It is one of [the files every agent reads before it starts](../agents-md/).
 
 ## One language from promise to incident
 
@@ -60,9 +60,9 @@ Q-044  What is a delivery?
        c) The customer confirms receipt.
 ```
 
-A person picks an answer, the answer becomes the definition, and the question is kept as history. Expect undefined words to be the most common source of open questions, so a vocabulary that is filling up shows a team converging.
+A person picks an answer, the answer becomes the definition, and the question is kept as history. Expect undefined words to be the most common source of open questions, which makes a vocabulary that is filling up a sign that the team is converging.
 
-A word can also be missing where nobody expected it. A proposal to approve refunds "under $100" automatically raised the question of whether $100 meant the order total or the amount being refunded, and the vocabulary gained an entry.
+A word can also be missing where nobody expected it. At [Shape](../shape/), a proposal to approve refunds "under $100" automatically left open whether $100 meant the order total or the amount refunded, and the vocabulary gained an entry.
 
 ```text
 Refund amount   The money returned by one refund. Not the order total.
@@ -76,4 +76,4 @@ Sometimes two teams mean different things by one word, and both are right. "Acco
 
 ## What it costs
 
-A vocabulary is cheap to start and takes discipline to keep. Expect the first clauses to raise many questions about words. Those questions were always there, and they now arrive when they are cheapest to answer. Later, people want synonyms because "refund" feels repetitive, and the rule has to be held against them, because a second word for the same thing reads to an agent as a second thing.
+A vocabulary is cheap to start and takes discipline to keep. Expect the first clauses to raise many questions about words; those questions were always there, and they now arrive when they are cheapest to answer. Later, people want synonyms because "refund" feels repetitive, and the rule has to be held against them, because a second word for the same thing reads to an agent as a second thing.

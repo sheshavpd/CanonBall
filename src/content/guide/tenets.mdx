@@ -19,7 +19,7 @@ Both answers can be defended: one pays the customer sooner, and the other keeps 
 
 ## What a tenet is
 
-A **tenet** is a short statement of which good thing wins when two conflict, written "X over Y". People write the tenets in `spec/canon/tenets.md`, and agents read the file before every task.
+A **tenet** is a short statement of which good thing wins when two conflict, written "X over Y". People write the tenets in `spec/canon/tenets.md`, one of [the files every agent reads first](../agents-md/).
 
 ```markdown
 # Tenets
@@ -35,9 +35,9 @@ The list is kept to a handful, in priority order, because nobody can apply a lon
 
 ## Why not "values"
 
-A value names a good thing nobody disagrees with: speed, safety, fairness to the customer. Every team would sign that list, so it tells an agent nothing. In the split-refund case speed and safety point in opposite directions, and the list is silent.
+A value names a good thing nobody disagrees with: speed, safety, fairness to the customer. Every team would sign that list, so it gives an agent no guidance. For the split refunds, speed and safety point in opposite directions, and the list is silent.
 
-A tenet says which one wins. One test separates the two: could a sensible team have written the opposite? A shop selling low-priced goods might put speed over review. If no team would write the opposite, the statement is a value and settles nothing.
+A tenet says which one wins, and one test separates the two: could a sensible team have written the opposite? A shop selling low-priced goods might put speed over review. If no team would write the opposite, the statement is a value and settles nothing.
 
 ## How an agent uses one
 
@@ -52,11 +52,11 @@ Cites       Tenet 1. A person's review over speed,
             when money moves.
 ```
 
-The product manager decides, and here agrees. A tenet supports a recommendation, and the decision remains a person's.
+The product manager decides, and agrees; a tenet supports a recommendation, and the decision remains a person's.
 
 ## From a tenet to a decision
 
-When a tenet settles a specific question, the answer is recorded as a [decision](../primitives/#decision), and the decision file cites the tenet. Here the decision is DEC-031: "A refund is approved automatically while the total refunded on the order stays under $100." One of its examples is "two $60 refunds on one order, the second goes to review", and its file carries the line "Why: tenet 1".
+When a tenet settles a specific question, the answer is recorded as a [decision](../primitives/#decision), and the decision file cites the tenet. The decision is DEC-031: "A refund is approved automatically while the total refunded on the order stays under $100." One of its examples is "two $60 refunds on one order, the second goes to review", and its file carries the line "Why: tenet 1".
 
 From then on the case is decided, and its example becomes a check. A question that comes up twice with no tenet to settle it is a sign that a tenet is missing.
 

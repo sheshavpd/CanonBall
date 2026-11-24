@@ -23,9 +23,9 @@ function header(title: string, summary: string, path: string, s: Site): string {
     '',
     `> ${summary}`,
     '',
-    `Site: ${site.name}. ${site.tagline}`,
-    `HTML page: ${abs(path, s)}`,
-    `This file: ${txt(path, s)}`,
+    `- Site: ${site.name}. ${site.tagline}`,
+    `- HTML page: ${abs(path, s)}`,
+    `- This file: ${txt(path, s)}`,
     '',
     '---',
     '',
@@ -58,8 +58,8 @@ const interactive: Record<string, string> = {
 };
 const who = (st: Station): string =>
   [
-    st.agents.length ? `agents: ${[...st.agents, ...(st.alsoAgents ?? [])].join(', ')}` : '',
-    st.people.length ? `people: ${[...st.people, ...(st.alsoPeople ?? [])].join(', ')}` : '',
+    [...st.agents, ...(st.alsoAgents ?? [])].length ? `agents: ${[...st.agents, ...(st.alsoAgents ?? [])].join(', ')}` : '',
+    [...st.people, ...(st.alsoPeople ?? [])].length ? `people: ${[...st.people, ...(st.alsoPeople ?? [])].join(', ')}` : '',
     st.sometimes?.length ? `in some cases: ${st.sometimes.map((x) => `${x.who} (${x.when})`).join(', ')}` : '',
     st.program ? `a program: ${st.program}` : '',
   ].filter(Boolean).join('; ');
@@ -69,7 +69,7 @@ export function conveyorText(): string {
   const out = [
     '[Animated figure: the conveyor] Requests arrive and gather into a milestone. The milestone passes seven stations on a belt and leaves as a CanonBall. Each station names who works there.',
     '',
-    ...stations.map((st, i) => `${i + 1}. ${st.name}. ${st.does} Who: ${who(st)}.${st.gate ? ` ${st.gate}` : ''}`),
+    ...stations.map((st, i) => `${i + 1}. ${st.name}. ${st.does} Who: ${who(st)}.${st.gate ? ` ${st.gate.name}: ${st.gate.text}` : ''}`),
     '',
     'Below the main belt runs an express belt for repairs and upkeep that change no promise. An incident returns from Operate along a dashed line, enters the express belt as a single fix, and passes the same stations alone, without waiting for a milestone.',
     'An observability rail (logs, traces, metrics, state, replay) runs under the belts from Build to Operate. The Verify station is drawn as a built chamber, the verification environment, which work on both belts passes through.',
@@ -80,6 +80,7 @@ export function conveyorText(): string {
     '',
     'Three practices are marked 1 to 3 on the figure. Together they make it possible for agents to do most of the work reliably:',
     ...ideas.map((d) => `${d.n}. ${d.title}. ${d.text} ${d.strong}`),
+    '',
   ];
   return out.join('\n');
 }
@@ -101,10 +102,11 @@ function stationText(chapter: Chapter): string {
   const st = stations[idx]!;
   return [
     `Station ${idx + 1} of ${stations.length} on the conveyor: ${st.name}.`,
-    `Who works here: ${who(st)}.`,
-    `Reads: ${st.reads.join(', ')}.`,
-    `Writes: ${st.writes.join(', ')}.`,
-    ...(st.gate ? [st.gate] : []),
+    '',
+    `- Who works here: ${who(st)}.`,
+    `- Reads: ${st.reads.join(', ')}.`,
+    `- Writes: ${st.writes.join(', ')}.`,
+    ...(st.gate ? [`- ${st.gate.name}: ${st.gate.text}`] : []),
     '',
     '',
   ].join('\n');

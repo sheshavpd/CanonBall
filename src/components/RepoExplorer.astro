@@ -26,8 +26,8 @@ const firstOutside = rows.findIndex((r) => r.outside);
         </>
       ))}
     </div>
-    <div class="pane" aria-live="polite">
-      <div class="narr" data-narr hidden></div>
+    <div class="pane">
+      <div class="narr" data-narr hidden aria-live="polite"></div>
       {rows.map((r, i) => (
         <article class="panel" data-panel={r.id} hidden={i !== 0}>
           <div class="ptop"><span class:list={['pill', r.writer !== 'n' && r.writer]}>{r.who}</span><code>{pathOf(r.id)}</code></div>
@@ -80,14 +80,14 @@ const firstOutside = rows.findIndex((r) => r.outside);
     };
     const go = (i: number) => {
       step = i; paint(); show(steps[i]!.focus);
-      const first = rows.find((r) => r.dataset.id === steps[i]!.ids[0]);
-      if (first) tree.scrollTop = Math.max(0, first.offsetTop - tree.offsetTop - 60);
+      const focus = rows.find((r) => r.dataset.id === steps[i]!.focus);
+      if (focus) tree.scrollTop = Math.max(0, focus.offsetTop - tree.offsetTop - tree.clientHeight / 3);
     };
     const stop = () => { if (timer) { clearInterval(timer); timer = undefined; play.textContent = 'Play'; } };
 
     rows.forEach((r) => r.addEventListener('click', () => { stop(); show(r.dataset.id!); }));
     stepButtons.forEach((b, i) => b.addEventListener('click', () => { stop(); go(i); }));
-    bench.querySelector('[data-free]')!.addEventListener('click', () => { stop(); step = -1; paint(); show('spec'); tree.scrollTop = 0; });
+    bench.querySelector('[data-free]')!.addEventListener('click', () => { stop(); step = -1; paint(); show(rows[0]!.dataset.id!); tree.scrollTop = 0; });
     play.addEventListener('click', () => {
       if (timer) { stop(); return; }
       play.textContent = 'Pause';

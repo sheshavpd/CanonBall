@@ -4,24 +4,24 @@ summary: "Each run of each check leaves one line of evidence, and the orchestrat
 part: verification
 order: 3
 points:
-  - "Status is computed from evidence. No person and no agent can write it."
+  - "Status is computed from evidence, and no person or agent can write it."
   - "Every check must be seen to fail before its pass counts."
-  - "The weakest link is named. Nothing is averaged."
+  - "The Record names the weakest link and never averages."
   - "The reviewer agent and the person at the release gate read the same Verification Record."
 related: [verification-engineering, environments, review, operate, canonball]
 ---
 
 ## Status is computed
 
-In CanonBall, nobody declares a clause, a task or a release to be done. The **orchestrator**, the program that computes every state and carries out a release, works it out from what exists.
+In CanonBall, no clause, task or release is declared done. The **orchestrator**, the program that computes every state and carries out a release, works the status out from what exists.
 
 The **Verification Record** is the computed status of every clause. The orchestrator reads the assurance cases and the results of the checks, applies rules that people own, and publishes the outcome. No agent and no person can write a status into the Record, because it is not a file in the repository.
 
-The reviewer agent reads the Record for every change. A person at the release gate reads it as well when the policy lists the change as critical or the reviewer rates its blast radius as large, as the chapter on [review](../review/) describes. Whether a task is finished, and whether a change is ready to [release](../release/), are computed in the same way.
+The reviewer agent reads the Record for every change, and so does the person at the release gate when [review](../review/) calls for one. Whether a task is finished, and whether a change is ready to [release](../release/), are computed in the same way.
 
 ## A check must fail before its pass counts
 
-Test-driven development has a rule: watch the test fail before making it pass. A check that has never failed proves nothing, because it may assert something that is always true, it may be testing the fake, or it may not be running at all. CanonBall makes the rule a condition of acceptance.
+Test-driven development has a rule: watch the test fail before making it pass. A check that has never failed proves nothing, because it may assert something that is always true, test the fake, or not run at all. CanonBall makes the rule a condition of acceptance.
 
 <FailFirst />
 
@@ -48,7 +48,7 @@ Each run of each check writes one line.
  "recorded_failure": "verify/checks/red/test_concurrent_copies_pay_once.json"}
 ```
 
-The line records which clause the run is evidence for, which example the check encodes, what code it ran against, in which environment, with which random seed, and what happened. That is enough for someone else to run it again, and evidence that cannot be reproduced is treated as a claim.
+The line records which clause the run is evidence for, which example the check encodes, what code it ran against, in which environment, with which random seed, and what happened. That is enough for someone else to run it again; evidence that cannot be reproduced is treated as a claim.
 
 ## Five statuses
 
@@ -64,13 +64,13 @@ The status of a clause is a decision, not a confidence score.
 | **Pending** | Agreed, and waiting on another team to provide something. |
 | **Unknown** | Not yet assessed, or the code the case rests on has changed. |
 
-The Record can be trusted because it never averages and never omits. The weakest link is named: a clause with three strong parts and one missing part is unsupported, and the Record names the missing part. A gap is never hidden: a part that ran and saw nothing is shown as unsupported and is not left out.
+The Record can be trusted because it never averages and never omits. A clause with three strong parts and one missing part is unsupported, and the Record names the missing part. A part that ran and saw nothing is shown as unsupported rather than left out.
 
 For the refunds service at CanonBall 13, the Record's summary reads "4 accepted, 1 accepted with stated risk, 0 unsupported".
 
 ## Evidence that does not count
 
-A passing run is not always evidence. Runs of the following kinds are marked and set aside.
+A passing run is not always evidence, and runs of the following kinds are marked and set aside.
 
 | Marked as | Why it does not count |
 |---|---|
@@ -82,7 +82,7 @@ A passing run is not always evidence. Runs of the following kinds are marked and
 
 ## How staleness works
 
-Everything that evidence depends on carries a content hash: the code a clause relies on, the environment's declaration, each fake. When any of them changes, the hash changes, and the evidence that relied on it is stale until the check runs again. Because one mechanism serves every kind of dependency, evidence never silently outlives the thing it was about.
+Everything that evidence depends on carries a content hash: the code a clause relies on, the environment's declaration, each fake. When any of them changes, its hash changes, and the evidence that relied on it is stale until the check runs again. Because one mechanism serves every kind of dependency, evidence cannot silently outlive the thing it was about.
 
 The same mechanism keeps runs affordable. A change re-runs only the checks for clauses whose code it touched, in the way a build system skips what has not changed.
 
@@ -97,7 +97,7 @@ Every failing check is classified before anyone acts on it.
 | **Noise** | The environment misbehaved. | Fix the environment. |
 | **Ambiguity** | The clause has two readings. | Ask a person. |
 
-The label decides what happens next, and it is recorded. Retrying a failed check until it passes is not allowed, because it weakens the evidence without telling anyone.
+The label decides what happens next, and it is recorded. Retrying a failed check until it passes is not allowed, because it would weaken the evidence without telling anyone.
 
 ## Assumptions and monitors
 
@@ -108,9 +108,9 @@ A clause that depends on the outside world cannot be fully proven. In the refund
 - what the system does when it fails;
 - what is accepted when a failure could not be detected at all.
 
-A monitor that raises an alarm is a treatment. It does not show that the clause holds, and at best it supports "accepted, with stated risk".
+A monitor that raises an alarm is a treatment rather than evidence that the clause holds, so it supports "accepted, with stated risk" at most.
 
-When a monitor fires, an incident opens, and the repair comes back as a small piece of unplanned work with a new example and often a new invariant. Operating the system improves the canon in this way, and the chapter on [operating](../operate/) follows one incident from the first report to the release.
+When a monitor fires, an incident opens, and the repair comes back as a small piece of unplanned work with a new example and often a new invariant. In this way operating the system improves the canon; [Operate](../operate/) follows one incident from the first report to the release.
 
 ## The policy
 

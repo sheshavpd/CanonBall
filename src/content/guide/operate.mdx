@@ -6,7 +6,7 @@ order: 7
 station: operate
 points:
   - "Back pressure is the upkeep a running system demands: incidents, bugs and reliability problems."
-  - "The on-call agent diagnoses from logs and traces. A person decides anything risky."
+  - "The on-call agent diagnoses from logs and traces, and a person decides anything risky."
   - "A repair takes the express belt through the same stations and ships as its own CanonBall."
   - "Every incident leaves an example behind, and improves the verification environment that missed it."
 related: [observability, evidence, collect]
@@ -14,17 +14,11 @@ related: [observability, evidence, collect]
 
 ## What arrives
 
-CanonBall 13, running.
-
-**Monitors** watch the assumptions the evidence rested on. The refunds service assumes the payment gateway pays at most once per request key (ASM-011). No test can prove that about someone else's system, so a monitor watches for it in production.
-
-The **on-call agent** watches the monitors, the error rates and the support queue.
+CanonBall 13 is running, with **monitors** on the assumptions the evidence rested on. The refunds service assumes the payment gateway pays at most once per request key (ASM-011). No test can prove that about someone else's system, so a monitor watches for it in production. The **on-call agent** watches the monitors, the error rates and the support queue.
 
 ## Back pressure
 
-A running system asks for upkeep. Customers find cases nobody wrote an example for, dependencies change, and load grows. This is **back pressure**: work that arrives from the system itself, on its own schedule.
-
-In many teams this work has its own process and its own people. Here it rides the same belt, because a repair that skips verification is how the next incident is made.
+A running system asks for upkeep. Customers find cases nobody wrote an example for, dependencies change, and load grows. This is **back pressure**: work that arrives from the system itself, on its own schedule. It travels on the same belt as planned work, because a repair that skips verification is a common cause of the next incident.
 
 ## A refusal on day 29
 
@@ -42,17 +36,15 @@ REQ-012  refund window
   delivered     4 March
 ```
 
-The window was counted from the day the order was dispatched. The vocabulary says **delivery** means the carrier's delivered scan, so one part of the code read the wrong date.
+The window was counted from the day the order was dispatched. The vocabulary says **delivery** means the carrier's delivered scan, so one part of the code had read the wrong date.
 
 The cause was read from the decision log. Without the log, the agent would have had a refused refund, a date, and a long list of things that might be wrong.
 
-One more fact belongs in the incident. REQ-012 showed as accepted the whole time. Its checks passed, because none of them used an order whose dispatch and delivery dates differed. Accepted means supported by the evidence so far, and the evidence had a gap.
+The incident also records that REQ-012 showed as accepted the whole time. Its checks passed because none of them used an order whose dispatch and delivery dates differed. Accepted means supported by the evidence so far, and that evidence had a gap.
 
 ## The person's part
 
-Paying this customer now is money moving outside the normal path, so the **operator** approves it.
-
-The repair adds an example and an invariant, and both need a person's approval like any other.
+Paying this customer now is money moving outside the normal path, so the **operator** approves it. The repair adds an example and an invariant, and both need a person's approval like any other.
 
 ## The repair takes the express belt
 
@@ -81,10 +73,8 @@ Proposed:        INV-009
 
 The canon now has an invariant with a check that has been seen to fail, and the verification environment covers a case it missed.
 
-After every problem that reaches production, the team asks why the environment did not catch it, and the answer goes into the environment. Over time this is what reduces back pressure.
+After every problem that reaches production, the team asks why the environment did not catch it, and the answer goes into the environment. Over time, this practice is expected to reduce back pressure.
 
 ## Back to the start
 
-The belt is a loop. What Operate learns arrives at [Collect](../collect/) as requests and at the express belt as repairs, while the next milestone is already being shaped.
-
-The rest of the guide takes each idea on its own, starting with [the primitives](../primitives/).
+The belt forms a loop, in which what Operate learns arrives at [Collect](../collect/) as requests and at the express belt as repairs, while the next milestone is already being shaped. The statements people write to steer all of this work are described in [the primitives](../primitives/).

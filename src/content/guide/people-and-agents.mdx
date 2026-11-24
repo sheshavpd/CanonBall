@@ -5,7 +5,7 @@ part: structure
 order: 4
 points:
   - "The agent that writes the code never writes the checks that judge it, and the repository's permissions enforce the separation."
-  - "An agent reviews every change, and a person reviews as well only when the policy lists the change as critical or the reviewer rates its blast radius as large."
+  - "People act at two gates: the agreement gate, where they approve what the system promises, and the release gate, where they accept the risk of a critical change."
   - "People's roles are hats, and one person may wear several."
   - "People own by capability, while agents build across every component."
 related: [workflow, shape, review, delegation]
@@ -13,7 +13,7 @@ related: [workflow, shape, review, delegation]
 
 ## The dividing line
 
-A change passes [seven stations](../workflow/), and people and agents work together at most of them. What separates the two is the kind of decision. An agent may make any decision that can be verified and reversed, within bounds that people set. The following kinds stay with people.
+A change passes [seven stations](../workflow/), and people and agents work together at most of them. What separates their work is the kind of decision involved. An agent may make any decision that can be verified and reversed, within bounds that people set. The following kinds of decision stay with people.
 
 | Kind | Why it stays with a person |
 |---|---|
@@ -35,7 +35,7 @@ The people's roles are hats, and on a small team one person wears several.
 | **Constraint owner** | What is never allowed. Holds a veto. | Shape |
 | **Operator** | The running system, and anything risky or irreversible done to it | Operate |
 
-The Review station has no hat of its own, because the person who reviews there is the owner of what is at risk. When a change touches the path that moves money in the refunds service, that person is the refunds owner.
+The Review station has no hat of its own, because the person who reviews there is the owner of what is at risk. When a change in the refunds service touches the path that moves money, that person is the refunds owner.
 
 ## Seven agent roles
 
@@ -49,15 +49,15 @@ The Review station has no hat of its own, because the person who reviews there i
 | **On-call agent** | Watches the monitors, diagnoses with the [observability](../observability/) tools, and drafts the incident and the unplanned change that repairs it | `incidents/`, and a draft under `roadmap/unplanned/` | Operate |
 | **Holdout keeper** | Runs the held-out scenarios that people write, and reports only pass or fail | Nothing the other agents can read | Apart from the stations |
 
-One more participant is a program. The **orchestrator** computes the state of every change and task from what exists in the repository, compares predicted with actual behavior, computes the Verification Record, and at release copies the proposed files into `spec/` and publishes the CanonBall. Agents are allowed to be unreliable because the program that decides the state of the work is deterministic.
+One further participant is a program. The **orchestrator** computes the state of every change and task from what exists in the repository, compares predicted with actual behavior, computes the Verification Record, and at release copies the proposed files into `spec/` and publishes the CanonBall. Because the program that decides the state of the work is deterministic, the method can tolerate agents that are not.
 
 ## Why the roles are separate
 
-The builder and the verifier are separate roles so that the agent that writes the code does not also write the checks that judge it. A second agent can easily share the first one's misreading of a clause, so independence rests on permissions, which can be enforced, and never on the second agent's intentions, which cannot.
+The builder and the verifier are separate roles so that the agent that writes the code does not also write the checks that judge it. A second agent can easily share the first one's misreading of a clause, so independence is made to rest on permissions, which can be enforced, rather than on the second agent's intentions, which cannot.
 
 <Figure id="walls" />
 
-Each role is a separate account, and the repository rejects a commit outside that role's paths. No agent's account can write the policy, the rules that decide what counts as evidence, which belong to people. The held-out scenarios are also written by people. The holdout keeper runs them and reports only pass or fail, and runs are rationed, so that neither the builder nor the verifier can learn what they contain.
+Each role is a separate account, and the repository rejects a commit outside that role's paths. No agent's account can write the policy, the rules that decide what counts as evidence, which belong to people. The held-out scenarios are also written by people. The holdout keeper runs them and reports only pass or fail, and runs are rationed, so that neither the builder nor the verifier can learn what the scenarios contain.
 
 The same independence applies to people: the verification lead who reviews the case for a critical clause does not own the capability that the case protects.
 
@@ -73,7 +73,7 @@ A **gate** is a point where a person must act before work proceeds.
 | **A person reads** | The change proposal, the proposed clauses and their examples | The Record, predicted against actual behavior, and the case for each critical clause |
 | **Needs a person** | Always, when a clause is added or altered | Only when the policy lists the change as critical or the reviewer rates its blast radius as large |
 
-An agent reviews every change. A person reviews as well only when the policy lists the change as critical or the reviewer rates its blast radius as large, and that second review is the release gate. Review has no [level of automation](../delegation/). What a team tunes over time is the policy's list of what counts as critical, which [Review](../review/) sets out. After Review the orchestrator applies the [release rule](../release/), and no person acts there.
+The release gate is the person's part of [Review](../review/), which has no [level of automation](../delegation/); that chapter sets out when the gate applies. After Review the orchestrator applies the [release rule](../release/), and no person acts there.
 
 ## Every point where a person acts
 
@@ -85,7 +85,7 @@ An agent reviews every change. A person reviews as well only when the policy lis
 | At the release gate, when it applies | Reads what the gate requires, then accepts the change or sends it back | A short argument and one line |
 | On an incident | Decides anything risky or irreversible, and approves the new example | An example |
 
-A person who is handed a test file, or a raw log to dig through, has been failed by the system. The only code a person is asked to read is the code that touches the outside world: adapters and permission checks.
+The system is expected to present each of these decisions in the form shown, so that a person is never asked to work through a test file or dig through a raw log. The only code a person is asked to read is the code that touches the outside world: adapters and permission checks.
 
 While agents build and verify one milestone, the product manager collects and shapes the next. The amount of work in progress is therefore limited by people's attention, which is the scarce resource.
 

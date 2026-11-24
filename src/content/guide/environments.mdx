@@ -13,7 +13,7 @@ related: [verification-engineering, evidence, observability, verify, architectur
 
 ## What an environment is
 
-A **verification environment** is a place built to produce evidence about a clause. It is a relative of the test harness, with three additions: a declared boundary, a statement of what it cannot show, and a measurement of its own reliability.
+A **verification environment** is a place built to produce evidence about a clause. It extends the familiar test harness with a declared boundary, a statement of what it cannot show, and a measurement of its own reliability.
 
 ## Seven parts
 
@@ -21,7 +21,7 @@ Every environment, at every [verification level](../verification-engineering/#th
 
 <Figure id="environment" />
 
-The **probes** are the system's [observability](../observability/) tools pointed at the test world. A check sees the system through them, and when a check fails, the verifier agent uses them to explain why.
+The **probes** are the system's [observability](../observability/) tools pointed at the test world. A check sees the system through them, and when it fails, the verifier agent uses them to explain why.
 
 ## It states what it cannot show
 
@@ -39,11 +39,11 @@ Real gateway timing. Whether the real gateway honors
 request keys. Production request shapes.
 ```
 
-The last section is written first, before any code, because it lists the claims this environment must decline to support. Evidence counts only inside what the environment can show: a check that passes here says nothing about real gateway timing, and the Verification Record does not count it toward any claim about that. Whether the real gateway honors request keys therefore stays an assumption in the canon, ASM-011, which is watched in production.
+The last section is written first, before any code, because it lists the claims this environment must decline to support. Evidence counts only inside what the environment can show: a check that passes here says nothing about real gateway timing, and the Verification Record does not count it toward any claim about that. Whether the real gateway honors request keys therefore stays an assumption in the canon, ASM-011, watched in production.
 
 ## Four verbs
 
-An environment exposes a small, fixed set of actions, and checks, held-out scenarios and exploring agents all drive it through them.
+An environment exposes a small, fixed set of actions, through which checks, held-out scenarios and exploring agents all drive it.
 
 | Verb | Does |
 |---|---|
@@ -52,7 +52,7 @@ An environment exposes a small, fixed set of actions, and checks, held-out scena
 | `perturb` | Makes something in the world misbehave |
 | `observe` | Reads what actually happened, from an authoritative place |
 
-The fake gateway in VE-002 can simulate three failures: a refusal, a duplicate request, and a lost reply, in which the gateway pays and the reply never arrives. What milestone M2 added is a starting state, an order that has already been partly refunded, and its evidence plan required the automatic path to be run against the existing lost-reply failure.
+The fake gateway in VE-002 can simulate three failures: a refusal, a duplicate request, and a lost reply, in which the gateway pays and the reply never arrives. Milestone M2 added a starting state, an order that has already been partly refunded, and its evidence plan required the automatic path to be run against the existing lost-reply failure.
 
 ```python
 def test_retry_after_lost_reply_pays_once(world):
@@ -68,7 +68,7 @@ The environment drives and observes, and only the check decides pass or fail, be
 
 ## Three kinds of fidelity
 
-An environment can be unrealistic in its **world** (how real are the surroundings?), in its **actors** (do the simulated users behave like real ones?) and in its **oracle** (does "passed" actually mean correct?). The three fail independently, and the oracle is usually the weakest. Oracles are therefore preferred in a fixed order: a mechanical check first, then comparison against a reference model, then a model used as a judge with its noise measured, and human review last.
+An environment can be unrealistic in its **world** (how real are the surroundings?), in its **actors** (do the simulated users behave like real ones?) and in its **oracle** (does "passed" actually mean correct?). The three fail independently, and the oracle is usually the weakest, so oracles are preferred in a fixed order: a mechanical check first, then comparison against a reference model, then a model used as a judge with its noise measured, and human review last.
 
 ## Rules that keep an environment trustworthy
 
@@ -85,10 +85,15 @@ Some clauses concern what happens when two things overlap. A **window** is the i
 
 ## Designing one
 
-The verification lead and the verifier agent design an environment before it is built. Which of them leads is [the team's choice](../delegation/), on the condition that a person can always explain how each clause is checked. 
-The design of VE-002 had to answer three questions. Which failures must the system survive under test? The answer is the three that the fake gateway simulates, and a failure left off that list is never tried. What is faked, and how faithfully? The payment gateway is a fake that passes the real gateway's contract tests, and the store is real and local. What can the environment not show? The answer is the last section of the declaration.
+The verification lead and the verifier agent design an environment before it is built, and which of them leads is [the team's choice](../delegation/). The design of VE-002 settled the following.
 
-Once built, the environment is kept like product code. The verification lead reads the declaration, and a person reviews any change that weakens it. The declaration lives in `spec/blueprint/environments/` and the code in `verify/envs/`, and a change to either makes the evidence it produced [stale](../evidence/#how-staleness-works). It is also improved after every **escaped defect**, a defect that reached production past every check: the reason the environment missed it becomes a new starting state, a new `perturb` action, or a new line in the declaration's last section. After incident INC-007, for example, VE-002 gained an order whose dispatch and delivery dates differ, as [Operate](../operate/) describes.
+- **Which failures the system must survive under test:** the three that the fake gateway simulates. A failure left off that list is never tried.
+- **What is faked, and how faithfully:** the payment gateway is a fake that passes the real gateway's contract tests, and the store is real and local.
+- **What the environment cannot show:** the last section of the declaration.
+
+Once built, the environment is kept like product code. The verification lead reads the declaration, and a person reviews any change that weakens it. The declaration lives in `spec/blueprint/environments/` and the code in `verify/envs/`, and a change to either makes the evidence they produced [stale](../evidence/#how-staleness-works).
+
+The environment is also improved after every **escaped defect**, a defect that reached production past every check. The reason it was missed becomes a new starting state, a new `perturb` action, or a new line in the declaration's last section. After incident INC-007, for example, VE-002 gained an order whose dispatch and delivery dates differ, as [Operate](../operate/) describes.
 
 ## What is hard
 

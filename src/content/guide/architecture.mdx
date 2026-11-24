@@ -11,21 +11,21 @@ points:
 related: [build, observability, environments, delegation]
 ---
 
-## Agents need structure more than people do
+## Why structure matters more with agents
 
-A person can hold a tangled system in their head, because they were there when it became tangled. An agent has only the files in front of it, so the quality of its work depends on how much of the system it can reason about from them.
+A person can hold a tangled system in their head, because they were there when it became tangled. An agent has only the files in front of it, so the quality of its work depends on how much of the system it can reason about from those files.
 
-Good architecture has always made software easier to change. For a team that works with agents it also decides how cheaply anyone can find out whether a change is right, and what the running system did.
+Good architecture has always made software easier to change. For a team that works with agents, it also determines how cheaply anyone can find out whether a change is right and what the running system did.
 
 ## A recommendation
 
-The rest of the method works on any codebase. The layout recommended here is the one that makes evidence and observability cheapest, and a team should adopt it where it fits and leave it where it does not.
+The rest of the method works on any codebase. The structure recommended here is the one that makes evidence and observability cheapest, and a team should adopt it where it fits and leave it where it does not.
 
 ## Separate the code that decides from the code that acts
 
 <Figure id="core-shell" />
 
-Most code decides and acts at once. A function reads the database, checks a rule, calls the payment gateway, and writes a row, so testing the rule requires a database and a gateway. The remedy is to move the rule into a function of its own.
+Most code decides and acts at once. A typical function reads the database, checks a rule, calls the payment gateway and writes a row, so testing the rule requires a database and a gateway. The remedy is to move the rule into a function of its own.
 
 ```python
 # Decides. No database, no network, no clock.
@@ -49,7 +49,7 @@ def handle_refund_request(request):
     ...
 ```
 
-The first function contains every rule about who gets a refund and touches nothing, and the second contains no rules and touches everything. Milestone M2 of the refunds service depends on this split: the architect decides at [Shape](../shape/) that the rule for small refunds, DEC-031, goes into the first function and that the code that pays out is left alone.
+The first function contains every rule about who gets a refund and touches nothing, and the second contains no rules and touches everything. Milestone M2 of the refunds service relies on this split: at [Shape](../shape/) the architect decides that the rule for small refunds, DEC-031, goes into the first function and that the code that pays out is left alone.
 
 ## Two terms
 
@@ -59,7 +59,7 @@ An **adapter** is the one place where a particular side effect happens. Until so
 
 ## Established names
 
-The pattern is well established under several names, and a team should use whichever it already has.
+The pattern is well established under several names, and a team should use whichever name it already knows.
 
 | Name | From |
 |---|---|
@@ -79,13 +79,13 @@ The CanonBall specification calls the two halves the *pure core* and its *doors*
 | Deterministic | Any run can be replayed exactly from its recorded inputs. |
 | Small and separate | The list of code that can break a clause is short and easy to name. |
 
-The last row has the largest effect. Every [assurance case](../verification-engineering/) lists the code its clause depends on. If the rules about refunds live in one function, that list has one entry. If they are spread across handlers, queries and jobs, the list is long, it changes often, and the evidence goes stale constantly.
+The last row has the largest effect. Every [assurance case](../verification-engineering/) lists the code its clause depends on. If the rules about refunds live in one function, that list has one entry; if they are spread across handlers, queries and jobs, the list is long and changes often, and the evidence goes stale constantly.
 
 Adapters help in a different way. Each one is a narrow point through which an effect must pass, which makes it the natural place to enforce a [constraint](../primitives/#constraint), add an extra check, or require a person's approval before something irreversible happens.
 
 ## Why it makes observability cheap
 
-Agents build, verify and operate by looking inside the system, and the same split keeps that affordable. Decision logic receives everything it uses as an argument, so nothing it relied on is hidden. Each decision can also name the clause it applied.
+Agents build, verify and operate by looking inside the system, and the same split keeps that affordable. Decision logic receives everything it uses as an argument, so nothing it relied on is hidden, and each decision can also name the clause it applied.
 
 ```python
     if (today - order.delivered_on).days > 30:
@@ -94,13 +94,13 @@ Agents build, verify and operate by looking inside the system, and the same spli
         return Approve(payout=amount_cents, clause="DEC-031")
 ```
 
-The handler already holds the inputs and now holds the clause, so it can write one log line per decision with the clause, the inputs and the outcome, while the decision logic itself still performs no output. A line of this kind is what the on-call agent reads in incident INC-007 to see which clause refused a refund and which dates the decision was given, as [Operate](../operate/) describes.
+The handler already holds the inputs and now holds the clause, so it can write one log line per decision with the clause, the inputs and the outcome, while the decision logic itself still performs no output. In incident INC-007 the on-call agent reads a line of this kind to see which clause refused a refund and which dates the decision was given, as [Operate](../operate/) describes.
 
-In code that decides and acts at once, the inputs are spread across queries and calls, and every handler has to assemble that line by hand. The chapter on [observability](../observability/) covers what a system emits and the tools agents use to read it.
+In code that decides and acts at once, the inputs are spread across queries and calls, and every handler has to assemble that line by hand. [Observability](../observability/) covers what a system emits and the tools agents use to read it.
 
 ## What people still control
 
-Who leads the architecture is a team's choice. An architect may write it, or agents may write it and revise it. The chapter on [handing over decisions](../delegation/) covers how a team sets that. Wherever it is set, people keep the following levers on the design.
+Who leads the architecture is a team's choice: an architect may write it, or agents may write and revise it, as [handing over decisions](../delegation/) describes. Wherever that is set, people keep the following levers on the design.
 
 | Lever | What it gives a person |
 |---|---|
@@ -116,8 +116,8 @@ Who leads the architecture is a team's choice. An architect may write it, or age
 - **Prototypes.** The structure costs more than a throwaway is worth.
 - **Hot numeric code.** Passing state in and out explicitly can cost performance the product needs.
 
-In these cases the rest of the method still applies, and the evidence sits at a higher [verification level](../verification-engineering/#the-weakest-dependency-decides-the-method), where it is slower and less complete.
+In these cases the rest of the method still applies, but the evidence sits at a higher [verification level](../verification-engineering/#the-weakest-dependency-decides-the-method), where it is slower to produce and less complete.
 
 ## Starting on an existing system
 
-An existing system does not have to be restructured all at once. Start with the code behind its two or three most important invariants: extract the decision into a function with no side effects, leave the surrounding handler as the adapter, and write the checks against the function. Repeat when the next clause needs it.
+An existing system need not be restructured all at once. Start with the code behind its two or three most important invariants: extract the decision into a function with no side effects, leave the surrounding handler as the adapter, and write the checks against the function. Repeat when the next clause needs it.

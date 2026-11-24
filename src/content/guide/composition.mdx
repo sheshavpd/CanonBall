@@ -16,7 +16,7 @@ A promise such as "a customer is never charged twice" is kept by several service
 
 ## A unit
 
-A **unit** is a separately owned part of a system with its own canon, blueprint, build and Verification Record. A service is a unit, and so are the subdomain that contains it and the domain above that. The shape repeats at every level of the tree, and only the size differs. In the terms of domain-driven design, a unit is close to a bounded context.
+A **unit** is a separately owned part of a system with its own canon, blueprint, build and Verification Record. A service is a unit, and so are the subdomain that contains it and the domain above that; the shape repeats at every level of the tree, and only the size differs. In the terms of domain-driven design, a unit is close to a bounded context.
 
 A tree of units is kept consistent by the following rules.
 
@@ -31,13 +31,13 @@ A tree of units is kept consistent by the following rules.
 
 **Governance** means that the parent sets rules every descendant follows: the constraints, the policy and the vocabulary. The child adopts them, and the parent does not track how.
 
-**Composition** means that a parent promise is delivered by several parts working together. The parent designs how they cooperate, so it must know what it needs from each part, although it does not need to know who provides it. Roles exist to serve composition.
+**Composition** means that a parent promise is delivered by several parts working together. The parent designs how they cooperate, so it must know what it needs from each part, though not who provides it. Roles exist to serve composition.
 
 ## A role
 
 A **role** is a contract that a unit defines for something it needs someone else to provide. It is written in the style of design by contract: what the provider guarantees, and what it may assume of its caller.
 
-The word is also used for agent roles such as builder and reviewer, which are described under [people and agents](../people-and-agents/). A role between units is always a contract.
+The same word names the agent roles, such as builder and reviewer, described under [people and agents](../people-and-agents/); a role between units is always a contract.
 
 ```markdown
 id: ROLE-payer
@@ -53,7 +53,7 @@ Assumes:
 
 A role is published as a package. It holds the contract, which the parent designs against; the **contract tests**, which any provider must pass; and a **fake**, a stand-in built from the contract for the parent's own tests.
 
-No design refers to a concrete partner. The parent writes its design against `ROLE-payer`, and one file, the **assembly**, says who fills each role.
+No design refers to a concrete partner: the parent writes its design against `ROLE-payer`, and one file, the **assembly**, says who fills each role.
 
 <Figure id="roles" />
 
@@ -75,15 +75,15 @@ A promise delivered by several providers has an assurance case with three parts,
 - The **assembly** part shows that every role is filled by a provider that meets it. It is computed from each provider's own Record.
 - The **integration** part shows that the assembled system behaves, through end-to-end checks.
 
-The parent's proof takes each role's guarantees as given, and each provider's Record shows that its implementation meets the contract, so the whole system never has to be verified at once. Computer scientists call this assume-guarantee reasoning, and it is the kind of verification that scales with the number of teams.
+The parent's proof takes each role's guarantees as given, and each provider's Record shows that its implementation meets the contract, so the whole system never has to be verified at once. This is assume-guarantee reasoning, and because each team verifies only its own part, it is expected to scale with the number of teams.
 
 ## Staleness crosses boundaries
 
-Each role has a content hash computed from its contract, its tests and its fake. If the parent changes the role, every provider's test result goes stale. Each team also pins the [CanonBall](../canonball/) versions it depends on, and re-runs the checks that rest on a provider when it publishes a new one.
+Each role has a content hash computed from its contract, its tests and its fake, so if the parent changes the role, every provider's test result goes stale. Each team also pins the [CanonBall](../canonball/) versions it depends on, and re-runs the checks that rest on a provider when that provider publishes a new one.
 
 ## Outside dependencies are roles too
 
-A third-party payment gateway is handled the same way: define the role you need, bind the current vendor in the assembly, and write your assumptions against the role. In the refunds canon, ASM-011 (the payment gateway pays at most once per request key) is an assumption of this kind.
+A third-party payment gateway is handled in the same way: define the role you need, bind the current vendor in the assembly, and write your assumptions against the role. In the refunds canon, ASM-011 (the payment gateway pays at most once per request key) is an assumption of this kind.
 
 An assumption on your side is a promise on the vendor's side. If the vendor does not publish evidence, the binding carries its documentation in place of a Record, and your treatment of the assumption has to do more of the work.
 
@@ -91,14 +91,14 @@ Each binding is marked **hard** or **soft**. A hard binding means your capabilit
 
 ## One coordinator per protocol
 
-A cooperation among five services with no owner is a classic source of distributed failures. The responsibility for running a protocol is therefore assigned to exactly one unit, and the others promise only local guarantees.
+A cooperation among five services with no owner is a common source of distributed failures, so the responsibility for running a protocol is assigned to exactly one unit, and the others promise only local guarantees.
 
-## Teams do not wait for each other
+## Independent releases
 
-Each unit moves its own milestones through the [seven stations](../workflow/) and releases its own CanonBalls. A consumer's milestone can be released while the provider's is still being built. The affected clauses show as *pending* until the provider passes the contract tests.
+Each unit moves its own milestones through the [seven stations](../workflow/) and releases its own CanonBalls, so teams need not wait for each other. A consumer's milestone can be released while the provider's is still being built, and the affected clauses show as *pending* until the provider passes the contract tests.
 
 ## What it costs
 
-The cost is two extra artifacts, the role contracts and the assembly file. A role with a single provider can look like an interface with one implementation, but it is still worth keeping, because the contract is the allocation of responsibility that would have had to be written in any case. The only new file is the assembly, and the first change of provider is expected to repay it.
+The cost is two extra artifacts, the role contracts and the assembly file. A role with a single provider can look like an interface with one implementation, but it is worth keeping, because the contract records an allocation of responsibility that would have had to be written down in any case. That leaves the assembly as the only genuinely new file, and the first change of provider is expected to repay it.
 
-One risk remains open: a parent's status is only as good as its providers' contract tests, and a test suite that misses something the protocol relies on gives a green result and a wrong promise.
+A parent's status is only as good as its providers' contract tests, a risk discussed under [open bets](../open-bets/).

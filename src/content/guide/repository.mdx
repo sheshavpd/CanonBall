@@ -1,12 +1,12 @@
 ---
 title: The repository layout
-summary: "CanonBall is a way of organizing a repository so that each folder answers one question and is written at a known station."
+summary: "CanonBall organizes a repository so that each folder answers one question and is written at a known station."
 part: structure
 order: 2
 points:
-  - "spec/ holds only clauses that have been released with evidence. Only a release writes to it."
+  - "spec/ holds only clauses that have been released with evidence, and only a release writes to it."
   - "Every other folder is written at a known station, and observe/, the agents' view inside the system, is part of the layout."
-  - "Expect verify/ to grow larger than src/."
+  - "verify/ can be expected to grow larger than src/."
 related: [workflow, layers, people-and-agents, observability]
 ---
 
@@ -14,7 +14,7 @@ related: [workflow, layers, people-and-agents, observability]
 
 <Figure id="folders" />
 
-Because each folder answers one question, "where does this go?" has one answer: the folder whose question the file answers. "May I change this?" also has one answer, which the repository enforces for each [role](../people-and-agents/).
+Because each folder answers one question, "where does this go?" has a single answer: the folder whose question the file answers. So does "may I change this?", and the repository enforces that answer for each [role](../people-and-agents/).
 
 ## The layout
 
@@ -52,13 +52,13 @@ refunds/
 └── incidents/                 what went wrong
 ```
 
-The tree shows the refunds service while milestone M2 is being built. Clause files sit directly in `canon/`, one per file, with no folder per kind. DEC-031 is agreed and not yet released, so its file sits under the milestone's `diff/canon/` and not in `spec/`.
+The tree shows the refunds service while milestone M2 is being built. Clause files sit directly in `canon/`, one per file, with no folder per kind. DEC-031 is agreed but not yet released, so its file sits under the milestone's `diff/canon/` rather than in `spec/`.
 
-## Three objects
+## The spec, a change and a release
 
-- **The spec**, in `spec/`: what is true of the system today.
-- **A change**, a folder in `roadmap/`: a proposal that says what should become true, the files that would make it so, and the tasks to build them.
-- **A release**, an event: the moment it becomes true. Nothing else writes to `spec/`.
+- **The spec**, in `spec/`, is what is true of the system today.
+- **A change**, a folder in `roadmap/`, is a proposal: what should become true, the files that would make it so, and the tasks to build them.
+- **A release** is an event, the moment the change becomes true, and nothing else writes to `spec/`.
 
 ## Who writes what
 
@@ -78,33 +78,33 @@ A change moves through [seven stations](../workflow/), and each station writes t
 
 > `spec/` holds only clauses that have been released with evidence. Accepted means supported by the evidence so far, not proven.
 
-A clause that has been agreed but not built is not in `spec/`. It sits in its milestone's `diff/` until that milestone is released, when a program called the orchestrator copies it across. No person and no agent edits `spec/` by hand, so an agent starting a task and a person joining the team can both read it without asking which parts are aspirational.
+A clause that is agreed but not yet built stays in its milestone's `diff/` until the milestone is released, when the orchestrator copies it into `spec/`. No person and no agent edits `spec/` by hand, so an agent starting a task and a person joining the team can both rely on it without asking which parts are aspirational.
 
-Each planned change is a **milestone**, and its folder holds three things.
+Each planned change is a **milestone**, and its folder holds:
 
-- `change.md` is the change proposal: one page that answers "what changes in the system?"
-- `diff/` holds whole files in their final form: the clauses the change adds under `diff/canon/`, and the design and the evidence plan under `diff/blueprint/`. At release they replace the files of the same name in `spec/`.
-- `tasks/` is the agents' breakdown of the work.
+- `change.md`, the change proposal: one page that answers "what changes in the system?";
+- `diff/`, which holds whole files in their final form, with the clauses the change adds under `diff/canon/` and the design and the evidence plan under `diff/blueprint/`, and which at release replace the files of the same name in `spec/`;
+- `tasks/`, the agents' breakdown of the work.
 
-`index.md` lists the milestones in priority order, and the product manager ranks it. `unplanned/` holds unplanned work: incident repairs, bug fixes, refactorings and upkeep. Each piece has the same shape as a milestone, only smaller, and is released on its own. [Collect](../collect/) covers the ranking and says which work may go to `unplanned/`.
+`index.md` lists the milestones in the order the product manager ranks them. `unplanned/` holds unplanned work: incident repairs, bug fixes, refactorings and upkeep. Each piece has the shape of a small milestone and is released on its own. [Collect](../collect/) covers the ranking and the criteria for work that may go to `unplanned/`.
 
 ## The other folders
 
-- `src/` is the code, written at [Build](../build/), and CanonBall requires no particular layout inside it.
+- `src/` is the code, written at [Build](../build/). CanonBall requires no particular layout inside it.
 - `verify/` holds the environments, one check per example, a kept failing run of each check in `checks/red/`, the injected faults and the monitors, as [Verify](../verify/) shows.
-- `observe/` lists what the system emits and holds the commands that read it, which [Observability](../observability/) describes.
+- `observe/` lists what the system emits and holds the commands that read it, as [Observability](../observability/) describes.
 - `incidents/` keeps one file per incident permanently, such as the `INC-007` that [Operate](../operate/) follows.
-- `AGENTS.md` is the first file an agent reads, and it has [its own chapter](../agents-md/).
+- `AGENTS.md` is the first file an agent reads, and has [its own chapter](../agents-md/).
 
-Expect `verify/` to grow larger than `src/`, because showing that a clause holds takes more engineering than writing the code that keeps it.
+`verify/` can be expected to grow larger than `src/`, because showing that a clause holds usually takes more engineering than writing the code.
 
 ## Conventions
 
 - **One clause per file,** named with its ID.
-- **Markdown with front matter.** Machine-readable fields go in the front matter. Reasoning goes in the body.
+- **Markdown with front matter.** Machine-readable fields go in the front matter, and reasoning goes in the body.
 - **Stable IDs with a prefix for the kind:** `REQ` promise, `INV` invariant, `DEC` decision, `ENV` constraint, `ASM` assumption, `VE` verification environment, `INC` incident.
-- **Start with one repository.** Split a part out only when it gets its own team or its own release schedule. The chapter on [larger systems](../composition/) covers what changes then.
+- **Start with one repository.** Split a part out only when it gets its own team or release schedule. The chapter on [larger systems](../composition/) covers what changes then.
 
-## What the layout buys you
+## What the layout gives an agent
 
-The layout gives an agent the state of the work as well as context about the product: at any moment it can read what is true now, what is being changed and why, what the evidence says, and which files it may write.
+Besides context about the product, the layout gives an agent the state of the work: at any moment it can read what is true now, what is being changed and why, what the evidence says, and which files it may write.

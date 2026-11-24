@@ -7,15 +7,15 @@ points:
   - "A clause is one statement the system is held to, in one file, with worked examples."
   - "There are five kinds: a promise, an invariant, a decision, a constraint and an assumption."
   - "Each clause also says how much freedom agents have around it."
-  - "A tenet says which good thing wins when two conflict. It is not a clause, and nothing checks it."
+  - "A tenet says which good thing wins when two conflict; it is not a clause, and nothing checks it."
 related: [vocabulary, tenets, examples, shape, layers]
 ---
 
 ## Why primitives at all
 
-Tell an agent to "build a refunds service" and it will build one. Along the way it makes hundreds of decisions you never see: what counts as a duplicate, how long the refund window lasts, what happens when the payment gateway times out. A few of those decisions are yours to make, and the rest do not need your attention.
+Tell an agent to "build a refunds service" and it will build one. Along the way it makes many decisions you never see: what counts as a duplicate, how long the refund window lasts, what happens when the payment gateway times out. A few of those decisions are yours to make, and the rest do not need your attention.
 
-The primitives are how you draw that line. Each one is a short statement in plain language. An agent may do anything that respects them, and everything it does must trace back to one of them.
+The primitives are how you draw that line. Each is a short statement in plain language; an agent may do anything that respects them, and everything it does must trace back to one of them.
 
 ## A clause
 
@@ -23,7 +23,7 @@ A **clause** is one statement the system is held to. It lives in one file, has a
 
 <Figure id="clause-anatomy" />
 
-There are five kinds of clause. Each answers a different question.
+There are five kinds of clause, and each answers a different question.
 
 <Figure id="clause-kinds" />
 
@@ -43,11 +43,11 @@ Requirements engineering calls this a *requirement*, which is why a promise's ID
 
 > A refund is never issued twice for the same order.
 
-A promise says what the system does. An invariant says what it must never get wrong while doing it, which makes the promise safe to offer.
+Where a promise says what the system does, an invariant says what it must never get wrong while doing it, which makes the promise safe to offer.
 
 The sentence alone leaves "twice" open, and the invariant's [examples](../examples/) fix it: the same request paid two times. A second, separate refund on the same order is a new refund and is allowed.
 
-Invariants are also where experience accumulates. Nobody can list every invariant in advance. They come from asking "what must never happen?" of each promise, and from incidents. When something breaks in production, the repair adds an example and often an invariant, so the same failure cannot come back unnoticed.
+Invariants are also where experience accumulates. Nobody can list them all in advance; they come from asking "what must never happen?" of each promise, and from incidents. When something breaks in production, the repair adds an example and often an invariant, so the same failure cannot come back unnoticed.
 
 ## Decision
 
@@ -95,11 +95,11 @@ Every clause also says how much freedom agents have around it.
 - **Deferred.** The agents may choose, within stated bounds.
 - **Open.** Nobody has decided. Agents must ask a person and may not guess.
 
-This one field is a direct control. Marking a clause *deferred* hands a decision over. Marking it *open* stops an agent from filling a gap with a guess.
+This one field gives people direct control: marking a clause *deferred* hands a decision over, and marking it *open* stops an agent from filling a gap with a guess.
 
 ## Changes go one way
 
-Every change to a clause is classified. **Strengthening** promises more or assumes less, and **weakening** does the reverse. A clause may be strengthened freely. Weakening a clause that other people rely on is a breaking change, and each of them must agree to it.
+Every change to a clause is classified. **Strengthening** promises more or assumes less, and **weakening** does the reverse. A clause may be strengthened freely, but weakening a clause that other people rely on is a breaking change, and each of them must agree to it.
 
 ## What belongs in the canon
 
@@ -117,4 +117,4 @@ When an agent meets a choice that no clause settles, it cites a tenet in its rec
 
 ## Where clauses get written
 
-Work passes seven stations on its way from a request to a running system, as [How work moves](../workflow/) describes. Clauses are written at the second one, [Shape](../shape/). There an agent drafts the clauses for a milestone, which is a batch of related requests, and people settle them with examples. A settled clause joins the canon only at [release](../release/).
+Of the seven stations between a request and a running system, described in [How work moves](../workflow/), clauses are written at the second, [Shape](../shape/). There an agent drafts the clauses for a milestone, which is a batch of related requests, and people settle them with examples. A settled clause joins the canon only at [release](../release/).

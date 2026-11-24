@@ -1,18 +1,18 @@
 ---
 title: What a CanonBall is
-summary: "A CanonBall is the canon bound to the build that keeps it and the Verification Record that shows it, at one moment."
+summary: "A CanonBall is the canon bound, at one moment, to the build that keeps it and the Verification Record that shows it."
 part: structure
 order: 3
 points:
   - "A CanonBall is three things fixed together: the canon, the build, and the Verification Record."
-  - "Every release produces one. Progress is a sequence of them."
+  - "Every release produces one, and progress is a sequence of them."
   - "It answers \"what does this system promise, and how do you know?\" without anyone reading code."
 related: [layers, evidence, release]
 ---
 
 ## The name
 
-**Canon** is the set of clauses a system is held to. A **CanonBall** is what you get when you fix three things together at the moment of a [release](../release/):
+**Canon** is the set of clauses a system is held to. A **CanonBall** is what results from fixing three things together at the moment of a [release](../release/):
 
 1. the canon as it stands,
 2. the build that keeps it,
@@ -26,13 +26,11 @@ In the figure, CanonBall 13 carries a milestone and CanonBall 14 carries the [re
 
 ## The question it answers
 
-Someone who is handed a release as a build alone can run it. To find out what it promises, they read the documentation and hope it is current, and to find out whether it keeps those promises, they read the code or trust the team.
-
-A CanonBall answers both questions without anyone reading code.
+A person who receives a release as a build alone can run it. To learn what it promises, they read the documentation and hope it is current; to learn whether it keeps those promises, they read the code or trust the team. A CanonBall answers both questions without anyone reading code.
 
 > What does this system promise, and how do you know?
 
-Different people ask that question at different times: a customer deciding whether to depend on you, an auditor, and the engineer who inherits the system two years later.
+Different people ask that question at different times: a customer deciding whether to depend on the system, an auditor, and the engineer who inherits the system two years later.
 
 ## What is inside
 
@@ -47,7 +45,7 @@ CanonBall 13
 
 The record line counts five clauses: the four the refunds service kept at CanonBall 12, and DEC-031.
 
-A CanonBall differs from a tagged commit in these ways.
+A CanonBall differs from a tagged commit in the following ways.
 
 | Property | What it means |
 |---|---|
@@ -56,14 +54,14 @@ A CanonBall differs from a tagged commit in these ways.
 | **Assumptions travel with it** | It states what it assumes about where it runs, the way a package states its dependencies, and includes the monitors that notice when an assumption stops holding. |
 | **Scope stays visible** | Each clause appears with its status, the conditions under which the evidence holds, and anything still open. A bare "passed" is never shown. |
 
-A CanonBall holds only clauses that have been released with evidence. A clause still being built is not in it. Accepted means supported by the evidence so far, not proven.
+A CanonBall holds only clauses that have been released with evidence, so a clause still being built is not in it, and "accepted" means supported by the evidence so far rather than proven.
 
 ## For one team
 
-For a single team building for itself, none of the packaging matters. A repository with a `spec/canon/` folder, a release rule, and a Record that a program, the orchestrator, computes on every push is already a private CanonBall.
+A single team building for itself has no need of the packaging. A repository with a `spec/canon/` folder, a release rule, and a Record that the orchestrator computes on every push is already a private CanonBall.
 
-Signing, registries and exchange formats become useful on the day you hand the artifact to someone who did not watch it being built. [Larger systems](../composition/) covers what happens when another team depends on yours.
+Signing, registries and exchange formats become useful when the artifact is handed to someone who did not watch it being built. [Larger systems](../composition/) covers the case in which another team depends on yours.
 
 ## Is it a framework?
 
-There is nothing to install and no library to import, so "framework" overstates it. CanonBall is a method: a set of written artifacts, a repository layout, a division of work between people and agents, and a rule for what counts as a release. The tooling is small and mostly scripts, and you could write your own.
+There is nothing to install and no library to import, so "framework" overstates it. CanonBall is a method: a set of written artifacts, a repository layout, a division of work between people and agents, and a rule for what counts as a release. The tooling is small, mostly scripts, and a team could write its own.
