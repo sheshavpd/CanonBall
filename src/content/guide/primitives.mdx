@@ -7,7 +7,7 @@ points:
   - "A clause is one statement the system is held to, in one file, with worked examples."
   - "There are five kinds. A promise, an invariant, a decision, a constraint, an assumption."
   - "Each clause also says how much freedom agents have around it."
-  - "A tenet is not a clause. It says which good thing wins when two conflict, and nothing checks it."
+  - "A tenet says which good thing wins when two conflict. It is not a clause, and nothing checks it."
 related: [vocabulary, tenets, examples, shape, layers]
 ---
 
@@ -35,7 +35,7 @@ There are five kinds of clause. Each answers a different question.
 
 A promise is the reason any code exists. If part of the system cannot be traced back to a promise, nobody can say why it is there.
 
-Requirements engineering calls this a *requirement*, and so does the specification behind this guide. The guide says *promise* because that is how the customer experiences it.
+Requirements engineering calls this a *requirement*, which is why a promise's ID begins with REQ. The guide says *promise* because that is how the customer experiences it.
 
 ## Invariant
 
@@ -43,17 +43,19 @@ Requirements engineering calls this a *requirement*, and so does the specificati
 
 > A refund is never issued twice for the same order.
 
-A promise says what the system does. An invariant says what it must never get wrong while doing it. Invariants make promises safe to offer.
+A promise says what the system does. An invariant says what it must never get wrong while doing it, which makes the promise safe to offer.
 
-They are also where experience accumulates. Nobody can list every invariant in advance. They come from asking "what must never happen?" of each promise, and from incidents. When something breaks in production, the repair adds an invariant, so the same failure cannot come back unnoticed.
+The sentence alone leaves "twice" open, and the invariant's [examples](../examples/) fix it: the same request paid two times. A second, separate refund on the same order is a new refund and is allowed.
+
+Invariants are also where experience accumulates. Nobody can list every invariant in advance. They come from asking "what must never happen?" of each promise, and from incidents. When something breaks in production, the repair adds an example and often an invariant, so the same failure cannot come back unnoticed.
 
 ## Decision
 
 **A choice that could have gone another way, written down.**
 
-> Refunds under $100 are approved automatically.
+> A refund is approved automatically while the total refunded on the order stays under $100.
 
-Nothing forces the threshold to be $100. Someone chose it. If the choice is not recorded, an agent will make it again the next time it touches that code, and may choose differently.
+Nothing forces the limit to be $100, or to count everything refunded on the order. Someone chose both. If the choice is not recorded, an agent will make it again the next time it touches that code, and may choose differently.
 
 Teams that keep architecture decision records will recognize the idea. Here it applies to any choice a person cares about, large or small. A design choice an agent made can be promoted to a decision at any time, and from then on it is fixed until a person changes it.
 
@@ -89,13 +91,11 @@ A system cannot prove things about a world it does not control. It can state pla
 
 Every clause also says how much freedom agents have around it.
 
-| State | Meaning |
-|---|---|
-| **Decided** | The clause is binding as written. |
-| **Deferred** | The agents may choose, within stated bounds. |
-| **Open** | Nobody has decided. Agents must ask a person and may not guess. |
+- **Decided.** The clause is binding as written.
+- **Deferred.** The agents may choose, within stated bounds.
+- **Open.** Nobody has decided. Agents must ask a person and may not guess.
 
-This one field is the most direct control you have. Marking a clause *deferred* hands a decision over. Marking it *open* stops an agent from filling a gap with a guess.
+This one field is a direct control. Marking a clause *deferred* hands a decision over. Marking it *open* stops an agent from filling a gap with a guess.
 
 ## Changes go one way
 
@@ -113,7 +113,7 @@ A tenet says which good thing wins when two conflict. It is written "X over Y".
 
 > A person's review over speed, when money moves.
 
-When an agent meets a choice that no clause settles, it cites a tenet in its recommendation, and a person decides. The answer is then recorded as a decision, which is a clause. The tenet stays what it was: a ranking with no examples and no checks. The chapter on [tenets](../tenets/) covers how to write them.
+When an agent meets a choice that no clause settles, it cites a tenet in its recommendation, and a person decides. The answer is then recorded as a decision, which is a clause and cites the tenet. The tenet stays what it was: a ranking with no examples and no checks. The chapter on [tenets](../tenets/) covers how to write them.
 
 ## Where clauses get written
 

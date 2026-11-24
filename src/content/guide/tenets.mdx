@@ -6,17 +6,16 @@ order: 3
 points:
   - "A tenet is written \"X over Y\". It says which good thing wins when two conflict."
   - "Agents cite a tenet when they recommend. A person still decides."
-  - "A tenet is not a clause. Nothing checks it, and it never appears in the Verification Record."
+  - "When a tenet settles a question, the answer is recorded as a decision that cites it."
+  - "A tenet is not a clause: nothing checks it, and it never appears in the Verification Record."
 related: [primitives, vocabulary, shape, delegation]
 ---
 
 ## A choice nobody made
 
-The refunds team is drafting a decision: refunds under $100 are approved automatically. An example exposes a gap. A customer asks for two $60 refunds on one order. Each is under $100. Together they are not.
+At [Shape](../shape/), an example for the refunds team's new decision exposes a case nobody has decided: two $60 refunds on one order, each under the $100 limit and together over it.
 
-Nobody has decided this case. Left alone, an agent picks an answer, and may pick the other one next month. Told to ask, it still has nothing to recommend from.
-
-Both answers can be defended. One pays the customer sooner. The other keeps a person in front of the larger sum. The agent lacks one fact: which of the two this team puts first.
+Both answers can be defended. One pays the customer sooner. The other keeps a person in front of the larger sum. Left alone, an agent picks one, and may pick the other next month. Told to ask, it still has nothing to recommend from, because it lacks one fact: which of the two this team puts first.
 
 ## What a tenet is
 
@@ -28,11 +27,8 @@ A **tenet** is a short statement of which good thing wins when two conflict. It 
 In priority order. When two tenets conflict, the higher one wins.
 
 1. A person's review over speed, when money moves.
-   A person reviews before money moves, when in doubt.
 2. A slow refund over a wrongly refused one.
-   A wrongly refused refund is worse than a slow one.
 3. A rule support can explain over a rule that approves more.
-   A customer who is refused is told why in one sentence.
 ```
 
 Keep the list to a handful, in priority order. A long ranking is one nobody can apply.
@@ -45,22 +41,22 @@ A tenet says which one wins. One test separates the two: could a sensible team h
 
 ## How an agent uses one
 
-Choices like this one surface at the [Shape station](../shape/), where a milestone's clauses are settled. The elicitor, the agent that drafts clauses, brings the question to the product manager with a recommendation and cites the tenet behind it.
+The elicitor, the agent that drafts clauses, brings the question to the product manager with a recommendation and cites the tenet behind it.
 
 ```text
 Question    Two $60 refunds on one order. Does the $100 limit
             apply to each refund, or to the total refunded
             on the order?
 Recommend   The total refunded on the order.
-Cites       Tenet 1. A person reviews before money moves,
-            when in doubt.
+Cites       Tenet 1. A person's review over speed,
+            when money moves.
 ```
 
-The product manager decides, and here agrees. A tenet supports a recommendation. It never makes the decision.
+The product manager decides, and here agrees. A tenet supports a recommendation and never makes the decision.
 
 ## From a tenet to a decision
 
-When a tenet settles a specific question, the answer is recorded as a [decision](../primitives/#decision) that cites it. Here the decision is DEC-031, "Refunds under $100 are approved automatically". It gains an example, "two $60 refunds on one order: the second goes to review", and names tenet 1 as its reason.
+When a tenet settles a specific question, the answer is recorded as a [decision](../primitives/#decision), and the decision file cites the tenet. Here the decision is DEC-031: "A refund is approved automatically while the total refunded on the order stays under $100." One of its examples is "two $60 refunds on one order, the second goes to review", and its file carries the line "Why: tenet 1".
 
 From then on the case is decided, and its example becomes a check.
 
@@ -75,4 +71,4 @@ A question that comes up twice with no tenet to settle it is a sign that one is 
 | Appears in the Verification Record | Yes | Never |
 | Applies | Every time | When no clause settles the question |
 
-A statement that must hold every time belongs in a [clause](../primitives/). "No payout above $10,000 without review" has no "when in doubt" in it. It is a constraint.
+A statement that must hold every time belongs in a [clause](../primitives/). "No payout above $10,000 without review" ranks nothing over anything and allows no exception, so it is a constraint.

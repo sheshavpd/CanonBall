@@ -4,9 +4,9 @@ summary: "vocabulary.md defines each noun once, and people and agents both work 
 part: write
 order: 2
 points:
-  - "One word per concept, defined once, in a file agents read before every task."
+  - "One word per concept, defined once, in one file."
   - "The same word then appears unchanged in the promise, the code, the check and the incident report."
-  - "Most open questions turn out to be about an undefined word."
+  - "Expect most open questions to be about an undefined word."
 related: [primitives, tenets, shape, composition]
 ---
 
@@ -39,7 +39,7 @@ Three rules make it work.
 
 1. **One word per concept.** If "refund" is defined, nobody writes "reimbursement" or "return of funds".
 2. **No undefined nouns.** A clause that uses a noun missing from the vocabulary is blocked until the word is defined.
-3. **Agents read it before every task.** An agent starts each task with three files: `AGENTS.md`, which sits at the repository root and is the first file it reads, then `tenets.md` and `vocabulary.md`. The chapter on [tenets](../tenets/) covers the second.
+3. **Agents read it before every task.** It is one of the files [AGENTS.md](../agents-md/) tells an agent to start from.
 
 ## One language from promise to incident
 
@@ -60,9 +60,13 @@ Q-044  What is a delivery?
        c) The customer confirms receipt.
 ```
 
-A person picks an answer. The answer becomes the definition, and the question is kept as history. Undefined words are the most common source of open questions, so a vocabulary that is filling up shows a team converging.
+A person picks an answer. The answer becomes the definition, and the question is kept as history. Expect undefined words to be the most common source of open questions, so a vocabulary that is filling up shows a team converging.
 
-A word can also be missing where nobody expected it. A request to approve refunds "under $100" automatically raised the question of whether $100 meant the order total or the amount being refunded. The vocabulary gained *refund amount*.
+A word can also be missing where nobody expected it. A proposal to approve refunds "under $100" automatically raised the question of whether $100 meant the order total or the amount being refunded, and the vocabulary gained an entry.
+
+```text
+Refund amount   The money returned by one refund. Not the order total.
+```
 
 ## Alignment across teams
 
@@ -72,4 +76,4 @@ Sometimes two teams mean different things by one word, and both are right. "Acco
 
 ## What it costs
 
-A vocabulary is cheap to start and takes discipline to keep. Early on, the first ten clauses raise a dozen questions about words. Those questions were always there, and they now arrive when they are cheapest to answer. Later, people want synonyms because "refund" feels repetitive. Elegant variation is a virtue in essays and a defect in specifications.
+A vocabulary is cheap to start and takes discipline to keep. Expect the first clauses to raise many questions about words. Those questions were always there, and they now arrive when they are cheapest to answer. Later, people want synonyms because "refund" feels repetitive. Elegant variation is a virtue in essays and a defect in specifications.

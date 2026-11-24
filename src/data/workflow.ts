@@ -16,8 +16,8 @@ export interface Station {
   /** Others who take part, listed in the guide but not drawn on the conveyor. */
   alsoPeople?: string[];
   alsoAgents?: string[];
-  /** People who appear only when the change is critical. */
-  ifCritical?: string[];
+  /** People who take part only in some cases, with the condition. */
+  sometimes?: { who: string; short?: string; when: string }[];
   reads: string[];
   writes: string[];
   /** The gate that closes this station, if any. */
@@ -33,35 +33,35 @@ export const stations: Station[] = [
   },
   {
     id: 'shape', name: 'Shape', sub: 'promises, decisions, invariants',
-    does: 'People and agents settle what the milestone promises, how it will be built and how it will be proven, and write it all down.',
-    people: ['Product manager', 'Architect', 'Verification lead'], agents: ['Planner'],
-    alsoPeople: ['Constraint owner'], alsoAgents: ['Elicitor', 'Verifier'],
+    does: 'People and agents settle the milestone\u2019s promises, decisions and invariants, how it will be built and how it will be proven, and record it all in the milestone.',
+    people: ['Product manager', 'Architect', 'Verification lead'], agents: ['Elicitor'],
+    alsoPeople: ['Constraint owner'], alsoAgents: ['Planner', 'Verifier'],
     reads: ['AGENTS.md', 'spec/canon/tenets.md', 'spec/canon/vocabulary.md'], writes: ['roadmap/M2-…/diff/canon/', 'roadmap/M2-…/diff/blueprint/'],
     gate: 'Agreement gate: people approve the examples before anything is built.',
   },
   {
     id: 'build', name: 'Build', sub: 'the code',
     does: 'The builder writes the code in named tasks and watches what it does through the observability tools.',
-    people: [], agents: ['Builder'],
-    reads: ['roadmap/M2-…/diff/', 'observe/'], writes: ['src/'],
+    people: [], agents: ['Builder'], sometimes: [{ who: 'Architect', when: 'if the team keeps detailed design' }],
+    reads: ['roadmap/M2-…/diff/', 'observe/'], writes: ['src/', 'observe/signals.md'],
   },
   {
     id: 'verify', name: 'Verify', sub: 'in an engineered environment',
     does: 'A different agent builds the verification environment and the checks, and shows each check failing before its pass counts.',
     people: ['Verification lead'], agents: ['Verifier'],
-    reads: ['roadmap/M2-…/diff/blueprint/', 'observe/'], writes: ['verify/envs/', 'verify/checks/', 'verify/faults/'],
+    reads: ['roadmap/M2-…/diff/blueprint/', 'observe/'], writes: ['verify/envs/', 'verify/checks/', 'verify/faults/', 'observe/tools/'],
   },
   {
     id: 'review', name: 'Review', sub: 'an agent always, a person if critical',
-    does: 'An agent reviews every milestone. A person reviews as well when the change is critical or its blast radius is large.',
-    people: [], agents: ['Reviewer'], ifCritical: ['Owner'],
+    does: 'An agent reviews every milestone. A person reviews as well only when the change is critical or its blast radius is large.',
+    people: [], agents: ['Reviewer'], sometimes: [{ who: 'Owner of what is at risk', short: 'Owner', when: 'if critical' }],
     reads: ['the diff', 'Verification Record', 'spec/canon/policy/'], writes: ['a review'],
-    gate: 'Release gate: a person accepts the risk, only when the policy says there is risk to accept.',
+    gate: 'Release gate: a person accepts the remaining risk, only when the change is critical.',
   },
   {
     id: 'release', name: 'Release', sub: 'a CanonBall',
-    does: 'A program copies the proposed files into spec/ and publishes a CanonBall: the canon, the build and the Verification Record together.',
-    people: [], agents: [], program: 'Verification Record',
+    does: 'The orchestrator, a program, copies the proposed files into spec/, publishes a CanonBall (the canon, the build and the Verification Record together) and deploys its build.',
+    people: [], agents: [], program: 'Orchestrator',
     reads: ['Verification Record'], writes: ['spec/', 'a CanonBall'],
   },
   {
@@ -77,19 +77,19 @@ export const stationById = (id: StationId): Station => stations.find((s) => s.id
 /** The three ideas that set this apart from a conventional software lifecycle. Numbered on the conveyor. */
 export const ideas = [
   {
-    n: 1, slug: 'collect', title: 'Milestones, not tickets',
-    text: 'Requests gather before anyone builds, so promises, decisions and invariants are settled once for the whole batch.',
-    strong: 'Small urgent work rides the express belt through the same stations, alone.',
+    n: 1, slug: 'collect', title: 'Work moves in milestones',
+    text: 'Requests are gathered before anything is built, so their promises, decisions and invariants are settled once and an agent receives a complete, consistent specification.',
+    strong: 'Repairs and upkeep that change no promise take the express belt through the same stations.',
   },
   {
     n: 2, slug: 'environments', title: 'Verification environments are engineered',
-    text: 'The place where a promise is tested is designed with a person, like any other part of the product.',
-    strong: 'People can trust evidence only if they understand how it is produced.',
+    text: 'Agents produce most of the evidence, so the environment that produces it is designed with a person and maintained like product code.',
+    strong: 'People can rely on the evidence because they understand how it was obtained.',
   },
   {
-    n: 3, slug: 'observability', title: 'Observability is built for the agents',
-    text: 'Agents build, verify and operate by looking inside the system: its logs, traces, metrics and state.',
-    strong: 'Without it they guess.',
+    n: 3, slug: 'observability', title: 'Observability is built for agents',
+    text: 'An agent begins each task with no memory of the system. Logs, traces, metrics and state give it the context it needs to build, verify and operate.',
+    strong: 'With them it diagnoses from evidence rather than speculation.',
   },
 ] as const;
 

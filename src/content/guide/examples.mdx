@@ -5,8 +5,8 @@ part: write
 order: 4
 points:
   - "An example is one concrete case of a clause, written as given, when, then."
-  - "People approve examples. They do not approve formal statements or code."
-  - "Every example becomes one check, and every check names its example."
+  - "People approve examples, never formal statements or code."
+  - "Every example becomes one check, every check names its example, and every check is seen to fail once."
 related: [primitives, vocabulary, shape, evidence]
 ---
 
@@ -14,7 +14,7 @@ related: [primitives, vocabulary, shape, evidence]
 
 "A refund is never issued twice for the same order" reads as a complete rule. It leaves at least three things open. Is a second, partial refund on the same order "twice", or only a repeat of the same refund? What about two requests that arrive together, before either has been paid? What about a payout that went through while its reply was lost, so the client tries again?
 
-Each answer is a decision. If the sentence is all you approve, an agent makes those decisions for you.
+Each answer is a decision. If the sentence is all you approve, an agent makes those decisions for you. The refunds team's answers: a second, separate refund on the same order is a new refund and is allowed. Only a repeat of the same request counts as twice, whether it arrives at the same moment or as a retry after a lost reply.
 
 ## What an example is
 
@@ -26,18 +26,21 @@ When the client sends the same refund request again
 Then the customer has been paid $40, once
 ```
 
-The practice is known as specification by example, and behavior-driven development calls each case a *scenario*. Every clause has examples of two kinds.
+The practice is known as specification by example, and behavior-driven development calls each case a *scenario*. Every clause has examples of two kinds: a **satisfies** example shows a situation in which the clause holds, and a **violates** example shows one the clause forbids. The invariant above, INV-004, has three. The block above is the first written out in full.
 
-| Kind | Shows |
-|---|---|
-| **Satisfies** | A situation in which the clause holds. |
-| **Violates** | A situation the clause forbids. |
+```text
+Satisfies:
+- The same request sent twice pays once.
+- A retry after a lost reply finds the original payout.
+Violates:
+- Two concurrent copies of one request both pay out.
+```
 
-The violating examples do most of the work. "Two concurrent requests both pay out" tells the reader more about what "never twice" means than the sentence does.
+The violating example tells the reader more about what "never twice" means than the sentence does.
 
 ## People approve examples
 
-In CanonBall a person never approves a formal statement, and never approves a bare sentence. A person approves examples. The sentence is accepted only through the cases that pin it down.
+In CanonBall a person approves examples, never a formal statement and never a bare sentence. The sentence is accepted only through the cases that pin it down.
 
 This puts human attention where it counts. The step from prose to a precise property is the one step no tool can check. If the property is wrong, every check built on it verifies the wrong thing perfectly. Examples let a person confirm the meaning before any of that machinery is built.
 
@@ -49,7 +52,7 @@ The approval happens at the [Shape station](../shape/), where an agent drafts th
 
 Each example becomes one check, built at the [Verify station](../verify/), and the check names the example it encodes. That link is enforced. An example with no check shows up as a gap. A check with no example has no reason to exist.
 
-For every violating example, the check must also be seen to fail once, against a deliberately broken build. The chapter on [evidence](../evidence/) explains why.
+Every check must also be seen to fail once, against a build broken on purpose, before its pass counts. The chapter on [evidence](../evidence/) explains why.
 
 ## Conventions that help agents read
 
@@ -81,4 +84,4 @@ After drafting a clause, the agent restates it in its own words. If the restatem
 
 Examples pin down meaning at the points you thought to write. They say nothing about the points you did not. A clause with five examples can still be wrong in a sixth situation.
 
-The agent proposes extra examples, and every incident adds the one that was missing. Examples make a missing case cheap to add. They do not tell you it is missing.
+The agent proposes extra examples, and every incident adds the one that was missing. Examples make a missing case cheap to add, and they cannot tell you that it is missing.

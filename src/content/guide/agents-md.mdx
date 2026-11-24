@@ -1,0 +1,69 @@
+---
+title: "AGENTS.md: how an agent learns the method"
+summary: "AGENTS.md is the first file an agent reads: a top part about this repository, and an appendix that states CanonBall in a few hundred words."
+part: write
+order: 5
+points:
+  - "An agent starts every task with no memory, so the method has to be in a file it always reads."
+  - "The top part is yours: commands, owners, and which decisions people keep."
+  - "The appendix is the same in every CanonBall repository. Copy it."
+  - "AGENTS.md, tenets.md and vocabulary.md are the three files that align an agent before it does anything."
+related: [tenets, vocabulary, repository, start]
+---
+
+## Why a file
+
+A new engineer learns how a team works over weeks, from colleagues. An agent has no weeks and no colleagues. It starts each task knowing only what it reads at the start of that task. A way of working that lives in a wiki, or in people's heads, does not exist for it.
+
+`AGENTS.md` is an open convention for exactly this: a file at the root of a repository that coding agents read before they do anything else. CanonBall uses it to carry the method.
+
+## Three files, three jobs
+
+| File | What it gives the agent | Who owns it |
+|---|---|---|
+| `AGENTS.md` | How work moves here | People |
+| [`tenets.md`](../tenets/) | How this team chooses when two good things conflict | People |
+| [`vocabulary.md`](../vocabulary/) | What each word means | People |
+
+An agent reads all three before every task. Everything else it reads depends on the task.
+
+## The top part is yours
+
+The top of the file is specific to the repository. Keep it to what an agent needs on every task: what the system is, the commands, and who decides what.
+
+```markdown
+# Refunds service
+
+Issues refunds for the shop's orders.
+
+## Commands
+make env        start verification environment VE-002
+make check      run every check against it
+observe ...     read logs, traces, metrics and state
+
+## Who decides what here
+Promises, decisions, constraints   people, always
+Architecture                       the architect
+Detailed design                    agents, recorded in the blueprint
+Verification design                the verification lead, with the verifier
+What counts as critical            spec/canon/policy/
+
+## Read next
+spec/canon/tenets.md, spec/canon/vocabulary.md, then the appendix.
+```
+
+The "who decides what" table is where the team's settings are written down. [Handing over decisions](../delegation/) explains how they move.
+
+## The appendix is the method
+
+Below the top part sits a summary of CanonBall. It is about 400 words, because an agent loads every line of it on every task. Detail belongs in the files it points to.
+
+<Appendix />
+
+The same text is available as a file to copy: [agents-appendix.md](../../agents-appendix.md).
+
+## Keeping it true
+
+The appendix is only useful while it matches how the team works. If the team changes a rule, it changes the appendix in the same milestone. People own the file, and a change to it is reviewed by a person.
+
+A sign that the file is missing something: agents keep asking the same question, or keep making the same wrong assumption. The answer goes in `AGENTS.md` if it is about how work moves, in `tenets.md` if it is about a trade-off, and in `vocabulary.md` if it is about a word.

@@ -2,7 +2,7 @@
 export const figures: Record<string, { caption: string; text: string }> = {
   bottleneck: {
     caption: 'Twelve changes, two ways to review them.',
-    text: 'Two panels. Left, "Review every change": twelve changes all go to a person, and the queue grows or the reading stops. Right, "Review the promises": two of the twelve alter a promise and go to a person; the other ten are checked by machines against promises already agreed.',
+    text: 'Two panels. Left, "Review every change": twelve changes all go to a person, and the queue grows or the reading stops. Right, "Review the promises": an agent reviews all twelve; two are critical and go to a person as well; the other ten are checked by machines against promises already agreed.',
   },
   'clause-anatomy': {
     caption: 'The parts of a clause file.',
@@ -30,11 +30,11 @@ export const figures: Record<string, { caption: string; text: string }> = {
   },
   balls: {
     caption: 'Progress is a sequence of CanonBalls.',
-    text: 'Three CanonBalls in a row, each drawn with the CanonBall mark. CanonBall 12 is the system before the milestone, with three clauses. CanonBall 13 adds decision DEC-031 after a milestone is released. CanonBall 14 adds invariant INV-009 after an incident is repaired.',
+    text: 'Three CanonBalls in a row, each drawn with the CanonBall mark. CanonBall 12 is the system before the milestone, with four clauses. CanonBall 13 adds decision DEC-031 after a milestone is released. CanonBall 14 adds invariant INV-009 after an incident is repaired.',
   },
   release: {
     caption: 'A release copies the proposed files into spec/ and publishes a CanonBall.',
-    text: 'Before the release, spec/ holds three clauses and the change folder holds one proposed clause, DEC-031. After the release, spec/ holds four clauses, the change folder is archived, and CanonBall 13 has been published.',
+    text: 'Before the release, spec/canon holds four clauses (REQ-012, INV-004, ENV-003, ASM-011) and the milestone folder holds one proposed clause, DEC-031. After the release, spec/canon holds five clauses, the milestone folder is archived, and CanonBall 13 has been published.',
   },
   walls: {
     caption: 'Who can write what. Independence is a matter of permissions.',

@@ -13,7 +13,7 @@ const dots = (people: number) => Array.from({ length: 12 }, (_, i) => (i < peopl
     {id === 'bottleneck' && (
       <div class="f-2">
         <div class="f-lane"><b>Review every change</b><div class="f-dots">{dots(12).map((c) => <i class={c}></i>)}</div><p>Twelve changes, twelve reviews by a person.</p><em class="bad">The queue grows, or the reading stops.</em></div>
-        <div class="f-lane"><b>Review the promises</b><div class="f-dots">{dots(2).map((c) => <i class={c}></i>)}</div><p>Two alter a promise. Ten are checked by machines.</p><em class="ok">People decide meaning. Machines check the rest.</em></div>
+        <div class="f-lane"><b>Review the promises</b><div class="f-dots">{dots(2).map((c) => <i class={c}></i>)}</div><p>An agent reviews all twelve. Two are critical and go to a person as well.</p><em class="ok">People decide meaning. Machines check the rest.</em></div>
       </div>
     )}
 
@@ -91,7 +91,7 @@ const dots = (people: number) => Array.from({ length: 12 }, (_, i) => (i < peopl
 
     {id === 'balls' && (
       <div class="f-balls">
-        <div><Logo /><b>CanonBall 12</b><span>The system before this milestone. Three clauses, all accepted.</span></div>
+        <div><Logo /><b>CanonBall 12</b><span>The system before this milestone. Four clauses, none unsupported.</span></div>
         <i class="f-ar" aria-hidden="true"></i>
         <div class="now"><Logo /><b>CanonBall 13</b><span>A milestone is released.<br /><code>+ DEC-031</code></span></div>
         <i class="f-ar" aria-hidden="true"></i>
@@ -101,9 +101,9 @@ const dots = (people: number) => Array.from({ length: 12 }, (_, i) => (i < peopl
 
     {id === 'release' && (
       <div class="f-rel">
-        <div class="f-col"><small>Before</small><code>spec/canon/</code><ul><li>REQ-012</li><li>INV-004</li><li>ENV-003</li></ul><code>roadmap/M2/diff/</code><ul><li class="new">DEC-031</li></ul></div>
+        <div class="f-col"><small>Before</small><code>spec/canon/</code><ul><li>REQ-012</li><li>INV-004</li><li>ENV-003</li><li>ASM-011</li></ul><code>roadmap/M2/diff/canon/</code><ul><li class="new">DEC-031</li></ul></div>
         <i class="f-ar" aria-hidden="true"></i>
-        <div class="f-col"><small>After the release</small><code>spec/canon/</code><ul><li>REQ-012</li><li>INV-004</li><li>ENV-003</li><li class="new">DEC-031</li></ul><span class="f-ball"><Logo />CanonBall 13 published</span></div>
+        <div class="f-col"><small>After the release</small><code>spec/canon/</code><ul><li>REQ-012</li><li>INV-004</li><li>ENV-003</li><li>ASM-011</li><li class="new">DEC-031</li></ul><span class="f-ball"><Logo />CanonBall 13 published</span></div>
       </div>
     )}
 

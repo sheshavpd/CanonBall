@@ -6,9 +6,9 @@ order: 3
 station: build
 points:
   - "The builder works from the agreed clauses. No clause, no code."
-  - "It looks at what the code did, through logs and traces, instead of guessing."
+  - "It finds out what the code did from logs and traces."
   - "It can run the checks and cannot change them."
-  - "Nobody waits. People are already shaping the next milestone."
+  - "On a team that keeps detailed design with a person, the architect works here too."
 related: [architecture, observability, people-and-agents]
 ---
 
@@ -16,7 +16,7 @@ related: [architecture, observability, people-and-agents]
 
 An agreed milestone: one decision with three examples, a design, and three named tasks.
 
-The builder starts every task the same way. It reads `AGENTS.md`, `tenets.md` and `vocabulary.md`, then the files in the milestone's `diff/`. Those are its instructions. It does not need the conversation that produced them.
+The builder starts every task by reading [`AGENTS.md`](../agents-md/), `tenets.md` and `vocabulary.md`, then the files in the milestone's `diff/`. Those are its instructions. It does not need the conversation that produced them.
 
 ## Named tasks
 
@@ -29,13 +29,13 @@ tasks/
   03-decision-log      log each decision with its clause and inputs
 ```
 
-A program computes the state of each task from what exists in the repository. Nobody marks a task done.
+The orchestrator computes the state of each task from what exists in the repository. Nobody marks a task done.
 
-## Looking instead of guessing
+## Looking, not guessing
 
-The builder writes the rule, starts the service in the verification environment, and tries the split-refund example by hand. The second $60 refund is approved. It should have gone to review.
+The builder writes the rule, starts the service in the verification environment, and tries the split-refund example by hand. The second $60 refund is approved, when it should have gone to review.
 
-The builder does not reread its own code and reason about what might be wrong. It asks the system what happened.
+Rereading its own code and reasoning about what might be wrong is the slow way to find out. The builder asks the system what happened.
 
 ```text
 $ observe decisions --order 7731
@@ -46,23 +46,23 @@ DEC-031  auto-approve under $100
   total refunded  $60
 ```
 
-The total is wrong. It should read $120. The lookup from the first task counted only the current request. The fix takes a minute, because the cause was read from the log.
+The total should read $120. The lookup from the first task counted only the current request, and the fix is short because the cause was read from the log.
 
-This works only because the third task exists. Logging each decision with the clause it applied and the inputs it used is part of the milestone, not something added after an incident. [Observability](../observability/) explains what to build and why agents need it more than people did.
+This works only because the third task exists. Logging each decision with the clause it applied and the inputs it used is part of the milestone, and is not added after an incident. [Observability](../observability/) explains what to build and why agents need it more than people did.
 
 ## What the builder cannot do
 
 - **Change a check.** It can run every check the verifier writes. If it thinks one is wrong, it attaches a proposed correction, and the verifier applies or rejects it.
 - **Change the canon.** If a clause cannot be met as written, the milestone goes back to [Shape](../shape/) with a question. A quiet workaround is the one thing the builder must not produce.
-- **Add behavior nobody asked for.** Code that traces to no clause is found at [Review](../review/).
+- **Add behavior nobody asked for.** Behavior a customer or another system could notice needs a clause. Plumbing that changes none, such as logging or configuration, does not. [Review](../review/) looks for the first kind.
 
 ## Where a person comes in
 
-On this team, nowhere. The architect made the one design decision at Shape and reads what the agents decided when the milestone is released.
+On this team the architect made the one design decision at Shape, and reads what the agents decided when the milestone is released.
 
-A team that keeps detailed design with a person would have the architect set the module boundaries and interfaces first. That is a setting, described in [Handing over decisions](../delegation/).
+A team that keeps detailed design with a person has the architect set the module boundaries and interfaces before the builder starts. That is a setting, described in [Handing over decisions](../delegation/).
 
-Either way the product manager is not watching this station. They are shaping the store-credit milestone.
+In both cases the product manager is not watching this station. They are shaping M3.
 
 ## What leaves
 

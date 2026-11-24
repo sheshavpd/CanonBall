@@ -4,9 +4,9 @@ summary: "CanonBall is a way of organizing a repository so that each folder answ
 part: structure
 order: 2
 points:
-  - "spec/ describes the system as it is today. Only a release writes to it."
-  - "Every other folder is written at a known station: roadmap/ at Collect and Shape, src/ at Build, verify/ at Verify, incidents/ at Operate."
-  - "On a healthy system, verify/ is larger than src/."
+  - "spec/ holds only clauses that have been released with evidence. Only a release writes to it."
+  - "Every other folder is written at a known station, and observe/, the agents' view inside the system, is part of the layout."
+  - "Expect verify/ to grow larger than src/."
 related: [workflow, layers, people-and-agents, observability]
 ---
 
@@ -14,7 +14,7 @@ related: [workflow, layers, people-and-agents, observability]
 
 <Figure id="folders" />
 
-"Where does this go?" has one answer: the folder whose question it answers. "May I change this?" also has one answer, and it is written in the permissions.
+"Where does this go?" has one answer: the folder whose question it answers. "May I change this?" also has one answer, and the repository enforces it for each [role](../people-and-agents/).
 
 ## The layout
 
@@ -24,24 +24,25 @@ refunds/
 ├── spec/                      what is true today
 │   ├── canon/                 what the system promises
 │   │   ├── purpose.md  vocabulary.md  tenets.md
-│   │   ├── requirements/      REQ-012-refund-window.md
-│   │   ├── invariants/        INV-004-single-refund.md
-│   │   ├── decisions/         none until M2 is released
-│   │   ├── envelope/          ENV-003-no-payout-above-10k.md
-│   │   ├── assumptions/       ASM-011-gateway-request-keys.md
+│   │   ├── REQ-012-refund-window.md
+│   │   ├── INV-004-no-double-payout.md
+│   │   ├── ENV-003-no-payout-above-10k.md
+│   │   ├── ASM-011-gateway-request-keys.md
 │   │   └── policy/            what counts as evidence
 │   └── blueprint/             how the clauses are kept
 │       ├── architecture.md
 │       ├── cases/             INV-004.md
-│       └── environments/      VE-002-payments-sandbox.md
+│       └── environments/      VE-002.md
 ├── roadmap/                   what is proposed
 │   ├── index.md               the order of work
 │   ├── notes/                 requests as they arrive
 │   ├── M2-faster-small-refunds/
 │   │   ├── change.md          what changes in the system?
-│   │   ├── diff/              DEC-031-auto-approve-under-100.md
+│   │   ├── diff/
+│   │   │   ├── canon/         DEC-031-auto-approve-under-100.md
+│   │   │   └── blueprint/     the design, the evidence plan
 │   │   └── tasks/             the agents' breakdown
-│   └── unplanned/             incidents, bugs, small requests
+│   └── unplanned/             repairs and upkeep
 ├── src/                       what runs
 ├── verify/                    how we know
 │   └── envs/  checks/  checks/red/  faults/  monitors/
@@ -51,94 +52,53 @@ refunds/
 └── incidents/                 what went wrong
 ```
 
-The tree shows the refunds service while milestone M2 is being built. DEC-031 is agreed and not yet released, so its file sits in the milestone's `diff/` folder and not in `spec/`.
+The tree shows the refunds service while milestone M2 is being built. Clause files sit directly in `canon/`, one per file, with no folder per kind. DEC-031 is agreed and not yet released, so its file sits under the milestone's `diff/canon/` and not in `spec/`.
 
 ## Three objects
 
-Three things carry all the work.
+- **The spec**, in `spec/`: what is true of the system today.
+- **A change**, a folder in `roadmap/`: a proposal that says what should become true, the files that would make it so, and the tasks to build them.
+- **A release**, an event: the moment it becomes true. Nothing else writes to `spec/`.
 
-| Object | Where | What it is |
-|---|---|---|
-| **The spec** | `spec/` | What is true of the system today. |
-| **A change** | A folder in `roadmap/` | A proposal that says what should become true, the files that would make it so, and the tasks to build them. |
-| **A release** | An event | The moment it becomes true. Nothing else writes to `spec/`. |
+## Who writes what
 
-## Who writes each folder
+A change moves through [seven stations](../workflow/), and each station writes to its own paths.
 
-A change moves through [seven stations](../workflow/). Each of the main folders is written at one or two of them.
-
-| Folder | Written at | By |
-|---|---|---|
-| `roadmap/` | [Collect](../collect/) and [Shape](../shape/) | The elicitor, planner and verifier agents draft. People agree and rank. |
-| `src/` | [Build](../build/) | The builder agent |
-| `verify/` | [Verify](../verify/) | The verifier agent |
-| `spec/` | [Release](../release/) | A program |
-| `incidents/` | [Operate](../operate/) | The on-call agent |
-
-The [Review](../review/) station writes to no folder. The reviewer agent reads all of them and writes only its review.
-
-## spec/ describes the system as it is
-
-The rest of the layout exists to protect one rule.
-
-> **`spec/` describes the system as it stands today.** It never contains a promise the system does not yet keep.
-
-A clause that has been agreed but not built is not in `spec/`. It sits in the `diff/` folder of its change, under `roadmap/`, until that change is released. No person and no agent edits `spec/` by hand.
-
-The payoff is that `spec/` can be trusted without qualification. An agent starting a task reads it and knows what is true. A person joining the team reads it and knows what the system does. Nobody has to ask which parts are aspirational.
-
-## roadmap/ holds everything proposed
-
-Each planned change is a **milestone**: a folder with three things in it.
-
-| File | Holds |
+| Station | Writes |
 |---|---|
-| `change.md` | The change proposal. One page that answers "what changes in the system?" |
-| `diff/` | Whole files in their final form: the clauses the change adds and the design for them. At release they replace the files of the same name in `spec/`. |
-| `tasks/` | The agents' breakdown of the work. |
+| [Collect](../collect/) | `roadmap/notes/`, `roadmap/index.md`, and the milestone's `change.md` |
+| [Shape](../shape/) | The milestone's `diff/` and `tasks/`. Reads `AGENTS.md`, `tenets.md` and `vocabulary.md`. |
+| [Build](../build/) | `src/` and `observe/signals.md` |
+| [Verify](../verify/) | `verify/` and `observe/tools/` |
+| [Review](../review/) | Nothing but its review |
+| [Release](../release/) | `spec/` |
+| [Operate](../operate/) | `incidents/` and `roadmap/unplanned/` |
 
-`notes/` holds requests as they arrive. Collect gathers related requests into a milestone and creates its folder and proposal. Shape fills `diff/`, and ends when people agree to what is in it.
+## spec/ and the milestone folder
 
-`index.md` lists the milestones in priority order. People maintain that order. It is the one file the whole team ranks together.
+> `spec/` holds only clauses that have been released with evidence. Accepted means supported by the evidence so far, not proven.
 
-`unplanned/` holds incident repairs, bug fixes and small requests. Each has the same shape as a milestone, only smaller, and is released on its own. The chapter on [Collect](../collect/) says which work goes there.
+A clause that has been agreed but not built is not in `spec/`. It sits in its milestone's `diff/` until that milestone is released, when a program called the orchestrator copies it across. No person and no agent edits `spec/` by hand, so an agent starting a task and a person joining the team can both read it without asking which parts are aspirational.
 
-## src/ and verify/
+Each planned change is a **milestone**, and its folder holds three things.
 
-`src/` is the code. CanonBall does not require a particular layout inside it. It does [recommend one habit](../architecture/): keep the logic that decides apart from the code that touches the outside world.
+- `change.md` is the change proposal: one page that answers "what changes in the system?"
+- `diff/` holds whole files in their final form: the clauses the change adds under `diff/canon/`, and the design and the evidence plan under `diff/blueprint/`. At release they replace the files of the same name in `spec/`.
+- `tasks/` is the agents' breakdown of the work.
 
-`verify/` is the home of [verification engineering](../verification-engineering/).
+`index.md` lists the milestones in priority order, and the product manager ranks it. `unplanned/` holds unplanned work: incident repairs, bug fixes, refactorings and upkeep. Each piece has the same shape as a milestone, only smaller, and is released on its own. [Collect](../collect/) covers the ranking and says which work may go to `unplanned/`.
 
-| Folder | Holds |
-|---|---|
-| `envs/` | The verification environments |
-| `checks/` | One check per example |
-| `checks/red/` | For each check, a kept run in which it failed |
-| `faults/` | Small deliberate defects used to show that checks can fail |
-| `monitors/` | What watches the assumptions in production |
+## The other folders
 
-On a healthy CanonBall system, `verify/` is larger than `src/`. The proportions follow from where the engineering now goes.
+Each of these belongs to another chapter.
 
-## observe/
+- `src/` is the code, written at [Build](../build/). CanonBall requires no particular layout inside it.
+- `verify/` holds the environments, one check per example, a kept failing run of each check in `checks/red/`, the injected faults and the monitors, as [Verify](../verify/) shows.
+- `observe/` lists what the system emits and holds the commands that read it, which [Observability](../observability/) describes.
+- `incidents/` keeps one file per incident, such as `INC-007`, permanently. [Operate](../operate/) follows that one.
+- `AGENTS.md` is the first file an agent reads, and it has [its own chapter](../agents-md/).
 
-Agents build, verify and operate by looking inside the system. `observe/` is where that view is defined.
-
-| File | Holds |
-|---|---|
-| `signals.md` | What the system emits: every decision logged with the clause it applied and the inputs it used, and one trace per request |
-| `tools/` | The commands agents run to read logs, traces, metrics and state, and to replay a request |
-
-The same tools work in a verification environment and, read-only, in production. Build, Verify and Operate all use them. The chapter on [observability](../observability/) says what goes into it and why.
-
-## incidents/
-
-When something goes wrong in production, the on-call agent drafts an incident file here, such as `INC-031`. The repair is a small change under `roadmap/unplanned/`. Incident files are kept permanently.
-
-## AGENTS.md
-
-`AGENTS.md` is the first file an agent reads. Its top part is specific to the repository. Its appendix is a summary of CanonBall, two or three kilobytes long.
-
-Before every task an agent reads three files: `AGENTS.md`, `spec/canon/tenets.md` and `spec/canon/vocabulary.md`. The [tenets](../tenets/) say which good thing wins when two conflict. The [vocabulary](../vocabulary/) defines each noun once.
+Expect `verify/` to grow larger than `src/`, because showing that a clause holds takes more engineering than writing the code that keeps it.
 
 ## Conventions
 
@@ -149,4 +109,4 @@ Before every task an agent reads three files: `AGENTS.md`, `spec/canon/tenets.md
 
 ## What the layout buys you
 
-Most tools that put agents to work give them context about the product. This layout also gives them the state of the work. At any moment an agent can read what is true now, what is being changed and why, what the evidence says, and which files it may write.
+The layout gives an agent the state of the work as well as context about the product. At any moment an agent can read what is true now, what is being changed and why, what the evidence says, and which files it may write.

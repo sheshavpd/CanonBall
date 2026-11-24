@@ -1,43 +1,33 @@
 ---
 title: Verification engineering
-summary: "When agents write the code, most of the engineering goes into verification environments, and each one is designed with a person so that its evidence can be trusted."
+summary: "When agents write the code, most of the engineering goes into verification: deciding what counts as evidence for each clause, and building the environments that produce it."
 part: verification
 order: 1
 points:
   - "Verification engineering is the work of building environments in which a promise can be checked, and can be seen to fail."
-  - "An environment is engineered like product code and designed with a person. People can trust evidence only if they understand how it is produced."
+  - "An environment is engineered like product code and designed with a person, so that someone can explain where each result came from."
   - "Each clause has an assurance case. It splits the clause into parts and argues that the parts are enough."
   - "The weakest thing a part depends on decides how it is verified."
 related: [environments, evidence, observability, shape, verify]
 ---
 
-## The inversion
+## Where the effort goes
 
-When people wrote the code, the product took most of the effort and testing came second. With agents writing the code, the balance turns over. Producing the change is quick. The engineering goes into building a place where you can find out whether the change is right.
-
-**Verification engineering** is the name for that work. It has three parts.
-
-1. Decide, for each clause, what would count as evidence.
-2. Build [environments](../environments/) in which that evidence can be produced.
-3. Keep the evidence trustworthy as the system changes.
+An agent produces a change quickly, but neither the agent nor the people responsible for the system can tell from the change alone whether it is right. Establishing that takes more effort than writing the change did, and the work has a name: **verification engineering**. It consists of deciding, for each clause, what would count as evidence; building the [environments](../environments/) in which that evidence can be produced; and keeping the evidence trustworthy as the system changes.
 
 ## Engineered, and designed with a person
 
-A verification environment is part of the product. It has a design, known limits and defects of its own, and it is reviewed, versioned and repaired like the code it tests. That is why this is engineering and not housekeeping.
+Verification environments are engineered, and each one is designed with a person, because **people can trust evidence only if they understand how it is produced**.
 
-It is also designed with a person. An agent can produce a thousand passing checks in an afternoon. They are worth something only if a person understands how they were produced: what was real, what was faked, which failures were tried, and what the environment could never have shown.
+An engineered environment is treated as part of the product. It has a design, known limits and defects of its own, and it is reviewed, versioned and repaired like the code it tests. Designing it with a person means that someone can state, for any clause, what was real in the test, what was faked, which failures were tried, and what the environment could never have shown. An agent can generate passing checks in large numbers, and they become evidence only when a person can give that account of them.
 
-> **People can trust evidence only if they understand how it is produced.** A passing check from an environment nobody can explain is a green light with no meaning.
+That person is the **verification lead**, who works with the verifier agent at two stations. At [Shape](../shape/) they agree the evidence plan before any code exists: what will count as evidence for each clause, and which environment will produce it. At [Verify](../verify/) they build the environment, the checks and the injected faults. Which of the two drafts the design is [the team's choice](../delegation/). In every team, people decide what counts as evidence and review any change that would weaken an environment.
 
-That person is the **verification lead**, who works with the verifier agent at two stations. At [Shape](../shape/) they agree the evidence plan before any code exists: what will count as evidence for each clause, and which environment will produce it. At [Verify](../verify/) they build the environment, the checks and the injected faults.
+## What a passing suite leaves open
 
-Which of the two drafts the design is [the team's choice](../delegation/). Either way, people decide what counts as evidence, read the arguments for critical clauses, and review any change that would weaken an environment.
+A passing test suite establishes that the tests passed. An agent deciding whether its work is finished, and a person deciding whether to accept it, need answers to further questions, and CanonBall records each answer in a fixed place.
 
-## What a test suite does not tell you
-
-A conventional suite answers "did the tests pass?" Four questions go unanswered.
-
-| Question | Where CanonBall records the answer |
+| Question | Where the answer is recorded |
 |---|---|
 | Which promise is each test evidence for? | Every check names the example it encodes. |
 | Could this test ever fail? | Every check keeps a run in which it did. |
@@ -46,28 +36,22 @@ A conventional suite answers "did the tests pass?" Four questions go unanswered.
 
 ## The assurance case: one per clause
 
-An **assurance case**, or *case* for short, is the bridge between a clause and its evidence. The term and the idea come from safety engineering.
+An **assurance case**, or *case*, connects a clause to its evidence. The idea comes from safety engineering, where a claim about a system has to be supported by a structured argument as well as by test results.
 
 <Figure id="case" />
 
-A case has four elements.
-
-| Element | What it is |
+| Element of a case | What it is |
 |---|---|
 | **Parts** | The clause, split into pieces that can each be checked. |
 | **Assumptions** | Whatever depends on the outside world, named. |
 | **A method and an environment** | One of each, for every part. |
 | **An argument** | Why those parts, taken together, are enough. |
 
-The argument is where real gaps hide. A verified move gate and a fast sensor do not add up to "no robot moves near a person". Braking distance and sensor blind spots have to be accounted for as well. Writing the argument down is how someone notices that they were left out.
+The argument is where gaps are usually found. A verified move gate and a fast sensor do not add up to "no robot moves near a person" until braking distance and sensor blind spots are accounted for as well, and writing the argument down is how someone notices that they were left out.
 
 ## The weakest dependency decides the method
 
-For each part, ask one question.
-
-> What must be true outside the decision logic for this claim to hold?
-
-The answer places the part at a **level**, and the level tells you the method.
+The method for verifying a part follows from one question: what must be true outside the decision logic for the claim to hold? The answer places the part at a **verification level**.
 
 | Level | The claim depends on | Method | For software alone |
 |---|---|---|---|
@@ -77,27 +61,23 @@ The answer places the part at a **level**, and the level tells you the method.
 | 3 | Real devices, drivers, latency | Tests on real hardware | Real infrastructure, a staging system |
 | 4 | Physics, materials, people | Measurement, field data | Production traffic |
 
-Readers who know the test pyramid will see a family resemblance. The pyramid sorts tests by size. These levels sort claims by what they depend on. A level says nothing about confidence: a narrow proof about an abstract controller can leave a larger practical gap than a well-designed physical test.
+The levels resemble the test pyramid, with one difference: the pyramid sorts tests by size, and the levels sort claims by what they depend on. A level is not a measure of confidence, since a narrow proof about an abstract controller can leave a larger gap than a well-designed physical test.
 
 <Figure id="levels" />
 
-Two consequences follow.
-
-**Control falls as realism rises.** In a level 1 environment you can freeze time and hold a race condition open. On real infrastructure you cannot. Timing bugs are therefore best caught low, and only observed high.
-
-**A team's name for a test is not its level.** "Unit tests" are level 1 if they run real code. Place each part by what it depends on.
+Control over an environment falls as its realism rises. At level 1 a test can freeze time and hold a race condition open, whereas on real infrastructure it can only wait for the race to occur. Timing faults are therefore best caught at the low levels and only observed at the high ones. A part is placed by what it depends on, whatever the team calls its tests: a "unit test" that runs real code against fakes is level 1.
 
 ## Tiers: how much rigor
 
-A full case for every clause would cost too much. Safety standards scale rigor to criticality, and so does CanonBall.
+A full case for every clause would cost more than most clauses justify. Safety standards scale rigor to criticality, and CanonBall does the same.
 
 | Tier | Which clauses | The case | A person reads the argument |
 |---|---|---|---|
 | 0 | Most. Logic with no side effects | One part, generated | No |
-| 1 | A few parts | A short argument | No |
+| 1 | Some. Clauses that cross a side effect | A few parts and a short argument | No |
 | 2 | Safety, money, irreversible actions | A full argument, assumptions with treatments | Yes |
 
-Most clauses are tier 0. A person reads only the tier 2 arguments.
+In the refunds service, INV-004 (a refund is never issued twice for the same order) concerns money, so it is tier 2. Its case names one assumption, ASM-011, which says that the payment gateway pays at most once per request key, and the verification lead reads its argument.
 
 ## The procedure for one clause
 
@@ -108,25 +88,19 @@ Most clauses are tier 0. A person reads only the tier 2 arguments.
 5. **Decide** whether the evidence is enough, against the policy.
 6. **Move the boundary.** If a part will not verify because the logic lives in the wrong place, move the logic. If it depends on the world, make that an assumption and give it a treatment.
 
-Step 6 has a trap. Moving logic to where it can be checked is progress. Relabeling a hard problem as an assumption is not. The Record keeps the two apart by showing every assumption as an assumption.
-
-## Cases go stale on their own
-
-Every case lists the code its clause depends on. When that code changes, the clause shows as *unknown* until the case is checked again. The chapter on [evidence](../evidence/) describes the mechanism.
+The sixth step can be misused. Moving logic to where it can be checked is progress, whereas relabeling a hard problem as an assumption only hides it. The Record keeps the two apart by showing every assumption as an assumption.
 
 ## What a proof does not give you
 
-A proof shows that the logic satisfies a property for every input. Four things remain, and each has its own cover.
+A proof shows that the logic satisfies a property for every input. Other questions remain open, and each is covered by a different means.
 
-| A proof does not show | What covers it |
-|---|---|
-| That the property is the right one | Examples |
-| That the world behaves as assumed | Treatments |
-| That the parts are enough | The argument |
-| That the code matches the model that was proved | Checks against recorded behavior |
+- Whether the property is the right one is settled by examples.
+- Whether the world behaves as assumed is covered by treatments.
+- Whether the parts are enough is the subject of the argument.
+- Whether the code matches the model that was proved is tested by checks against recorded behavior.
 
-In the Record, "proven" always appears with its property, its model, its bounds, and its assumptions.
+For that reason the Record never shows "proven" alone. It shows the property, the model, the bounds and the assumptions with it.
 
-## Seeing inside
+## What a case depends on
 
-Building an environment and explaining a failed check both depend on seeing inside the running system. The chapter on [observability](../observability/) says what to build for that.
+Every case lists the code its clause depends on. When that code changes, the clause shows as *unknown* until the case is checked again, by the mechanism described under [evidence](../evidence/). Building an environment and explaining a failed check both depend on seeing inside the running system, and [observability](../observability/) covers what to build for that.

@@ -34,7 +34,7 @@ const count = all.length;
             <li class="r"><b>Release</b><span>all three, shipped together</span></li>
           </ul>
         </div>
-        <figcaption>One turn of the work. People agree the canon, agents build, the Verification Record is computed, and a CanonBall leaves the loop as a release.</figcaption>
+        <figcaption>Each release fixes three things together: what the system promises, the code that keeps those promises, and the evidence that it does.</figcaption>
       </figure>
     </section>
   </div>
@@ -48,7 +48,7 @@ const count = all.length;
       <div class="why">
         <div><b>Agents write faster than people can read.</b><span>Reviewing every change wastes the agent. Skipping review turns each change into a risk nobody measured.</span></div>
         <div><b>So the question changed.</b><span>It used to be "can we build this?". Now it is "what does this change do, and what does the system still promise afterwards?"</span></div>
-        <div><b>The effort moves to verification.</b><span>Most of the engineering now goes into showing that a promise holds. CanonBall organizes the work around that.</span></div>
+        <div><b>The effort moves to verification.</b><span>Establishing that a promise holds becomes the larger part of the engineering. CanonBall organizes the work around it.</span></div>
       </div>
       <p class="cap"><a class="more" href={guideUrl('why')}>Why the work changed</a></p>
     </div>
@@ -58,8 +58,8 @@ const count = all.length;
     <div class="wrap">
       <div class="head">
         <p class="eyebrow">How work moves</p>
-        <h2 class="t">A milestone goes in. A CanonBall comes out.</h2>
-        <p class="sub">Requests gather into a milestone. People and agents shape it together, agents build it and prove it, an agent reviews it, and it ships as a CanonBall. Three things on this belt are not in a conventional software lifecycle. They are numbered.</p>
+        <h2 class="t">Work moves through seven stations, one milestone at a time.</h2>
+        <p class="sub">Related requests are gathered into a milestone. People and agents shape it together, agents build and verify it, an agent reviews it, a person reviews it as well when it is critical, and it is released as a CanonBall. Three practices on the belt, marked 1 to 3, are what make it possible for agents to do most of this work reliably.</p>
       </div>
       <Conveyor />
       <p class="cta" style="margin-top:26px"><a class="btn" href={guideUrl('workflow')}>Walk it, station by station</a></p>
@@ -71,7 +71,7 @@ const count = all.length;
       <div class="head">
         <p class="eyebrow">What gets written down</p>
         <h2 class="t">People steer agents with a few written things.</h2>
-        <p class="sub">Each one is a short file in plain language, and most are written at the Shape station. Together they are the controls: an agent may do anything that respects them, and nothing that does not trace back to them.</p>
+        <p class="sub">Each is a short file in plain language, and most are written at the Shape station. Together they bound what an agent may do: it may take any action consistent with them, and nothing that cannot be traced back to one of them.</p>
       </div>
       <p class="group"><span class="pill p">People write</span></p>
       <div class="prims">
@@ -124,8 +124,8 @@ const count = all.length;
     <div class="wrap">
       <div class="head">
         <p class="eyebrow">Verification engineering</p>
-        <h2 class="t"><span class="v">Verification engineering</span> is where the work is now.</h2>
-        <p class="sub">When people wrote the code, most of the effort went into the product and testing came second. With agents writing it, that ratio turns over. The discipline that matters is engineering the environments in which a promise can be checked, and designing them with a person. People can trust evidence only if they understand how it is produced.</p>
+        <h2 class="t"><span class="v">Verification engineering</span> takes the larger share of the effort.</h2>
+        <p class="sub">When agents write the code, producing a change is quick and establishing that it is correct is the harder problem. The environments in which promises are checked therefore deserve the same design attention as the product. They are designed with a person who understands them, because evidence is only as credible as the method that produced it.</p>
       </div>
       <div class="two">
         <div class="box">
@@ -151,8 +151,8 @@ const count = all.length;
     <div class="wrap">
       <div class="head">
         <p class="eyebrow">Observability</p>
-        <h2 class="t">Agents work by looking. Give them something to see.</h2>
-        <p class="sub">A person can debug on intuition and a dashboard. An agent cannot. Shown what the system did, it finds the cause in minutes. Left without it, it guesses and patches the symptom. So observability is built first, and built for the agents.</p>
+        <h2 class="t">Observability gives agents the context people used to carry.</h2>
+        <p class="sub">An experienced engineer debugs with years of knowledge about how the system behaves. An agent begins each task with none of that knowledge, so it depends on what the system can tell it. When every decision is logged with its reason and every request can be traced, an agent can diagnose a fault from the evidence instead of speculating about the code.</p>
       </div>
       <div class="two">
         <div class="box">
@@ -162,7 +162,7 @@ const count = all.length;
             <li><b>Traces</b><span>One trace follows each request through every adapter.</span></li>
             <li><b>Tools</b><span>Agents have commands to read logs, traces, metrics and state, and to replay a request.</span></li>
           </ul>
-          <div class="cannot"><b>One investment, three uses.</b> The builder sees what its code does. The verifier explains every failure. The on-call agent diagnoses an incident. People see the same view.</div>
+          <div class="cannot"><b>The same tools serve three stations.</b> The builder uses them to see what its code does, the verifier to explain why a check failed, and the on-call agent to diagnose an incident. People read the same signals, so they can check what an agent concluded.</div>
         </div>
         <div class="box">
           <h3>What the on-call agent saw</h3>
@@ -173,10 +173,10 @@ REQ-012  refund window
   reason        day 31 of 30
   counted from  dispatch, 2 March
   delivered     4 March</pre>
-          <p class="obsnote">A customer was refused on day 29. The log shows why without anyone guessing: the window was counted from dispatch, and the vocabulary says delivery.</p>
+          <p class="obsnote">A customer who asked for a refund on day 29 was refused. The decision log shows the cause directly: the window was counted from the dispatch date, although the vocabulary defines it from delivery.</p>
         </div>
       </div>
-      <p class="cap"><a class="more" href={guideUrl('observability')}>Observability: letting agents see</a></p>
+      <p class="cap"><a class="more" href={guideUrl('observability')}>Observability for agents</a></p>
     </div>
   </section>
 
@@ -208,7 +208,7 @@ REQ-012  refund window
       <div class="head">
         <p class="eyebrow">Adoption</p>
         <h2 class="t">Hand over decisions as agents earn them.</h2>
-        <p class="sub">Each kind of decision has its own level of automation. A team starts with agents recommending and people deciding. Settings move one at a time, on track record, and where they end up depends on the domain. Agent review stays on at every setting. What moves is how often a person looks as well.</p>
+        <p class="sub">Each kind of decision has its own level of automation, so a team can keep architecture or detailed design with a person for as long as it wants and hand over other decisions sooner. A team starts with agents recommending and people deciding, and moves each setting on track record. Review works differently: an agent reviews every change at every setting, and a person reviews as well whenever the policy lists the change as critical.</p>
       </div>
       <Dial />
       <p class="cap">An illustration. Each team writes its own thresholds in advance. A new model release does not move a setting. Agreement with people over many cases does, and one failure that gets through moves it back. <a class="more" href={guideUrl('delegation')}>Handing over decisions</a></p>

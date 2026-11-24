@@ -22,7 +22,7 @@ The mark at the top of this page draws one turn of that work. The three arcs are
 
 <Figure id="balls" />
 
-In the figure, CanonBall 13 carries a milestone and CanonBall 14 carries the repair of an incident. Both were released by the same rule.
+In the figure, CanonBall 13 carries a milestone and CanonBall 14 carries the [repair of an incident](../operate/). Both were released by the same rule.
 
 ## The question it answers
 
@@ -40,11 +40,14 @@ Different people ask that question at different times. A customer deciding wheth
 CanonBall 13
   canon    spec/canon at this release
   build    commit 3f9c
-  record   4 accepted, 0 unsupported
-  notes    + DEC-031 Refunds under $100 are approved automatically
+  record   4 accepted, 1 accepted with stated risk, 0 unsupported
+  notes    + DEC-031 A refund is approved automatically while the
+             total refunded on the order stays under $100
 ```
 
-Four properties separate it from a tagged commit.
+The record line counts five clauses: the four the refunds service kept at CanonBall 12, and DEC-031.
+
+A CanonBall differs from a tagged commit in these ways.
 
 | Property | What it means |
 |---|---|
@@ -53,11 +56,11 @@ Four properties separate it from a tagged commit.
 | **Assumptions travel with it** | It states what it assumes about where it runs, the way a package states its dependencies, and includes the monitors that notice when an assumption stops holding. |
 | **Scope stays visible** | Each clause appears with its status, the conditions under which the evidence holds, and anything still open. A bare "passed" is never shown. |
 
-A CanonBall holds only the clauses the system keeps at that release. A clause still being built is not in it.
+A CanonBall holds only clauses that have been released with evidence. A clause still being built is not in it. Accepted means supported by the evidence so far, not proven.
 
 ## For one team
 
-For a single team building for itself, none of the packaging matters. A repository with a `spec/canon/` folder, a release rule, and a Record that is computed on every push is already a private CanonBall.
+For a single team building for itself, none of the packaging matters. A repository with a `spec/canon/` folder, a release rule, and a Record that a program computes on every push is already a private CanonBall. The guide calls that program the orchestrator.
 
 Signing, registries and exchange formats become useful on the day you hand the artifact to someone who did not watch it being built. The chapter on [larger systems](../composition/) covers what happens when another team depends on yours.
 

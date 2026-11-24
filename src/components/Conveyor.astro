@@ -28,7 +28,7 @@ const X = [12, 27, 42, 57, 70, 81, 93];
       <div class="cv-belt"></div>
       <div class="cv-belt x"></div>
       <span class="cv-lane" style="top:238px">milestones</span>
-      <span class="cv-lane" style="top:296px; left:8.5%">express belt: small urgent work</span>
+      <span class="cv-lane" style="top:296px; left:8.5%">express belt: repairs and upkeep</span>
       <span class="cv-fwd">Forward pressure &rarr; requests</span>
       <span class="cv-back">&larr; Back pressure: incidents, bugs, reliability</span>
       <div class="cv-stack"><i></i><i></i><i></i></div>
@@ -45,7 +45,7 @@ const X = [12, 27, 42, 57, 70, 81, 93];
           <div class="cv-who">
             {s.agents.map((n) => <Who kind="a" label={n} />)}
             {s.people.map((n) => <Who kind="p" label={n} />)}
-            {s.ifCritical?.map((n) => <Who kind="p" label={n} class="crit" />)}
+            {s.sometimes?.map((x) => <Who kind="p" label={x.short ?? x.who} class="crit" />)}
             {s.program && <Who kind="v" label={s.program} />}
           </div>
         </div>
@@ -61,7 +61,7 @@ const X = [12, 27, 42, 57, 70, 81, 93];
         <span class="cv-who">
           {s.agents.map((n) => <Who kind="a" label={n} />)}
           {s.people.map((n) => <Who kind="p" label={n} />)}
-          {s.ifCritical?.map((n) => <Who kind="p" label={`${n}, if critical`} />)}
+          {s.sometimes?.map((x) => <Who kind="p" label={`${x.who}, ${x.when}`} />)}
           {s.program && <Who kind="v" label={s.program} />}
         </span>
       </li>

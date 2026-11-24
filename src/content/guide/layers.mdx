@@ -18,7 +18,7 @@ Canon and blueprint together are the **spec**: the statement of intent. Build an
 
 Read down the left side, each layer constrains the one below. The canon bounds what the blueprint may design. The blueprint bounds what the build may contain.
 
-Read up the right side, each layer answers to the one above. The build produces evidence. The evidence discharges the assurance cases in the blueprint. The cases discharge the clauses in the canon.
+Read up the right side, each layer answers to the one above. The build produces evidence. The blueprint holds, for each clause, an **assurance case**: the argument for how that clause will be shown true. The evidence discharges the cases, and the cases discharge the clauses in the canon.
 
 When two layers disagree, the higher one is right by definition, and the change is blocked until they agree.
 
@@ -34,7 +34,7 @@ The blueprint is where design choices are written down, so that they are visible
 
 - the architecture and the contracts between internal modules;
 - **derived decisions**, which are design choices an agent made and recorded with its reasons;
-- one **assurance case** per clause, saying how that clause will be shown true;
+- one case per clause;
 - the evidence plan and the design of each verification environment.
 
 The canon leaves gaps on purpose. The blueprint records how they were filled. Agents may revise it as often as they like, on one condition: it must never contradict the canon.
@@ -43,12 +43,7 @@ A person can move a derived decision up into the canon at any time. That is how 
 
 ## Build
 
-The build has two halves.
-
-| Folder | Holds | Written by |
-|---|---|---|
-| `src/` | The code that runs | The builder agent, at the [Build](../build/) station |
-| `verify/` | Everything that produces evidence: environments, checks, proofs, monitors | The verifier agent, at the [Verify](../verify/) station |
+The build has two halves. `src/` is the code that runs, written by the builder agent at the [Build](../build/) station. `verify/` is everything that produces evidence: environments, checks, injected faults, proofs and monitors, written by the verifier agent at the [Verify](../verify/) station.
 
 The agent that writes `src/` can run what is in `verify/` and cannot change it. The chapter on [people and agents](../people-and-agents/) explains why.
 
@@ -58,7 +53,7 @@ The build is replaceable, with one restriction that surprises people. You may no
 
 ## Verification Record
 
-The Record states, for every clause, whether the evidence supports it. A program computes it from the assurance cases and the results of the checks, according to rules that people own.
+The Record states, for every clause, whether the evidence supports it. A program called the orchestrator computes it from the cases and the results of the checks, according to rules that people own.
 
 Nobody writes "done" or "verified" into the Record, because it is not a file in the repository. It is recomputed on every push and published. The [release rule](../release/) is stated in terms of it.
 
@@ -68,8 +63,8 @@ Layers are only a diagram unless something enforces them. Two automated checks d
 
 > **Traceability.** Every element of the build refers to an element of the blueprint, and every element of the blueprint refers to a clause. Anything that cannot be traced blocks the merge.
 
-This check establishes that the references exist. It does not establish that the code is justified by them. Justification is the job of the assurance case.
+This check establishes only that the references exist. Whether the code is justified by them is the job of the case.
 
-> **No silent gaps.** No clause is reported as accepted while any part of its case lacks evidence. Anything that has not been assessed is shown as unknown. It is never left out.
+> **No silent gaps.** No clause is reported as accepted while any part of its case lacks evidence. Anything that has not been assessed is shown as unknown and is never left out.
 
-Neither rule involves a person. Both are computed.
+Both rules are computed, and neither involves a person.

@@ -440,3 +440,5 @@ h2.t { font-size: clamp(28px, 3.6vw, 46px); line-height: 1.06; font-weight: 800;
 .station dd code { font-size: 13px; background: var(--soft); border-radius: 6px; padding: 2px 7px; overflow-wrap: anywhere; }
 .station .gate { font-size: 15px; color: var(--ink-2); border-top: 1px solid var(--line); padding-top: 11px; margin: 0; }
 .station .gate b { color: var(--ink); }
+
+.prose pre.appendix { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13.5px; line-height: 1.6; max-height: 520px; overflow-y: auto; }

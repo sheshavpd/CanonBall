@@ -4,9 +4,9 @@ summary: "An agent can write a change in minutes, but finding out what the chang
 part: start
 order: 1
 points:
-  - "The scarce skill is no longer producing a change. It is knowing what a change does."
-  - "A specification helps an agent build the right thing. It does not tell you how well that thing was checked."
-  - "Most of the engineering on an agent-built system goes into verification."
+  - "Producing a change is now cheap. The scarce skill is knowing what a change does."
+  - "A specification helps an agent build the right thing and says nothing about how well that thing was checked."
+  - "On an agent-built system, most of the engineering goes into verification."
 related: [workflow, primitives, verification-engineering, open-bets]
 ---
 
@@ -20,26 +20,26 @@ Both options get worse as agents get faster. If you read everything, the agent w
 
 ## What changed
 
-For most of the history of software, writing the code was the expensive part, and teams organized themselves around it. The author understood the change because the author had typed it. Code review was a second pair of eyes on something a person already understood.
+Producing a change used to cost enough that its author understood it. Code review was a second pair of eyes on something a person already understood.
 
-An agent now produces working code faster than a person can read it. The scarce skill has moved. It used to be producing a change. Now it is answering two questions about one:
+An agent now produces working code faster than a person can read it. The scarce skill is answering two questions about a change:
 
 - What does this change actually do?
 - What does the system still promise after it?
 
-A conventional codebase answers neither. Side effects are spread through the code. State is shared. Tests check whatever their author happened to think of. A green build tells you that some tests passed. It does not tell you which promises were tested, or how thoroughly.
+A conventional codebase answers neither. Side effects are spread through the code. State is shared. Tests check whatever their author happened to think of. A green build says that some tests passed, and nothing about which promises were tested or how thoroughly.
 
 ## Why a specification is not enough
 
-Giving the agent a written specification solves half of the problem. The agent builds the right thing more often, and several tools now do this well.
+Giving the agent a written specification solves half of the problem: the agent builds the right thing more often.
 
-They stop one step short. They can tell you that a requirement "has a test". They cannot tell you what kind. A requirement covered by one example and a requirement covered by a proof look the same on a dashboard, and neither says what was assumed or left out.
+Tools that track a specification stop one step short. They can tell you that a requirement "has a test", and they cannot tell you what kind. A requirement covered by one example and a requirement covered by a proof look the same on a dashboard, and neither says what was assumed or left out.
 
 ## The idea CanonBall borrows
 
-Safety engineering solved this problem decades ago for aircraft and medical devices. The tool is the **assurance case**: a written argument, backed by evidence, that a system meets a claim. It says what was checked, by which method, under which assumptions, and what is still open.
+Safety engineering has had a tool for this for decades, used on aircraft and medical devices. It is the **assurance case**: a written argument, backed by evidence, that a system meets a claim. It says what was checked, by which method, under which assumptions, and what is still open.
 
-Assurance cases are rare outside regulated industries for one reason. They are expensive to write and expensive to keep current by hand.
+Assurance cases are rare outside regulated industries mainly because they are expensive to write and expensive to keep current by hand.
 
 > **The bet.** Agents can bring the cost of an assurance case down to the cost of ordinary software. If the agents that write the code also maintain the argument for it, and independent machinery checks them, any system can carry an account of its own promises.
 
@@ -54,12 +54,8 @@ If the bet holds, the shape of the work changes.
 | "Done" means | Merged, with a green build | Every promise has evidence, and the weakest one is named |
 | An incident produces | A fix | A fix and a permanent example |
 
-The work in the right-hand column has a name in this guide: [verification engineering](../verification-engineering/). It means building places where a promise can be shown to hold, and shown to fail when it should. On an agent-built system, most of the engineering goes there.
+The work in the right-hand column has a name in this guide: [verification engineering](../verification-engineering/). It means building places where a promise can be shown to hold, and shown to fail when it should.
 
-> **A claim to resist.** Current models can do most of this labor. That does not make the result trustworthy. Trust comes from running the method on a real system and measuring what gets through.
+> **A claim to resist.** Current models can do most of this labor, and that alone does not make the result trustworthy. Trust comes from running the method on a real system and measuring what gets through.
 
-## Three ideas to carry forward
-
-The rest of the guide rests on three ideas. Work moves in **milestones**, which are batches of related requests, and not in single tickets. **Verification environments** are engineered like any other part of the product, and **observability**, the means of looking inside a running system, is built for the agents.
-
-The next chapter, [How work moves](../workflow/), puts all three on one picture: a conveyor that carries a milestone through seven stations, from the first request to the running system.
+The next chapter, [How work moves](../workflow/), follows a change from the first request to the running system.

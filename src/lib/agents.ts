@@ -5,6 +5,7 @@ import { rows, pathOf } from '../data/repo';
 import { glossary } from '../data/glossary';
 import { figures } from '../data/figures';
 import { stations, ideas, pressures, type Station } from '../data/workflow';
+import { appendix } from '../data/appendix';
 import { url } from './links';
 import type { Chapter } from './guide';
 
@@ -52,32 +53,32 @@ function retarget(body: string): string {
 
 /** Chapters embed a few components. In text they become a labeled description. */
 const interactive: Record<string, string> = {
-  Dial: '[Interactive figure: levels of automation] Seven kinds of decision, each on a scale from 0 (agent analyzes, a person decides) to 5 (agent acts, people watch the metrics), shown for three scenarios: day one, a billing service later, and a robot fleet later. Values in that order: what the system promises 1, 1, 1; what is never allowed 1, 1, 1; choices a customer would notice 1, 2, 1; internal design 1, 4, 3; decision logic 1, 5, 4; code that touches the outside world 1, 2, 2; releasing with no clause changed 1, 5, 2. These are an illustration.',
+  Dial: `[Interactive figure: levels of automation] ${dial.rows.length} kinds of decision, each on a scale from 0 (${dial.levels[0]!.toLowerCase()}) to 5 (${dial.levels[5]!.toLowerCase()}), shown for three scenarios: ${dial.scenarios.join(', ').toLowerCase()}. Values in that order: ${dial.rows.map((r) => `${r.name.toLowerCase()} ${r.v.join(', ')}`).join('; ')}. These are an illustration.`,
   FailFirst: '[Interactive figure: a check must fail before its pass counts] Three checks for INV-004 pass. The third has never been seen to fail, so the computed status is "unsupported". After a fault is injected, the third check fails as it should, and that failing run is kept. Run again on the real build, all three pass and the status becomes "accepted".',
 };
 const who = (st: Station): string =>
   [
     st.agents.length ? `agents: ${[...st.agents, ...(st.alsoAgents ?? [])].join(', ')}` : '',
     st.people.length ? `people: ${[...st.people, ...(st.alsoPeople ?? [])].join(', ')}` : '',
-    st.ifCritical?.length ? `a person only when the change is critical: ${st.ifCritical.join(', ')}` : '',
+    st.sometimes?.length ? `in some cases: ${st.sometimes.map((x) => `${x.who} (${x.when})`).join(', ')}` : '',
     st.program ? `a program: ${st.program}` : '',
   ].filter(Boolean).join('; ');
 
 /** The conveyor, as text: the stations in order, the express belt, the two pressures and the three ideas. */
 export function conveyorText(): string {
   const out = [
-    '[Animated figure: the conveyor] Requests arrive and gather into a milestone, three at a time. The milestone passes seven stations on a belt and leaves as a CanonBall. Each station names who works there.',
+    '[Animated figure: the conveyor] Requests arrive and gather into a milestone. The milestone passes seven stations on a belt and leaves as a CanonBall. Each station names who works there.',
     '',
     ...stations.map((st, i) => `${i + 1}. ${st.name}. ${st.does} Who: ${who(st)}.${st.gate ? ` ${st.gate}` : ''}`),
     '',
-    'Below the main belt runs an express belt for small urgent work. An incident returns from Operate along a dashed line, enters the express belt as a single fix, and passes the same stations alone, without waiting for a milestone.',
+    'Below the main belt runs an express belt for repairs and upkeep that change no promise. An incident returns from Operate along a dashed line, enters the express belt as a single fix, and passes the same stations alone, without waiting for a milestone.',
     'An observability rail (logs, traces, metrics, state, replay) runs under the belts from Build to Operate. The Verify station is drawn as a built chamber, the verification environment, which work on both belts passes through.',
-    'At Review, every milestone stops for an agent. A milestone marked critical also waits behind a barrier until a person has reviewed it.',
+    'At Review, every milestone and every express item stops for an agent. Only a milestone marked critical also waits behind a barrier until a person has reviewed it.',
     '',
     pressures.forward,
     pressures.back,
     '',
-    'Three ideas are numbered on the figure:',
+    'Three practices are marked 1 to 3 on the figure. Together they make it possible for agents to do most of the work reliably:',
     ...ideas.map((d) => `${d.n}. ${d.title}. ${d.text} ${d.strong}`),
   ];
   return out.join('\n');
@@ -90,7 +91,8 @@ function describeComponents(body: string): string {
       return f ? `[Figure: ${f.caption}]\n${f.text}` : '';
     })
     .replace(/<(Dial|FailFirst) \/>/g, (_, name: string) => interactive[name] ?? '')
-    .replace(/<Conveyor[^>]*\/>/g, () => conveyorText());
+    .replace(/<Conveyor[^>]*\/>/g, () => conveyorText())
+    .replace(/<Appendix \/>/g, () => '```markdown\n' + appendix.trim() + '\n```');
 }
 
 function stationText(chapter: Chapter): string {
@@ -191,12 +193,12 @@ export function homeText(all: Chapter[], s: Site): string {
     '',
     '## Verification engineering',
     '',
-    'When agents write the code, most of the engineering goes into environments in which a promise can be checked. They are designed with a person, because people can trust evidence only if they understand how it is produced. A verification environment has seven parts: boundary, stimulus, world, probes, oracle, coverage, control. It also states what it cannot show. A check must be seen to fail, against an injected fault, before its pass counts.',
+    'When agents write the code, establishing that a change is correct takes the larger share of the effort. The environments in which promises are checked are designed with a person who understands them, because evidence is only as credible as the method that produced it. A verification environment has seven parts: boundary, stimulus, world, probes, oracle, coverage, control. It also states what it cannot show. A check must be seen to fail, against an injected fault, before its pass counts.',
     `More: ${txt('/guide/verification-engineering/', s)}`,
     '',
     '## Observability',
     '',
-    'Agents work by looking inside the system. Without that they guess and patch symptoms. Three rules: every decision the system makes is logged with the clause it applied and the inputs it used; one trace follows each request through every adapter; agents have commands to read logs, traces, metrics and state, and to replay a request. One investment serves three stations: the builder sees what its code does, the verifier explains every failure, and the on-call agent diagnoses incidents. People see the same view.',
+    'An agent begins each task with no memory of the system, so it depends on what the system can tell it. Three rules: every decision the system makes is logged with the clause it applied and the inputs it used; one trace follows each request through every adapter; agents have commands to read logs, traces, metrics and state, and to replay a request. One investment serves three stations: the builder sees what its code does, the verifier explains every failure, and the on-call agent diagnoses incidents. People see the same view.',
     'Example. A customer was refused a refund on day 29. The decision log for the order reads: REQ-012 refund window, result refused, reason day 31 of 30, counted from dispatch on 2 March, delivered 4 March. The window was counted from dispatch, and the vocabulary says delivery.',
     `More: ${txt('/guide/observability/', s)}`,
     '',
@@ -211,7 +213,7 @@ export function homeText(all: Chapter[], s: Site): string {
     '',
   );
   dial.levels.forEach((l, i) => out.push(`${i}. ${l}`));
-  out.push('', 'A team starts at level 1 everywhere. Settings move on track record, never on a model release. Agent review stays on at every setting; what moves is how often a person reviews as well. Illustrative settings (day one / billing service later / robot fleet later):', '');
+  out.push('', 'A team starts at level 1 everywhere. Settings move on track record, never on a model release. An agent reviews every change at every setting; a person reviews as well whenever the policy lists the change as critical. Illustrative settings (day one / billing service later / robot fleet later):', '');
   for (const r of dial.rows) out.push(`- ${r.name}: ${r.v.join(' / ')}${r.lock ? ' (stays with people)' : ''}`);
   out.push(`More: ${txt('/guide/delegation/', s)}`, '', '## All pages', '');
   all.forEach((c, i) => out.push(`- Chapter ${i + 1}. ${c.data.title}: ${txt(`/guide/${c.id}/`, s)}`, `  ${c.data.summary}`));

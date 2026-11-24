@@ -6,8 +6,8 @@ order: 2
 points:
   - "Work moves in milestones. A milestone passes seven stations: Collect, Shape, Build, Verify, Review, Release, Operate."
   - "A person and an agent work together at most stations. People decide what is promised. Agents do the building and the proving."
-  - "Small urgent work takes an express belt through the same stations."
-  - "Three things set this apart from a conventional lifecycle: milestones, engineered verification environments, and observability built for agents."
+  - "Repairs and upkeep take an express belt through the same stations."
+  - "Three practices let agents do most of the work reliably: milestones, engineered verification environments, and observability built for agents."
 related: [collect, people-and-agents, repository]
 ---
 
@@ -15,21 +15,21 @@ related: [collect, people-and-agents, repository]
 
 <Conveyor compact />
 
-Read it left to right. Requests arrive as cards. Related cards drop into a tray, and the tray is a **milestone**. The milestone rides the belt through seven **stations**. At the sixth it becomes a ball: a **CanonBall**, which is one release of the system. At the seventh it is running.
+The figure reads from left to right. Requests arrive as cards, and related cards are gathered into a tray, which is a **milestone**. The milestone passes through seven **stations**. At the sixth it is released as a **CanonBall**, the name for one release of the system, and at the seventh it is in operation.
 
 ## Seven stations
 
 | Station | What happens | Who |
 |---|---|---|
 | [Collect](../collect/) | Requests gather into a milestone. A one-page proposal says what it will change. | Product manager, elicitor agent |
-| [Shape](../shape/) | The promises, decisions and invariants are settled and written down, with the design and the plan for evidence. | Product manager, architect, verification lead, planner agent |
+| [Shape](../shape/) | The promises, decisions and invariants are settled and written down, with the design and the evidence plan. | Product manager, architect, verification lead; elicitor, planner and verifier agents |
 | [Build](../build/) | The code is written. | Builder agent |
 | [Verify](../verify/) | The verification environment and the checks are built, and each check is seen to fail before its pass counts. | Verifier agent, verification lead |
-| [Review](../review/) | An agent reviews every milestone. A person reviews as well when the change is critical. | Reviewer agent, and the owner of what is at risk |
-| [Release](../release/) | The proposed files become the specification, and a CanonBall is published. | A program |
+| [Review](../review/) | An agent reviews every milestone. A person reviews as well only when the change is critical. | Reviewer agent. The owner of what is at risk, only when critical. |
+| [Release](../release/) | The proposed files become the specification, and a CanonBall is published and deployed. | The orchestrator, a program |
 | [Operate](../operate/) | The system runs. What breaks comes back as work. | On-call agent, operator |
 
-Each of the next seven chapters takes one station.
+The people named in the table are roles rather than positions. On a team of five, two or three people usually hold all of them.
 
 ## Two pressures
 
@@ -37,38 +37,51 @@ Work enters the belt from two directions.
 
 **Forward pressure** is people asking for something new: a customer need, a number finance wants to move, an idea.
 
-**Back pressure** is the running system asking for upkeep: an incident, a bug, a reliability problem. A system that is not maintained stops keeping its promises, so this work is not optional and cannot be scheduled.
+**Back pressure** is the running system asking for upkeep: an incident, a bug, a reliability problem. A system that is not maintained gradually stops keeping its promises, and this work arrives on the system's schedule rather than the team's.
 
-Both ride the same stations. Planned work rides the main belt as a milestone. Urgent small work rides the **express belt** underneath: it skips the wait for a batch, and none of the stations.
+Both kinds of work pass through the same stations. Planned work travels on the main belt as a milestone. Repairs and upkeep travel on the **express belt** beneath it, which does not wait for a batch but stops at every station.
 
-## Three things that are new
+## What the process does for the agents
 
-A conventional software lifecycle has stages much like these. Three things here are different, and each exists because agents now do the building.
+Three practices on the belt are marked 1 to 3. Many teams use some of them already. Here they carry more weight than usual, because each one supplies something an agent cannot supply for itself.
 
-1. **Work moves in milestones, not tickets.** An agent can build a ticket in minutes, so tickets are no longer the unit that needs managing. People's attention is. Gathering requests into a milestone lets people settle its promises, decisions and invariants once, and gives agents a coherent whole to build. [Collect](../collect/) explains how a milestone is sized and when small work may skip the batch.
-2. **Verification environments are engineered.** The place where a promise is tested is designed with a person, like any other part of the product. People can trust evidence only if they understand how it is produced. [Verify](../verify/) shows one being extended.
-3. **Observability is built for the agents.** Agents build, verify and operate by looking inside the system. Without logs, traces and state they can read, they guess. [Observability](../observability/) says what to build.
+1. **Work moves in milestones.** An agent builds whatever it is given, quickly and literally. If it is given one ticket at a time, it builds each ticket without knowing the decisions the next ticket will need. Gathering related requests into a milestone lets people settle the promises, decisions and invariants once, and gives the agent a complete and consistent specification to build against. The batch is a batch of decisions, not of code: M2 holds three requests and is built in days. [Collect](../collect/) describes how a milestone is sized and when work may go on its own.
+2. **Verification environments are engineered.** Agents produce most of the evidence that the system works, so the environment that produces it is designed with a person and maintained like product code. A person who understands how each promise is checked can rely on the result without reading the code. [Verify](../verify/) shows an environment being extended for M2.
+3. **Observability is built for agents.** An experienced engineer debugs with knowledge accumulated over years. An agent begins each task with none, and depends on what the system can tell it. Decision logs, traces and tools to read them let it diagnose a fault from evidence. [Observability](../observability/) describes what to build.
 
 ## People and agents at the same station
 
-This is not a relay in which people write a specification, hand it over and wait. At each station a person and an agent bring different things to the same piece of work.
+At most stations a person and an agent work on the same piece of work, each contributing what the other cannot.
 
 | Station | The person brings | The agent brings |
 |---|---|---|
 | Collect | What matters most, and in what order | Every request, gathered and drafted into one page |
 | Shape | The decisions | The questions, the examples and a recommendation for each choice |
 | Verify | What would convince them | The environment, the checks and the injected faults |
-| Review | Accountability for the risk | A reading of everything that changed |
+| Review | Accountability, when the change is critical | A reading of everything that changed |
 | Operate | The call on anything risky | The diagnosis |
 
-Nobody waits at the end of the belt. While agents build this milestone, people shape the next one.
+Because agents do most of the building, people are free to shape the next milestone while the current one is being built and verified.
+
+## Words the walkthrough uses
+
+The next seven chapters use a few terms that later chapters define in full.
+
+- A **clause** is one written statement the system is held to: a file with an ID and worked examples. The approved clauses together are the **canon**.
+- The story uses five kinds of clause. A **promise** (REQ) is what the system does for someone. An **invariant** (INV) is what must always be true. A **decision** (DEC) is a choice that could have gone another way, written down. A **constraint** (ENV) is what is never allowed, and has its own owner. An **assumption** (ASM) is a fact about the outside world the system relies on. [The primitives](../primitives/) covers them.
+- The **Verification Record** is the status of every clause, computed from evidence. A clause is **accepted** when every part of it has evidence, and **unsupported** when some part does not.
+- The **orchestrator** is a program, not an agent. It computes the state of the work from what is in the repository, and it performs the release.
+- The **policy** is a short set of rules, owned by people, that says what counts as evidence and which changes are critical.
 
 ## The example
 
-The seven station chapters follow one milestone of a refunds service for an online shop. When it starts, the service is at CanonBall 12 and keeps three clauses:
+The seven station chapters follow one milestone of a refunds service for an online shop. When it starts, the service is at CanonBall 12 and keeps four clauses:
 
-- **REQ-012.** A customer can request a refund within 30 days of delivery.
-- **INV-004.** A refund is never issued twice for the same order.
-- **ENV-003.** No payout above $10,000 without review.
+- **REQ-012**, a promise. A customer can request a refund within 30 days of delivery.
+- **INV-004**, an invariant. A refund is never issued twice for the same order. Its examples say what "twice" means: the same request paid two times. A second, separate refund on an order is allowed.
+- **ENV-003**, a constraint. No payout above $10,000 without review.
+- **ASM-011**, an assumption. The payment gateway pays at most once per request key.
 
-The first station is [Collect](../collect/).
+The team in the story has used the method for a while. It has handed detailed design to agents, and it still sends anything on the path that moves money to a person. A new team keeps more with people, as [Handing over decisions](../delegation/) describes.
+
+The walkthrough begins at [Collect](../collect/).

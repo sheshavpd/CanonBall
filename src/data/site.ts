@@ -27,7 +27,7 @@ export const written = [
   {
     id: 'tenet', name: 'Tenet', slug: 'tenets',
     what: 'Which good thing wins when two conflict.',
-    example: 'A person reviews before money moves, when in doubt.',
+    example: 'A person\u2019s review over speed, when money moves.',
     why: 'An agent facing an undecided choice recommends the way the team would, and says which tenet it used.',
   },
   {
@@ -45,7 +45,7 @@ export const written = [
   {
     id: 'decision', name: 'Decision', slug: 'primitives',
     what: 'A choice that could have gone another way, written down.',
-    example: 'Refunds under $100 are approved automatically.',
+    example: 'A refund is approved automatically while the total refunded on the order stays under $100.',
     why: 'Otherwise an agent decides it for you, and may decide differently next time.',
   },
   {
@@ -89,13 +89,13 @@ export const computed = [
 
 /** The milestone M2, followed through the repository one station at a time. */
 export const steps = [
-  { n: 'Collect', k: 'p', say: 'Three requests gather into one milestone. An agent drafts a one-page proposal, and a person agrees to it and ranks it.', ids: ['notes', 'index', 'm2', 'change'], focus: 'change' },
+  { n: 'Collect', k: 'p', say: 'Three requests gather into one milestone. An agent drafts a one-page proposal, and the product manager confirms it and ranks it.', ids: ['notes', 'index', 'm2', 'change'], focus: 'change' },
   { n: 'Shape', k: 'p', say: 'People and agents settle the decision and its examples, the design and the evidence plan. They are written as whole files beside the proposal. Nothing in spec/ changes yet.', ids: ['agents', 'tenets', 'vocab', 'm2', 'diff', 'tasks'], focus: 'diff' },
   { n: 'Build', k: 'a', say: 'The builder writes the code, and uses the observability tools to see what it does.', ids: ['src', 'observe'], focus: 'src' },
   { n: 'Verify', k: 'v', say: 'Verification engineering. A different agent extends the environment, writes the checks, and shows each one failing first.', ids: ['verify', 'envs', 'checks', 'red', 'faults', 'holdout'], focus: 'verify' },
   { n: 'Review', k: 'a', say: 'An agent reviews the milestone against its clauses and the Verification Record. This one is on the path that moves money, so its owner reviews it too.', ids: ['record', 'policy', 'case'], focus: 'record' },
-  { n: 'Release', k: 'v', say: 'A program copies the proposed files into spec/. The spec now describes the new system, and CanonBall 13 is published.', ids: ['spec', 'canon', 'dec', 'bp', 'ball'], focus: 'ball' },
-  { n: 'Operate', k: '', say: 'A customer is wrongly refused. The on-call agent reads the decision log, and the fix comes back on the express belt.', ids: ['observe', 'monitors', 'inc', 'unpl'], focus: 'inc' },
+  { n: 'Release', k: 'v', say: 'The orchestrator, a program, copies the proposed files into spec/. The spec now describes the new system, and CanonBall 13 is published and deployed.', ids: ['spec', 'canon', 'dec', 'bp', 'ball'], focus: 'ball' },
+  { n: 'Operate', k: '', say: 'A customer is wrongly refused. The on-call agent reads the decision log, and the fix comes back on the express belt.', ids: ['observe', 'monitors', 'asm', 'inc', 'unpl'], focus: 'inc' },
 ] as const;
 
 export const dial = {
@@ -112,9 +112,10 @@ export const dial = {
     { name: 'What the system promises', sub: 'Promises, examples, vocabulary', v: [1, 1, 1], lock: true },
     { name: 'What is never allowed', sub: 'Constraints on safety, money, irreversible actions', v: [1, 1, 1], lock: true },
     { name: 'Choices a customer would notice', sub: 'Thresholds, policies', v: [1, 2, 1], lock: false },
-    { name: 'Internal design', sub: 'Module layout, retries, data shapes', v: [1, 4, 3], lock: false },
+    { name: 'Architecture', sub: 'How the system is divided, where state lives', v: [1, 2, 1], lock: false },
+    { name: 'Detailed design', sub: 'Module layout, interfaces, retries, data shapes', v: [1, 4, 3], lock: false },
+    { name: 'Verification design', sub: 'The environment, what is faked, which failures to simulate', v: [1, 3, 2], lock: false },
     { name: 'Decision logic', sub: 'The functional core: code with no side effects', v: [1, 5, 4], lock: false },
     { name: 'Code that touches the outside world', sub: 'Adapters, permissions', v: [1, 2, 2], lock: false },
-    { name: 'Releasing with no clause changed', sub: 'Refactors, upkeep', v: [1, 5, 2], lock: false },
   ],
 };

@@ -13,7 +13,7 @@ related: [build, verify, operate, environments, architecture]
 
 ## An agent that cannot see, guesses
 
-A customer is refused a refund on day 29. The promise says 30 days from delivery. This is incident INC-031, and the on-call agent must find the cause.
+A customer is refused a refund on day 29. The promise says 30 days from delivery. This is incident INC-007, and the on-call agent must find the cause.
 
 Suppose the agent can read only the code and the complaint. The code looks right. So the agent forms a theory about time zones and widens the window by a day. The complaint stops and the cause remains. That is a patched symptom.
 
@@ -44,7 +44,7 @@ Keeping the logic that decides [apart from the code that acts](../architecture/)
 | `observe/signals.md` | What the system emits: the decision log, the traces, the metrics |
 | `observe/tools/` | The commands agents run |
 
-For INC-031 the on-call agent runs two of them.
+For INC-007 the on-call agent runs two of them.
 
 ```text
 $ observe decisions --order 5512

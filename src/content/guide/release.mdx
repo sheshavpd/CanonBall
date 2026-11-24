@@ -1,6 +1,6 @@
 ---
 title: "Release: a CanonBall leaves the belt"
-summary: "When the release rule holds, a program makes the milestone's proposed files the specification and publishes a CanonBall."
+summary: "When the release rule holds, the orchestrator makes the milestone's proposed files the specification and publishes a CanonBall."
 part: walkthrough
 order: 6
 station: release
@@ -13,29 +13,33 @@ related: [canonball, evidence, repository]
 
 ## What arrives
 
-A reviewed milestone. Nothing at this station is done by a person or decided by an agent. A program applies a rule.
+A reviewed milestone. At this station no person decides anything and no agent does. The orchestrator applies a rule.
 
 ## The release rule
 
 Checks for a milestone run against the **release candidate**: `spec/` with the milestone's proposed files applied. The milestone may be released when two things are true of the Verification Record computed for that candidate.
 
 1. Every clause the milestone touches is accepted.
-2. No clause it did not touch has become worse.
+2. No clause it did not touch has become worse, unless a named person accepted that at the release gate.
 
-The second condition is what protects everything already promised. A milestone carries no list of things it must not break. The Record enforces every clause, every time.
+The second condition protects everything already promised. A milestone carries no list of things it must not break, because the Record checks every clause every time.
 
 <Figure id="release" />
 
-## What the program does
+## What the orchestrator does
 
-When the rule holds and the review has passed, a program does four things.
+When the rule holds and the review has passed, the orchestrator:
 
-1. Copies the files in `diff/` over the files of the same name in `spec/`.
-2. Archives the milestone folder.
-3. Publishes a CanonBall.
-4. Deploys the build that CanonBall names.
+1. copies the files in `diff/` over the files of the same name in `spec/`;
+2. archives the milestone folder;
+3. publishes a CanonBall;
+4. hands the build that CanonBall names to the team's deployment pipeline.
 
-No person edits `spec/` by hand, at any time. That is why `spec/` can be trusted to describe the system as it is.
+If another milestone was released in the meantime, the candidate is rebuilt on the new `spec/` and the checks run again before anything is copied.
+
+No person edits `spec/` by hand. That is what lets `spec/` describe the system as released, with evidence, and not as someone hoped it would be.
+
+How the build is rolled out and rolled back is the pipeline's job. CanonBall says which build goes out and what it promises.
 
 ## What a CanonBall holds
 
@@ -43,13 +47,14 @@ No person edits `spec/` by hand, at any time. That is why `spec/` can be trusted
 CanonBall 13
   canon    spec/canon at this release
   build    commit 3f9c
-  record   4 accepted, 0 unsupported
-  notes    + DEC-031 Refunds under $100 are approved automatically
+  record   4 accepted, 1 accepted with stated risk,
+           0 unsupported
+  notes    + DEC-031 Small refunds are approved automatically
 ```
 
-Three things, fixed together at one moment: what the system promises, the code that keeps the promises, and the evidence that it does. Any one of them without the other two answers less. Together they answer "what does this system promise, and how do you know?" without anyone reading code. [What a CanonBall is](../canonball/) goes further.
+Three things are fixed together at one moment: what the system promises, the code that keeps the promises, and the evidence that it does. Together they answer "what does this system promise, and how do you know?" without anyone reading code. [What a CanonBall is](../canonball/) goes further.
 
-Progress is a sequence of them. The service was at CanonBall 12. It is now at 13.
+The one clause "accepted with stated risk" is ASM-011, the assumption about the payment gateway. It cannot be proven from here, so it is watched in production.
 
 ## When the rule does not hold
 
@@ -61,8 +66,8 @@ The milestone stays on the belt. The Record names the clause that is holding it 
 | A check fails | [Build](../build/) |
 | An untouched clause got worse | [Build](../build/), or [Review](../review/) if someone means to accept it |
 
-Nobody argues about whether the milestone is done. The status is computed.
+Whether the milestone is done is not a matter of opinion. The status is computed.
 
 ## What leaves
 
-`spec/` now describes a system in which small refunds are approved automatically, and that system is running. It is [operated](../operate/) from here.
+`spec/` now describes a system in which small refunds are approved automatically, and that system is running as CanonBall 13. It is [operated](../operate/) from here.
