@@ -43,7 +43,7 @@ Put the clauses, the vocabulary and the tenets in a first change folder and rele
 Write two short policy files.
 
 - **Acceptance** says which clauses are critical and when a clause is accepted. To begin with, a clause is accepted when every example has a check, every check passed at this commit, and every check has a recorded failure.
-- **Gates** has three lines. An agent reviews every release. A person accepts it as well when it touches a critical clause or adapter code. A named person approves when an owner is away.
+- **Gates** has three lines. An agent reviews every change. A person reviews as well when the change touches a critical clause or adapter code, or when the reviewer rates its blast radius as large. A named person approves when an owner is away.
 
 Add the traceability check to continuous integration. It is a script that reads front matter and fails the build when something traces to no clause.
 
@@ -70,7 +70,7 @@ Alongside the environment, build the minimum of [observability](../observability
 Write a script that joins the list of examples, the assurance cases and the lines of evidence, and prints one row per clause. It is the first piece of the orchestrator, the program that computes every state.
 
 ```text
-INV-003 | unsupported | checks 3/3 | seen to fail 2/3 | never failed: violates/1
+INV-004 | unsupported | checks 3/3 | seen to fail 2/3 | never failed: violates/1
 ```
 
 Publish the table as a page rather than committing it, so that nobody can edit a status.

@@ -59,12 +59,10 @@ Nobody can write "done" or "verified" into the Record, because it is not a file 
 
 ## Two rules that make it mechanical
 
-The layers are held together by two automated checks that run on every change.
+The layers are held together by two automated checks that run on every change and involve no person.
 
 > **Traceability.** Every element of the build refers to an element of the blueprint, and every element of the blueprint refers to a clause. Anything that cannot be traced blocks the merge.
 
 This check establishes only that the references exist; whether they justify the code is a question for the case.
 
 > **No silent gaps.** No clause is reported as accepted while any part of its case lacks evidence. Anything that has not been assessed is shown as unknown and is never left out.
-
-Both rules are computed, and neither depends on a person.
