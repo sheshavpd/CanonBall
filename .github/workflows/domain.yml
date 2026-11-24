@@ -13,7 +13,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
 
 jobs:
   dns:
@@ -28,21 +27,3 @@ jobs:
           PAGES_HOST: ${{ github.repository_owner }}.github.io
           APPLY: ${{ inputs.apply }}
         run: node scripts/cloudflare-dns.mjs
-
-  pages:
-    runs-on: ubuntu-latest
-    if: ${{ inputs.apply }}
-    steps:
-      # The workflow token may lack the right to change Pages settings.
-      # If it does, the step says so and the settings are made by hand once.
-      - name: Pages source and custom domain
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-        run: |
-          gh api "repos/$REPO/pages" --jq '{build_type, cname, https_enforced, status}' \
-            || gh api -X POST "repos/$REPO/pages" -f build_type=workflow --jq '{build_type, html_url}' \
-            || echo "::warning::Could not enable Pages with the workflow token. Set Settings > Pages > Source to GitHub Actions."
-          gh api -X PUT "repos/$REPO/pages" -f cname=canonball.org -f build_type=workflow \
-            && echo "Custom domain set to canonball.org" \
-            || echo "::warning::Could not set the custom domain with the workflow token. Enter canonball.org under Settings > Pages > Custom domain."
