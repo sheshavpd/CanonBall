@@ -17,12 +17,12 @@ Three requests reach the refunds team in the same week.
 
 ```text
 roadmap/notes/
-  support   small refunds wait two days in review
-  finance   most review time goes to refunds under $100
-  risk      split refunds must not slip past review
+  support-small-refunds-wait.md     Small refunds wait two days in review
+  finance-review-time-under-100.md  Most review time goes to refunds under $100
+  risk-split-refunds.md             Split refunds must not slip past review
 ```
 
-A **request** is anything someone asks of the system before it has been shaped. The elicitor agent files each one as it arrives.
+A **request** is anything someone asks of the system before it has been shaped. The elicitor agent files each one as it arrives, as a short file that says who asked and what for.
 
 ## Why not build each one
 
@@ -40,7 +40,7 @@ A milestone spends people's attention, the scarce resource, once for the whole b
 2. **It can be read in a minute.** Otherwise it is split.
 3. **It changes what the system promises.** It adds or alters a promise, a decision or a constraint. A milestone can be a single request, if that request does this.
 
-A fourth request that week asks for refunds as store credit. It is a different promise with different decisions, so it becomes the next milestone, M3.
+A fourth request that week, `store-credit.md`, asks for refunds as store credit. It is a different promise with different decisions, so it becomes the next milestone, M3.
 
 ## The proposal
 
@@ -52,12 +52,16 @@ The elicitor drafts one page from conversations with the three people who asked.
 What changes: refunds under $100 are approved automatically.
 Nothing else changes.
 
-Gathers:   3 requests (support, finance, risk)
-Why now:   the review queue is the slowest step for small refunds.
-status:    draft
+Gathers:   3 requests: roadmap/notes/support-small-refunds-wait.md, finance-review-time-under-100.md,
+           risk-split-refunds.md
+Why now:   the review queue is the slowest step for small refunds. Support handles complaints about the
+           wait every day, and reviewers spend most of their time on refunds they almost never turn down.
+Adds:      to be settled at Shape
+
+status: draft   (written by canonball)
 ```
 
-The page states what changes in the system and leaves how to later stations. Only the orchestrator writes the `status` line.
+The page states what changes in the system and leaves how to later stations. Only the orchestrator writes the `status` line, when `tools/canonball status` runs.
 
 The product manager confirms the milestone and ranks it in `roadmap/index.md` by cost of delay, and that ranking decides which page is shaped next.
 

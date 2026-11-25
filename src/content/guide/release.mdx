@@ -31,29 +31,31 @@ The second condition protects everything already promised. A milestone carries n
 When the rule holds and the review has passed, the orchestrator:
 
 1. copies the files in `diff/` over the files of the same name in `spec/`;
-2. archives the milestone folder;
-3. publishes a CanonBall;
-4. hands the build that CanonBall names to the team's deployment pipeline.
+2. archives the milestone folder in `roadmap/archive/`;
+3. records a CanonBall in `CANONBALLS.md`, naming the build it releases;
+4. tells the team to commit the result, tag it, and deploy that build.
 
-If another milestone was released in the meantime, the candidate is rebuilt on the new `spec/` and the checks run again before anything is copied.
+For M2 this is one command, `tools/canonball release M2-faster-small-refunds`, and the same commit moves M2 to Released in `roadmap/index.md`. If another milestone was released in the meantime, the release candidate is the new `spec/` with this milestone's files applied, and the rule is applied to that candidate before anything is copied.
 
 No person edits `spec/` by hand, so `spec/` describes the system as released and as supported by evidence. How the build is rolled out and rolled back is the pipeline's job; CanonBall says which build goes out and what it promises.
 
 ## What a CanonBall holds
 
-```text
-CanonBall 13
-  canon    spec/canon at this release
-  build    commit 3f9c
-  record   4 accepted, 1 accepted with stated risk,
-           0 unsupported
-  notes    + DEC-031 A refund is approved automatically while the
-             total refunded on the order stays under $100
+```markdown
+## CanonBall 13
+
+- released: 2026-03-10
+- from: roadmap/archive/M2-faster-small-refunds
+- build: 8ca1c6a
+- record: 4 accepted, 1 accepted, with stated risk
+- adds or changes: DEC-031 Auto-approve under $100
 ```
+
+The entry names the build, the commit the review signed off, and the canon is `spec/canon` at the commit that records the entry.
 
 A CanonBall fixes together, at one moment, what the system promises, the code that keeps the promises, and the evidence that it does. Together they answer the question "what does this system promise, and how do you know?" without anyone reading code. [What a CanonBall is](../canonball/) describes the format in full.
 
-The one clause "accepted with stated risk" is ASM-011, the assumption about the payment gateway. It cannot be proven from inside the system, so it is watched in production.
+The one clause "accepted, with stated risk" is ASM-011, the assumption about the payment gateway. It cannot be proven from inside the system, so it is watched in production.
 
 ## When the rule does not hold
 

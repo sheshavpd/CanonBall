@@ -21,11 +21,12 @@ const dots = (people: number) => Array.from({ length: 12 }, (_, i) => (i < peopl
       <div class="f-anno">
         <code>id: INV-004</code><span>A stable identifier. Checks and evidence refer to it.</span>
         <code>kind: invariant</code><span>One of the five kinds.</span>
-        <code>state: decided</code><span>How much freedom agents have.</span>
-        <code>owner: aisha</code><span>The one person who can approve a change.</span>
         <code>traces: [REQ-012]</code><span>The promise this clause exists for.</span>
+        <code>terms: [refund, order]</code><span>The defined words it uses. A word missing from the vocabulary is blocked.</span>
+        <code>owner: refunds owner</code><span>The one person who can approve a change.</span>
+        <code>tier: 2</code><span>How much is at stake. Tier 2 is safety and money, and a person reviews any change to it.</span>
         <code class="say">A refund is never issued twice for the same order.</code><span>The statement. One sentence, in the team's vocabulary.</span>
-        <code>Satisfies: ...<br />Violates: ...</code><span>The examples. These are what a person approves.</span>
+        <code>### satisfies/1: ...<br />### violates/1: ...</code><span>The examples. These are what a person approves.</span>
       </div>
     )}
 
@@ -46,16 +47,16 @@ const dots = (people: number) => Array.from({ length: 12 }, (_, i) => (i < peopl
     {id === 'word-chain' && (
       <ol class="f-chain">
         <li><b>Promise</b><span>A customer can request a refund within 30 days of <mark>delivery</mark>.</span></li>
-        <li><b>Example</b><span>Given order 4471 had its <mark>delivery</mark> on 3 March, when a refund is requested on 1 April, then it is accepted.</span></li>
-        <li><b>Code</b><code>days_since(<mark>delivery</mark>.scanned_at)</code></li>
-        <li><b>Check</b><code>rig.order(<mark>delivery</mark>_days_ago=31)</code></li>
-        <li><b>Incident</b><span>Refund refused on day 29. The <mark>delivery</mark> date was read from dispatch.</span></li>
+        <li><b>Example</b><span>Given an order dispatched on 2 March and delivered on 4 March, when the customer requests a refund on 3 April, then the request is accepted, on day 30 of 30, counted from <mark>delivery</mark> on 4 March.</span></li>
+        <li><b>Code</b><code>return "<mark>delivery</mark>", order.delivered_on</code></li>
+        <li><b>Check</b><code>("<mark>delivery</mark>", "2026-03-04")</code></li>
+        <li><b>Incident</b><span>Refund refused on day 29. The refund window was counted from the day of dispatch, where REQ-012 says <mark>delivery</mark>.</span></li>
       </ol>
     )}
 
     {id === 'example-flow' && (
       <div class="f-flow">
-        <div class="f-step p"><b>Example</b><span>Given a $40 refund for order 4471 has been paid, when the same request arrives again, then the customer has been paid $40, once.</span><small>a person approves</small></div>
+        <div class="f-step p"><b>Example</b><span>Given order 4471 and a refund request with request key K, when the same request, with request key K, is sent a second time and both are reviewed, then one payout is made for order 4471.</span><small>a person approves</small></div>
         <i class="f-ar" aria-hidden="true"></i>
         <div class="f-step v"><b>Check</b><span>Code that sets up the given, performs the when, and asserts the then.</span><small>the verifier agent writes</small></div>
         <i class="f-ar" aria-hidden="true"></i>
@@ -101,7 +102,7 @@ const dots = (people: number) => Array.from({ length: 12 }, (_, i) => (i < peopl
 
     {id === 'release' && (
       <div class="f-rel">
-        <div class="f-col"><small>Before</small><code>spec/canon/</code><ul><li>REQ-012</li><li>INV-004</li><li>ENV-003</li><li>ASM-011</li></ul><code>roadmap/M2/diff/canon/</code><ul><li class="new">DEC-031</li></ul></div>
+        <div class="f-col"><small>Before</small><code>spec/canon/</code><ul><li>REQ-012</li><li>INV-004</li><li>ENV-003</li><li>ASM-011</li></ul><code style="overflow-wrap:anywhere">roadmap/M2-faster-small-refunds/diff/canon/</code><ul><li class="new">DEC-031</li></ul></div>
         <i class="f-ar" aria-hidden="true"></i>
         <div class="f-col"><small>After the release</small><code>spec/canon/</code><ul><li>REQ-012</li><li>INV-004</li><li>ENV-003</li><li>ASM-011</li><li class="new">DEC-031</li></ul><span class="f-ball"><Logo />CanonBall 13 published</span></div>
       </div>
@@ -146,13 +147,13 @@ const dots = (people: number) => Array.from({ length: 12 }, (_, i) => (i < peopl
 
     {id === 'environment' && (
       <div class="f-env">
-        <div class="world"><small>World &middot; real or faked &middot; here, a real local database and a fake payment gateway</small>
+        <div class="world"><small>World &middot; real or faked &middot; here, a real local store and a fake payment gateway</small>
           <div class="line">
-            <div class="io"><b>Stimulus</b><span>how it is driven</span><small>requests through the public interface</small></div>
+            <div class="io"><b>Stimulus</b><span>how it is driven</span><small>calls to the service's API</small></div>
             <i class="f-ar" aria-hidden="true"></i>
             <div class="sut"><small>Boundary</small><b>System under test</b><small>the refunds service, at this commit</small></div>
             <i class="f-ar" aria-hidden="true"></i>
-            <div class="io"><b>Probes</b><span>what can be observed</span><small>what the database holds, what the gateway paid</small></div>
+            <div class="io"><b>Probes</b><span>what can be observed</span><small>what the store holds, what the gateway paid</small></div>
           </div>
         </div>
         <div class="under">

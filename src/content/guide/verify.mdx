@@ -20,7 +20,7 @@ Writing the rule took the builder an afternoon. Showing that it holds, in a way 
 
 ## The environment is a product
 
-The refunds service is tested in a **verification environment** named VE-002: the service itself, a real local database, and a fake payment gateway, started and destroyed by one command. The verification lead and the verifier agent designed it, and they keep a page that describes it.
+The refunds service is tested in a **verification environment** named VE-002: the service itself, a real local store, and a fake payment gateway, brought up by constructing a `World` and taken down by `close()`. The verification lead and the verifier agent designed it, and they keep a page that describes it. This is the page as the milestone proposes it.
 
 ```text
 id: VE-002
@@ -29,6 +29,16 @@ boundary: the refunds service, at this commit
 world: real local store; a fake payment gateway
 control: seeded; one command up, one command down
 
+## Starting states it can set up
+- an order, with its day of dispatch and day of delivery
+- a refund waiting for review, or approved and waiting for payout
+- an order that has already been partly refunded
+
+## Failures it can simulate
+- a refusal
+- a duplicate request
+- a lost reply (the gateway pays and the reply never arrives)
+
 ## What it cannot show
 Real gateway timing. Whether the real gateway honors
 request keys. Production request shapes.
@@ -36,45 +46,47 @@ request keys. Production request shapes.
 
 The last section matters as much as the rest, because evidence counts only within what the environment can show.
 
-For this milestone the verifier extends the environment, as planned, to set up an order that has already been partly refunded.
+For this milestone the verifier extends the environment's code in `verify/envs/ve002.py`, as planned, to set up an order that has already been partly refunded.
 
-The verification lead need not write the environment, but must be able to say in a sentence how each clause is checked: "the split-refund rule is tested by making two requests against a real store and reading what the fake gateway paid." If no person can say that, a green result means nothing to anyone. [Verification environments](../environments/) covers how one is designed.
+The verification lead need not write the environment, but must be able to say in a sentence how each clause is checked: "the split-refund rule is tested by setting up an order with a $60 refund already paid, requesting a second $60 against a real store, and reading what the fake gateway paid." If no person can say that, a green result means nothing to anyone. [Verification environments](../environments/) covers how one is designed.
 
 ## One check per example
 
 Each approved example becomes one check, and the check names the example it encodes.
 
 ```python
-@example_of("DEC-031#satisfies/2", "Two $60 refunds on one order")
-def test_second_small_refund_goes_to_review(world):
-    order = world.rig.order(amount_cents=15000).result
-    world.act.api.refund(order, amount_cents=6000)
-    second = world.act.api.refund(order, amount_cents=6000).result
-    assert second.state == "in_review"
-    paid = world.observe.gateway.payouts(order=order).result
-    assert len(paid) == 1
+    @example_of("DEC-031#satisfies/2", "Two $60 refunds on one order")
+    def test_second_60_refund_goes_to_review(self):
+        world = self.world
+        order = world.rig.partly_refunded_order(6000, total_cents=15000)  # the first $60 refund, paid
+        second = world.act.request_refund(order, 6000, key="dec031-s2")
+        self.assertEqual(second.state, "in_review")
+        paid = world.observe.gateway.payouts(order=order)
+        self.assertEqual(len(paid), 0)
 ```
 
-An example with no check is visible, and so is a check with no example.
+The first refund was paid before this world started, so the fake gateway's list holds only what this request paid, which must be nothing. An example with no check is visible, and so is a check with no example.
 
-A second check runs the automatic path against a failure the fake gateway can simulate, in which the gateway pays and the reply is lost. The retry must find the original payout and pay nothing more, which covers INV-004 on the new path.
+A second check runs the automatic path against a failure the fake gateway can simulate, in which the gateway pays and the reply is lost. The retry must find the original payout and pay nothing more. The check is filed under INV-004 satisfies/2, which covers INV-004 on the new path.
 
 ## Fail first
 
-A check may be asserting something that is always true, and nobody can tell until it has been seen to fail. The verifier therefore breaks the code on purpose, in a scratch copy. This is an **injected fault**: one small patch, here making the limit apply to each refund instead of to the order's total. The check must fail against it.
+A check may be asserting something that is always true, and nobody can tell until it has been seen to fail. The verifier therefore breaks the code on purpose, in a scratch copy. This is an **injected fault**: one small patch, here making the limit apply to each refund instead of to the order's total. The check must fail against it, and `tools/canonball fault` runs every check against the patched copy.
 
 ```text
-verify/faults/limit-per-refund.patch     applied to a scratch copy
-test_second_small_refund_goes_to_review  FAILED   kept in verify/checks/red/
+$ tools/canonball fault verify/faults/limit-per-refund.patch
+
+verify/faults/limit-per-refund.patch: 1 of 12 checks failed, as they should; red proofs kept in verify/checks/red/
+  failed  verify.checks.test_dec031_auto_approve_under_100.AutoApproveUnder100.test_second_60_refund_goes_to_review  (DEC-031#satisfies/2)
 ```
 
-The failing run is kept. Only then is the check run against the real build, and only then does its pass count. [Evidence](../evidence/) covers the rule in full.
+The failing run is kept as a red proof. The other two DEC-031 checks are seen to fail against `auto-approve-off.patch` and `limit-ignores-this-refund.patch`. Only then is the check run against the real build, and only then does its pass count. [Evidence](../evidence/) covers the rule in full.
 
 ## What the builder cannot touch
 
-Each agent role is a separate account, and the repository rejects a commit outside that role's paths. The builder can run everything in `verify/` and change none of it.
+The rule is written in `AGENTS.md` and `verify/README.md`: the builder may run everything in `verify/` and may change none of it. A team that wants the rule enforced gives each agent role its own account and has the repository reject a commit outside that role's paths.
 
-People also write a few held-out scenarios that neither agent can read. A run reports only pass or fail, and runs are rationed, so the scenarios are hard to tune against.
+People can also write a few held-out scenarios that neither agent can read, kept in a separate repository; the example does not include any. A run reports only pass or fail, and runs are rationed, so the scenarios are hard to tune against.
 
 ## When a check fails on the real build
 

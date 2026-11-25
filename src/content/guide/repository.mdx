@@ -14,13 +14,15 @@ related: [workflow, layers, people-and-agents, observability]
 
 <Figure id="folders" />
 
-Because each folder answers one question, "where does this go?" has a single answer: the folder whose question the file answers. So does "may I change this?", and the repository enforces that answer for each [role](../people-and-agents/).
+Because each folder answers one question, "where does this go?" has a single answer: the folder whose question the file answers. So does "may I change this?", and `AGENTS.md` gives that answer for each [role](../people-and-agents/).
 
 ## The layout
 
 ```text
 refunds/
 ├── AGENTS.md                  what an agent reads first
+├── CANONBALLS.md              one entry per release
+├── canonball.toml             settings for tools/canonball
 ├── spec/                      what is true today
 │   ├── canon/                 what the system promises
 │   │   ├── purpose.md  vocabulary.md  tenets.md
@@ -28,7 +30,7 @@ refunds/
 │   │   ├── INV-004-no-double-payout.md
 │   │   ├── ENV-003-no-payout-above-10k.md
 │   │   ├── ASM-011-gateway-request-keys.md
-│   │   └── policy/            what counts as evidence
+│   │   └── policy/            evidence.md  review.md  automation.md
 │   └── blueprint/             how the clauses are kept
 │       ├── architecture.md
 │       ├── cases/             INV-004.md
@@ -38,18 +40,22 @@ refunds/
 │   ├── notes/                 requests as they arrive
 │   ├── M2-faster-small-refunds/
 │   │   ├── change.md          what changes in the system?
+│   │   ├── approvals.md       who approved the examples
 │   │   ├── diff/
-│   │   │   ├── canon/         DEC-031-auto-approve-under-100.md
-│   │   │   └── blueprint/     the design, the evidence plan
+│   │   │   ├── canon/         DEC-031-auto-approve-under-100.md  vocabulary.md
+│   │   │   └── blueprint/     architecture.md  cases/  environments/
 │   │   └── tasks/             the agents' breakdown
-│   └── unplanned/             repairs and upkeep
-├── src/                       what runs
+│   ├── unplanned/             repairs and upkeep
+│   └── archive/               released milestones
+├── src/refunds/               what runs
 ├── verify/                    how we know
 │   └── envs/  checks/  checks/red/  faults/  monitors/
 ├── observe/                   how agents see inside
 │   ├── signals.md             what the system emits
 │   └── tools/                 the commands that read it
-└── incidents/                 what went wrong
+├── incidents/                 what went wrong
+├── templates/                 starting points for new files
+└── tools/canonball            the orchestrator
 ```
 
 The tree shows the refunds service while milestone M2 is being built. Clause files sit directly in `canon/`, one per file, with no folder per kind. DEC-031 is agreed but not yet released, so its file sits under the milestone's `diff/canon/` rather than in `spec/`.
@@ -70,8 +76,8 @@ A change moves through [seven stations](../workflow/), and each station writes t
 | [Shape](../shape/) | The milestone's `diff/` and `tasks/` |
 | [Build](../build/) | `src/` and `observe/signals.md` |
 | [Verify](../verify/) | `verify/` and `observe/tools/` |
-| [Review](../review/) | Nothing but its review |
-| [Release](../release/) | `spec/` |
+| [Review](../review/) | The milestone's `review.md` |
+| [Release](../release/) | `spec/` and `CANONBALLS.md`, by `tools/canonball release` only |
 | [Operate](../operate/) | `incidents/` and `roadmap/unplanned/` |
 
 ## spec/ and the milestone folder
@@ -82,8 +88,9 @@ A clause that is agreed but not yet built stays in its milestone's `diff/` until
 
 Each planned change is a **milestone**, and its folder holds:
 
-- `change.md`, the change proposal: one page that answers "what changes in the system?";
-- `diff/`, which holds whole files in their final form, with the clauses the change adds under `diff/canon/` and the design and the evidence plan under `diff/blueprint/`, and which at release replace the files of the same name in `spec/`;
+- `change.md`, the change proposal: one page that answers "what changes in the system?", with the predicted change in behavior and the evidence plan;
+- `approvals.md`, one line for each approval of the agreement gate;
+- `diff/`, which holds whole files in their final form, with the clauses the change adds under `diff/canon/` and the design under `diff/blueprint/`, and which at release replace the files of the same name in `spec/`;
 - `tasks/`, the agents' breakdown of the work.
 
 `index.md` lists the milestones in the order the product manager ranks them. `unplanned/` holds unplanned work: incident repairs, bug fixes, refactorings and upkeep. Each piece has the shape of a small milestone and is released on its own. [Collect](../collect/) covers the ranking and the criteria for work that may go to `unplanned/`.

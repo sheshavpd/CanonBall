@@ -31,11 +31,10 @@ Keeping the logic that decides [apart from the code that acts](../architecture/)
 
 ## The observe/ folder
 
-The file `observe/signals.md` lists what the system emits: the decision log, the traces and the metrics. The folder `observe/tools/` holds the commands agents run. The decision log is the signal they read most often; this entry is from the refunds service.
+The file `observe/signals.md` lists what the system emits: the decision log, the traces and the metrics. The folder `observe/tools/` holds the commands agents run; in the refunds service that is one command, `observe`, which shows and replays the decisions for an order. The decision log is the signal they read most often; this entry is from the refunds service.
 
 ```text
-$ observe decisions --order 5512
-
+$ observe/tools/observe decisions --order 5512
 REQ-012  refund window
   result        refused
   reason        day 31 of 30

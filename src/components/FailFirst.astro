@@ -3,10 +3,11 @@
 ---
 <div class="box" id="failfirst">
   <h3>A check must fail once before its pass counts</h3>
-  <div class="ck"><span>The same request sent twice pays once</span><em class="tag">passed, seen to fail</em></div>
-  <div class="ck"><span>A retry after a lost reply pays once</span><em class="tag">passed, seen to fail</em></div>
-  <div class="ck"><span>Two requests at once pay once</span><em class="tag warn" data-ck>passed, never seen to fail</em></div>
-  <div class="verdict bad" data-verdict><small>Computed status of INV-004</small><b data-status>Unsupported</b><p data-why>The third check has never failed, so its pass is not evidence yet.</p></div>
+  <div class="ck"><span style="overflow-wrap:anywhere">test_same_request_twice_pays_once</span><em class="tag">passed, seen to fail</em></div>
+  <div class="ck"><span style="overflow-wrap:anywhere">test_retry_after_lost_reply_pays_once</span><em class="tag">passed, seen to fail</em></div>
+  <div class="ck"><span style="overflow-wrap:anywhere">test_retry_after_lost_reply_on_automatic_path_pays_once</span><em class="tag">passed, seen to fail</em></div>
+  <div class="ck"><span style="overflow-wrap:anywhere">test_two_concurrent_copies_pay_once</span><em class="tag warn" data-ck>passed, never seen to fail</em></div>
+  <div class="verdict bad" data-verdict><small>Computed status of INV-004</small><b data-status>Unsupported</b><p data-why>The fourth check has never failed, so its pass is not evidence yet.</p></div>
   <button class="btn" type="button" data-go>Inject a fault and run it</button>
 </div>
 
@@ -19,8 +20,8 @@
     const why = root.querySelector<HTMLElement>('[data-why]')!;
     const go = root.querySelector<HTMLButtonElement>('[data-go]')!;
     const states = [
-      { ck: 'passed, never seen to fail', cls: 'tag warn', v: 'verdict bad', s: 'Unsupported', why: 'The third check has never failed, so its pass is not evidence yet.', btn: 'Inject a fault and run it' },
-      { ck: 'failed against the injected fault', cls: 'tag red', v: 'verdict', s: 'The check works', why: 'With the lock removed, two requests both paid out, and the check caught it. The failing run is kept beside the check.', btn: 'Run it on the real build' },
+      { ck: 'passed, never seen to fail', cls: 'tag warn', v: 'verdict bad', s: 'Unsupported', why: 'The fourth check has never failed, so its pass is not evidence yet.', btn: 'Inject a fault and run it' },
+      { ck: 'failed against the injected fault', cls: 'tag red', v: 'verdict', s: 'The check works', why: 'With request-key-ignored.patch applied, both copies of the request paid out, and the check caught it. The failing run is kept in verify/checks/red/.', btn: 'Run it on the real build' },
       { ck: 'passed, seen to fail', cls: 'tag', v: 'verdict ok', s: 'Accepted', why: 'Every example has a check, every check passed, and every check has been seen to fail.', btn: 'Start over' },
     ];
     let i = 0;

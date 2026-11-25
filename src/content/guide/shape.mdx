@@ -20,8 +20,9 @@ A one-page proposal arrives: refunds under $100 are approved automatically. It r
 
 Before drafting a clause, the elicitor checks the proposal's nouns against `vocabulary.md` and finds one undefined: whether $100 means the order total or the refund. It asks the product manager, with the two readings side by side, and the answer goes into the vocabulary.
 
-```text
-Refund amount   The money returned by one refund. Not the order total.
+```markdown
+## Refund amount
+The money returned by one refund. Not the order total.
 ```
 
 An agent that guessed would have built one of the two readings, and nobody would have known which until a customer complained.
@@ -30,44 +31,62 @@ An agent that guessed would have built one of the two readings, and nobody would
 
 One of the elicitor's examples for the proposed decision has no obvious answer.
 
-> Given an order of $150, when the customer asks for $60 back, and later for another $60, then what?
+> Given an order on which a refund of $60 has already been paid, when the customer requests a second refund of $60, then what?
 
 Each refund is under $100 and together they are not, and the proposal does not say which counts.
 
 The elicitor recommends counting everything refunded on the order, and cites the first of the team's [tenets](../tenets/): a person's review over speed, when money moves. The product manager agrees, and the decision is recorded as a clause with the examples that fix its meaning.
 
 ```markdown
+---
 id: DEC-031
 kind: decision
+title: Auto-approve under $100
 traces: [REQ-012]
+cites: [tenet 1]
+terms: [refund, refund amount, order, review]
+owner: product manager
+tier: 2
 ---
-A refund is approved automatically while the total
-refunded on the order stays under $100.
+A refund is approved automatically while the total refunded on the order stays under $100.
 
-Why: tenet 1.
+The limit applies to the total refunded on the order, this refund included, and not to each refund amount on
+its own, so that a refund split into small pieces still goes to review. Settled by tenet 1: a person's review
+over speed, when money moves. Every other refund inside the window goes to review, as before.
 
-Satisfies:
-- A $40 refund, nothing refunded before: approved without review.
-- Two $60 refunds on one order: the second goes to review.
-Violates:
-- A $250 refund approved without review.
+## Examples
+
+### satisfies/1: A $40 refund, nothing refunded before
+Given an order on which nothing has been refunded
+When the customer requests a refund of $40
+Then the refund is approved without review
+
+### satisfies/2: Two $60 refunds on one order
+Given an order on which a refund of $60 has already been paid
+When the customer requests a second refund of $60
+Then the second refund goes to review
+
+### violates/1: A $250 refund approved without review
+Given an order on which nothing has been refunded
+When the customer requests a refund of $250
+Then the refund is approved without review
 ```
 
-The risk team's request is now an example that a check will enforce.
+The file is proposed in the milestone's `diff/canon/`, with `cites: [tenet 1]` in its front matter. The risk team's request is now an example that a check will enforce.
 
 ## How it will be built
 
 Who leads the design is each team's choice; this team's architect keeps the architecture and leaves detailed design to agents.
 
-The architect makes one call: the new rule belongs in the **decision logic**, the part of the code that decides and touches nothing outside, and the payout code is not changed. The planner agent writes the rest of the design, with a **predicted change in behavior**:
+The architect makes two calls, both recorded in the milestone's `architecture.md`: the new rule belongs in the **decision logic**, the part of the code that decides and touches nothing outside, and the payout code is not changed. The planner agent writes the rest of the design, such as which refunds count toward the total refunded, and the milestone states a **predicted change in behavior**:
 
 > A refund moves from review to automatic approval while the total refunded on the order stays under $100. Nothing else changes.
 
-At Review, the orchestrator compares this prediction with what actually changed.
+It goes in `change.md`, and at Review the reviewer compares it with what actually changed.
 
 ## How it will be proven
 
-The **evidence plan** is written now, before the code, for the reason scientists register a hypothesis before an experiment: a test written after the code can be shaped to fit it.
+The **evidence plan**, also in `change.md`, is written now, before the code, for the reason scientists register a hypothesis before an experiment: a test written after the code can be shaped to fit it.
 
 The verification lead and the verifier agent decide what the test must cover. The existing environment, VE-002, cannot yet set up an order that has already been partly refunded, so they add that starting state. It can already make its fake gateway lose a reply after paying, and the plan requires the automatic path to run against that failure, because a careless retry there would pay twice.
 
@@ -99,10 +118,11 @@ The milestone folder now holds whole files in their final form.
 
 ```text
 roadmap/M2-faster-small-refunds/
-  change.md            status: agreed
-  diff/canon/          DEC-031, the new vocabulary entry
-  diff/blueprint/      the design, the evidence plan
-  tasks/               three named tasks
+  change.md            the predicted change, the evidence plan; status: agreed
+  approvals.md         the three approvals of the agreement gate
+  diff/canon/          DEC-031-auto-approve-under-100.md, vocabulary.md
+  diff/blueprint/      architecture.md, cases/INV-004.md, environments/VE-002.md
+  tasks/               01-total-refunded.md, 02-auto-approve.md, 03-decision-log.md
 ```
 
 Nothing in `spec/` has changed, because these files become the specification only at [Release](../release/). First the milestone is [built](../build/).

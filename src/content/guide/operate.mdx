@@ -22,13 +22,12 @@ A running system asks for upkeep. Customers find cases nobody wrote an example f
 
 ## A refusal on day 29
 
-Three weeks after the release, a customer writes to support. Their refund was refused as too late, and they are sure they asked within 30 days.
+Three weeks after the release, a customer writes to support. Their refund for order 5512, requested on 2 April, was refused as too late, and they are sure they asked within 30 days. No monitor fired, because none watches refusals.
 
 The on-call agent opens incident INC-007 and asks the system what it decided for that order.
 
 ```text
-$ observe decisions --order 5512
-
+$ observe/tools/observe decisions --order 5512
 REQ-012  refund window
   result        refused
   reason        day 31 of 30
@@ -48,30 +47,38 @@ Paying this customer now is money moving outside the normal path, so the **opera
 
 ## The repair takes the express belt
 
-The fix restores what was already promised, so it does not wait for a milestone. It gets a small folder under `roadmap/unplanned/` and passes the same stations.
+The fix restores what was already promised, so it does not wait for a milestone. It gets a small folder, `roadmap/unplanned/inc-007-window-from-delivery/`, and passes the same stations.
 
 | Station | What happens |
 |---|---|
 | Shape | The failing case becomes an example. An invariant is proposed to pin down what REQ-012 already says: INV-009, the refund window is counted from delivery, never from dispatch. The product manager approves both. |
-| Build | The builder corrects the date. |
-| Verify | The verifier adds late delivery to the starting states VE-002 can set up, writes the check, and sees it fail against the old code. |
+| Build | The builder corrects one line, `window_start` in `src/refunds/decide.py`, to read the day of delivery. |
+| Verify | The verifier adds late delivery to the starting states VE-002 declares, writes three checks, for the new REQ-012 example and both INV-009 examples, and sees each fail against `verify/faults/count-from-dispatch.patch`, which puts the defect back. |
 | Review | The reviewer agent reviews it. It decides who is paid, so the refunds owner looks too. |
-| Release | CanonBall 14. |
+| Release | CanonBall 14, released on 6 April 2026: 5 accepted, 1 accepted, with stated risk. |
 
 ## What the system keeps
 
 The incident is filed in `incidents/` and stays there.
 
 ```text
-INC-007  Refund refused on day 29.
-         The delivery date was read from dispatch.
+# INC-007  Refund refused on day 29
 
-Example added:   dispatched 2 March, delivered 4 March,
-                 requested 2 April: accepted
-Proposed:        INV-009
+Detected:     a support report. The customer of order 5512 asked for a refund on 2 April 2026, 29 days after
+              delivery, and was refused as too late. No monitor fired: none watches refusals.
+Diagnosis:    the on-call agent read the decision log for the order (below). The REQ-012 decision was
+              "day 31 of 30", counted from dispatch on 2 March 2026. Delivery was 4 March 2026.
+Cause:        the refund window was counted from the day of dispatch, where REQ-012 says delivery.
+Repair:       inc-007-window-from-delivery (roadmap/unplanned/ until released, then roadmap/archive/)
+Example added: REQ-012 satisfies/2. Given an order dispatched on 2 March and delivered on 4 March, when
+              the customer requests a refund on 2 April, then the request is accepted.
+Proposed:     INV-009 The refund window is counted from delivery, never from dispatch.
+Environment:  VE-002 could always set up an order whose dispatch and delivery days differ, but no check
+              used one: every order it set up was delivered on the day of dispatch. The repair adds late
+              delivery to its starting states, and checks that start from it.
 ```
 
-The canon now has an invariant with a check that has been seen to fail, and the verification environment covers a case it missed.
+The canon now has an invariant whose two checks have been seen to fail, and the verification environment covers a case it missed.
 
 After every problem that reaches production, the team asks why the environment did not catch it, and the answer goes into the environment. Over time, this practice is expected to reduce back pressure.
 

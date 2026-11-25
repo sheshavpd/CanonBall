@@ -27,26 +27,39 @@ The rest of the method works on any codebase. The structure recommended here is 
 
 Most code decides and acts at once. A typical function reads the database, checks a rule, calls the payment gateway and writes a row, so testing the rule requires a database and a gateway. The remedy is to move the rule into a function of its own.
 
-```python
-# Decides. No database, no network, no clock.
-def decide_refund(order, refunded_cents, amount_cents, today):
-    if (today - order.delivered_on).days > 30:
-        return Reject("outside the refund window")
-    if refunded_cents + amount_cents < 100_00:
-        return Approve(payout=amount_cents)
-    return SendToReview()
-```
+From the worked example, [`src/refunds/decide.py`](https://github.com/sheshavpd/CanonBall/blob/refunds-example/src/refunds/decide.py), after CanonBall 14:
 
 ```python
-# Acts. Gathers the inputs, asks for a decision, carries it out.
-def handle_refund_request(request):
-    order = orders.load(request.order_id)
-    decision = decide_refund(
-        order, refunds.total_for(order.id), request.amount_cents, clock.today()
-    )
-    if isinstance(decision, Approve):
-        gateway.pay_out(order.id, decision.payout)
-    ...
+# Decides. No store, no network, no clock: every input is an argument.
+def decide_refund(order, amount_cents, refunded_cents, today) -> Decision:
+    counted_from, start = window_start(order)          # delivery, never dispatch
+    day = (today - start).days
+    inputs = {...}                                    # everything the decision used
+    reason = f"day {day} of {WINDOW_DAYS}"
+    if day > WINDOW_DAYS:
+        return Decision("refused", reason, "REQ-012", inputs)
+    total = refunded_cents + amount_cents
+    if total < AUTO_APPROVE_BELOW_CENTS:
+        return Decision("approved", f"total refunded {dollars(total)}, under $100", "DEC-031", inputs)
+    return Decision("in_review", f"total refunded {dollars(total)}, not under $100", "DEC-031", inputs)
+```
+
+And from [`src/refunds/service.py`](https://github.com/sheshavpd/CanonBall/blob/refunds-example/src/refunds/service.py):
+
+```python
+# Acts. Gathers the inputs, asks for a decision, records it, carries it out.
+def request_refund(self, order_id, amount_cents, key):
+    existing = self.store.refund_by_key(key)
+    if existing is not None:
+        return existing                                 # the same request again: INV-004
+    order = self.store.order(order_id)
+    refunded = self.store.total_refunded(order_id)
+    decision = decide_refund(order, amount_cents, refunded, self.today())
+    self.decisions.write(order_id, decision, self.new_trace())
+    refund = self.store.add_refund(order_id, key, amount_cents, decision.result)
+    if refund.state == "approved":
+        return self.pay(refund.id)
+    return refund
 ```
 
 The first function contains every rule about who gets a refund and touches nothing, and the second contains no rules and touches everything. Milestone M2 of the refunds service relies on this split: at [Shape](../shape/) the architect decides that the rule for small refunds, DEC-031, goes into the first function and that the code that pays out is left alone.
@@ -83,16 +96,9 @@ Adapters help in a different way. Each one is a narrow point through which an ef
 
 ## Why it makes observability cheap
 
-Agents build, verify and operate by looking inside the system, and the same split keeps that affordable. Decision logic receives everything it uses as an argument, so nothing it relied on is hidden, and each decision can also name the clause it applied.
+Agents build, verify and operate by looking inside the system, and the same split keeps that affordable. Decision logic receives everything it uses as an argument, so nothing it relied on is hidden, and each decision can also name the clause it applied, as `decide_refund` above returns `"REQ-012"` or `"DEC-031"` with its inputs.
 
-```python
-    if (today - order.delivered_on).days > 30:
-        return Reject("outside the refund window", clause="REQ-012")
-    if refunded_cents + amount_cents < 100_00:
-        return Approve(payout=amount_cents, clause="DEC-031")
-```
-
-The handler already holds the inputs and now holds the clause, so it can write one log line per decision with the clause, the inputs and the outcome, while the decision logic itself still performs no output. In incident INC-007 the on-call agent reads a line of this kind to see which clause refused a refund and which dates the decision was given, as [Operate](../operate/) describes.
+The service already holds the inputs and the clause, so it writes one log line per decision with the clause, the inputs and the outcome, while the decision logic itself still performs no output. In incident INC-007 the on-call agent reads a line of this kind to see which clause refused a refund and which dates the decision was given, as [Operate](../operate/) describes.
 
 In code that decides and acts at once, the inputs are spread across queries and calls, and every handler has to assemble that line by hand. [Observability](../observability/) covers what a system emits and the tools agents use to read it.
 

@@ -24,15 +24,23 @@ Agents make this both worse and better: worse, because an agent picks a meaning 
 
 ## The file
 
-`vocabulary.md` is part of the canon. It lists the nouns the team uses and gives each one a single definition.
+`vocabulary.md` is part of the canon. It lists the nouns the team uses and gives each one a single definition. This excerpt is from the refunds service at CanonBall 12.
 
-```text
-Order      One purchase by one customer.
-Delivery   The carrier's delivered scan for the last item
-           of an order. Not the dispatch.
-Refund     Money returned to the customer for an order.
-           Not store credit.
-Payout     One transfer of money through the payment gateway.
+```markdown
+## Order
+One purchase by a customer: one or more items, paid for together.
+
+## Dispatch
+The carrier's collection of the last item of an order.
+
+## Delivery
+The carrier's delivered scan for the last item of an order. Not the dispatch.
+
+## Refund
+Money returned to the customer for an order. Each refund is separate; an order can have more than one.
+
+## Payout
+One transfer through the payment gateway.
 ```
 
 The file is kept by these rules.
@@ -64,8 +72,9 @@ A person picks an answer, the answer becomes the definition, and the question is
 
 A word can also be missing where nobody expected it. At [Shape](../shape/), a proposal to approve refunds "under $100" automatically left open whether $100 meant the order total or the amount refunded, and the vocabulary gained an entry.
 
-```text
-Refund amount   The money returned by one refund. Not the order total.
+```markdown
+## Refund amount
+The money returned by one refund. Not the order total.
 ```
 
 ## Alignment across teams

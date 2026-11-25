@@ -20,20 +20,19 @@ Each answer is a decision, and if the sentence is all you approve, an agent make
 
 An **example** is one concrete case of a clause, written in a fixed shape: *given* a starting state, *when* something happens, *then* an outcome.
 
-```gherkin
-Given a $40 refund for order 4471 has been paid
-When the client sends the same refund request again
-Then the customer has been paid $40, once
+```markdown
+### satisfies/1: The same request sent twice pays once
+Given order 4471 and a refund request with request key K
+When the same request, with request key K, is sent a second time and both are reviewed
+Then one payout is made for order 4471
 ```
 
-The practice is known as specification by example, and behavior-driven development calls each case a *scenario*. Every clause has examples of two kinds: a **satisfies** example shows a situation in which the clause holds, and a **violates** example shows one the clause forbids. The invariant about refunds, INV-004, has three, and the case of order 4471 is the first of them written out in full.
+The practice is known as specification by example, and behavior-driven development calls each case a *scenario*. Every clause has examples of two kinds: a **satisfies** example shows a situation in which the clause holds, and a **violates** example shows one the clause forbids. The invariant about refunds, INV-004, has three, and the case of order 4471 is the first of them, as its file writes it.
 
 ```text
-Satisfies:
-- The same request sent twice pays once.
-- A retry after a lost reply finds the original payout.
-Violates:
-- Two concurrent copies of one request both pay out.
+### satisfies/1: The same request sent twice pays once
+### satisfies/2: A retry after a lost reply finds the original payout
+### violates/1: Two concurrent copies of one request both pay out
 ```
 
 The violating example tells the reader more about what "never twice" means than the sentence does.

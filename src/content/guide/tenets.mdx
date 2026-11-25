@@ -24,7 +24,9 @@ A **tenet** is a short statement of which good thing wins when two conflict, wri
 ```markdown
 # Tenets
 
-In priority order. When two tenets conflict, the higher one wins.
+Which good thing wins when two conflict, in priority order. When two tenets conflict, the higher one wins.
+Each is written "X over Y", and a sensible team could have chosen the opposite. Agents cite a tenet when they
+recommend a choice; people still decide. Keep the list to a handful.
 
 1. A person's review over speed, when money moves.
 2. A slow refund over a wrongly refused one.
@@ -56,7 +58,7 @@ The product manager decides, and agrees; a tenet supports a recommendation, and 
 
 ## From a tenet to a decision
 
-When a tenet settles a specific question, the answer is recorded as a [decision](../primitives/#decision), and the decision file cites the tenet. The decision is DEC-031: "A refund is approved automatically while the total refunded on the order stays under $100." One of its examples is "two $60 refunds on one order, the second goes to review", and its file carries the line "Why: tenet 1".
+When a tenet settles a specific question, the answer is recorded as a [decision](../primitives/#decision), and the decision file cites the tenet. The decision is DEC-031: "A refund is approved automatically while the total refunded on the order stays under $100." One of its examples is "Two $60 refunds on one order", in which the second refund goes to review. Its front matter carries `cites: [tenet 1]`, and its text says "Settled by tenet 1: a person's review over speed, when money moves."
 
 From then on the case is decided, and its example becomes a check. A question that comes up twice with no tenet to settle it is a sign that a tenet is missing.
 

@@ -6,7 +6,7 @@ export const figures: Record<string, { caption: string; text: string }> = {
   },
   'clause-anatomy': {
     caption: 'The parts of a clause file.',
-    text: 'A clause file, annotated line by line. id: a stable identifier that checks and evidence refer to. kind: one of the five kinds. state: how much freedom agents have (decided, deferred or open). owner: the one person who can approve a change. traces: the promise this clause exists for. Then the statement in one sentence, and the examples, which are what a person approves.',
+    text: 'The front matter and text of INV-004, annotated line by line. id: a stable identifier that checks and evidence refer to. kind: one of the five kinds. traces: the promise this clause exists for. terms: the defined words it uses. owner: the one person who can approve a change, here the refunds owner. tier: how much is at stake; tier 2 is safety and money. Then the statement in one sentence, and the examples, which are what a person approves.',
   },
   'clause-kinds': {
     caption: 'How the five kinds of clause relate.',
@@ -14,11 +14,11 @@ export const figures: Record<string, { caption: string; text: string }> = {
   },
   'word-chain': {
     caption: 'One word, carried unchanged through every step of the work.',
-    text: 'The word "delivery" appears with the same meaning in five places in turn: the promise, the example, the code, the check, and the incident report.',
+    text: 'The word "delivery" appears with the same meaning in five places in turn: the promise REQ-012, an example of INV-009, the code that picks the day the window is counted from, the check that reads that day from the decision log, and the report of incident INC-007.',
   },
   'example-flow': {
     caption: 'An example becomes a check, and a check produces evidence.',
-    text: 'Three boxes in a row. An example (given, when, then), approved by a person. A check that encodes it, written by the verifier agent. A line of evidence, produced by running the check.',
+    text: 'Three boxes in a row. An example (given, when, then), approved by a person. A check that encodes it, written by the verifier agent. A line of evidence, produced by running the check: which check, which example, which commit, which outcome.',
   },
   layers: {
     caption: 'Authority runs down the layers. Evidence runs back up.',
@@ -34,7 +34,7 @@ export const figures: Record<string, { caption: string; text: string }> = {
   },
   release: {
     caption: 'A release copies the proposed files into spec/ and publishes a CanonBall.',
-    text: 'Before the release, spec/canon holds four clauses (REQ-012, INV-004, ENV-003, ASM-011) and the milestone folder holds one proposed clause, DEC-031. After the release, spec/canon holds five clauses, the milestone folder is archived, and CanonBall 13 has been published.',
+    text: 'Before the release, spec/canon holds four clauses (REQ-012, INV-004, ENV-003, ASM-011) and the milestone folder, roadmap/M2-faster-small-refunds/, holds one proposed clause, DEC-031. After the release, spec/canon holds five clauses, the milestone folder is archived, and CanonBall 13 has been published.',
   },
   walls: {
     caption: 'Who can write what. Independence is a matter of permissions.',
@@ -50,7 +50,7 @@ export const figures: Record<string, { caption: string; text: string }> = {
   },
   environment: {
     caption: 'The seven parts of a verification environment.',
-    text: 'Seven parts, with the refunds example for each. Boundary: the system under test, here the refunds service at this commit. Stimulus: how it is driven, here requests through the public interface. World: what surrounds it, real or faked, here a real local database and a fake payment gateway. Probes: what can be observed, here what the database holds and what the gateway paid. Oracle: what decides pass or fail, here a mechanical check on what the probes saw. Coverage: what was exercised, here the examples run and the injected faults caught. Control: what can be fixed in place, here the seed, the clock, and start and teardown.',
+    text: 'Seven parts, with the refunds example for each. Boundary: the system under test, here the refunds service at this commit. Stimulus: how it is driven, here calls to the service\'s API. World: what surrounds it, real or faked, here a real local store and a fake payment gateway. Probes: what can be observed, here what the store holds and what the gateway paid. Oracle: what decides pass or fail, here a mechanical check on what the probes saw. Coverage: what was exercised, here the examples run and the injected faults caught. Control: what can be fixed in place, here the seed, the clock, and start and teardown.',
   },
   rollup: {
     caption: 'Lines of evidence roll up to parts, and parts to a status. The weakest link is named.',

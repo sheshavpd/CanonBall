@@ -167,14 +167,13 @@ const count = all.length;
         </div>
         <div class="box">
           <h3>What the on-call agent saw</h3>
-          <pre class="obs">$ observe decisions --order 5512
-
+          <pre class="obs">$ observe/tools/observe decisions --order 5512
 REQ-012  refund window
   result        refused
   reason        day 31 of 30
   counted from  dispatch, 2 March
   delivered     4 March</pre>
-          <p class="obsnote">A customer who asked for a refund on day 29 was refused. The decision log shows the cause directly: the window was counted from the dispatch date, although the vocabulary defines it from delivery.</p>
+          <p class="obsnote">A customer who asked for a refund on day 29 was refused. The decision log shows the cause directly: the window was counted from dispatch, where REQ-012 says delivery.</p>
         </div>
       </div>
       <p class="cap"><a class="more" href={guideUrl('observability')}>Observability for agents</a></p>

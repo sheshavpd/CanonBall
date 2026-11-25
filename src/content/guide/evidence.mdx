@@ -25,30 +25,25 @@ Test-driven development has a rule: watch the test fail before making it pass. A
 
 <FailFirst />
 
-Every check is run once against a build that has been broken on purpose. The break is an **injected fault**, a small patch to the code that is kept in `verify/faults/`. The failing run is kept beside the check as a **recorded failure**, and the check's pass counts only when that file exists.
+Every check is run once against a build that has been broken on purpose. The break is an **injected fault**, a small patch to the code that is kept in `verify/faults/`. The failing run is kept in `verify/checks/red/` as a **recorded failure**, and the check's pass counts only when that file exists. Here is INV-004 at CanonBall 13, first with the recorded failure of one check removed, then as released.
 
 ```text
-INV-004   unsupported   checks 3/3   seen to fail 2/3
-INV-004   accepted      checks 3/3   seen to fail 3/3
+INV-004   unsupported                 checks 4/4   seen to fail 3/4
+          weakest link: INV-004#violates/1: verify.checks.test_inv004_no_double_payout.NoDoublePayout.test_two_concurrent_copies_pay_once never seen to fail
+INV-004   accepted                    checks 4/4   seen to fail 4/4
 ```
 
-Both lines show three passing checks, and only the second supports the clause. Mutation testing applies the same idea across a whole suite, whereas here it is applied to each check in turn.
+Both rows show four passing checks, and only the second supports the clause. Mutation testing applies the same idea across a whole suite, whereas here it is applied to each check in turn.
 
 ## A line of evidence
 
 Each run of each check writes one line.
 
 ```json
-{"clause": "INV-004", "part": "a",
- "check": "verify/checks/test_inv_004.py::test_concurrent_copies_pay_once",
- "example": "INV-004#violates/1",
- "environment": "VE-002", "commit": "3f9c",
- "assumptions": [], "seed": 4411,
- "state": "passed",
- "recorded_failure": "verify/checks/red/test_concurrent_copies_pay_once.json"}
+{"check": "verify.checks.test_inv004_no_double_payout.NoDoublePayout.test_two_concurrent_copies_pay_once", "example": "INV-004#violates/1", "outcome": "passed", "run": "normal", "fault": "", "commit": "75ac2f0", "at": "2026-11-25T01:46:33+00:00"}
 ```
 
-The line records which clause the run is evidence for, which example the check encodes, what code it ran against, in which environment, with which random seed, and what happened. That is enough for someone else to run it again; evidence that cannot be reproduced is treated as a claim.
+The line records which check ran, which example it encodes and so which clause it is evidence for, whether it was a normal run or a run against an injected fault, what code it ran against, what happened, and when. VE-002 fixes its own random seed, so that is enough for someone else to run it again; evidence that cannot be reproduced is treated as a claim.
 
 ## Five statuses
 
@@ -66,7 +61,7 @@ The status of a clause is a decision, not a confidence score.
 
 The Record can be trusted because it never averages and never omits. A clause with three strong parts and one missing part is unsupported, and the Record names the missing part. A part that ran and saw nothing is shown as unsupported rather than left out.
 
-For the refunds service at CanonBall 13, the Record's summary reads "4 accepted, 1 accepted with stated risk, 0 unsupported".
+For the refunds service at CanonBall 13, the Record's summary reads "4 accepted, 1 accepted, with stated risk". The orchestrator omits a status no clause has.
 
 ## Evidence that does not count
 

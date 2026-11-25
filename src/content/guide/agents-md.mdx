@@ -1,6 +1,6 @@
 ---
 title: "AGENTS.md: how an agent learns the method"
-summary: "AGENTS.md is the first file an agent reads: a top part about this repository, and an appendix of about 400 words that states the method."
+summary: "AGENTS.md is the first file an agent reads: a top part about this repository, and an appendix of about 3 KB that states the method."
 part: write
 order: 5
 points:
@@ -29,28 +29,49 @@ An agent reads all three before every task; what else it reads depends on the ta
 
 ## The top part is yours
 
-The top of the file is specific to the repository. Keep it to what an agent needs on every task: what the system is, the commands, and who decides what.
+The top of the file is specific to the repository. Keep it to what an agent needs on every task: what the system is, the commands, and who decides what. This is the top part of the refunds service's `AGENTS.md`, without its table of owners.
 
-```markdown
-# Refunds service
+````markdown
+## This repository
 
-Issues refunds for the shop's orders.
+**What the system is.** The refunds service of an online shop. It decides each refund request a customer
+makes, and pays approved refunds through the payment gateway. Money is in cents in code and in dollars in
+prose.
 
-## Commands
-make env        start verification environment VE-002
-make check      run every check against it
-observe ...     read logs, traces, metrics and state
+**Commands.**
 
-## Who decides what here
-Promises, decisions, constraints   people, always
-Architecture                       the architect
-Detailed design                    agents, recorded in the blueprint
-Verification design                the verification lead, with the verifier
-What counts as critical            spec/canon/policy/
+```text
+tools/canonball check     is the canon well formed, and is every example checked?
+tools/canonball run       run every check in VE-002 and record the evidence
+tools/canonball fault verify/faults/NAME.patch
+                          run the checks against an injected fault; keep the red proofs
+tools/canonball record    the Verification Record for spec/
+tools/canonball status    the state of every milestone and unplanned item
 
-## Read next
-spec/canon/tenets.md, spec/canon/vocabulary.md, then the appendix.
+observe/tools/observe decisions --order N [--log PATH]
+                          the decisions logged for an order (default log: $REFUNDS_DECISION_LOG)
+observe/tools/observe replay --order N [--log PATH]
+                          re-run those decisions with the current code
 ```
+
+VE-002, the verification environment, is `verify/envs/ve002.py`. Constructing a `World` brings it up
+(an in-memory store, a fake payment gateway, a decision log); `close()` takes it down. Its four verbs are
+`rig`, `act`, `perturb` and `observe`. Python 3.11 or later, standard library only.
+
+**Code.** Decision logic in `src/refunds/decide.py`, with no side effects. The service, which reads, logs,
+records and pays, in `src/refunds/service.py`. Adapters in `src/refunds/adapters/`. See
+`spec/blueprint/architecture.md`.
+
+**Who decides what here.**
+
+| Decision | Who |
+|---|---|
+| Promises, product decisions, invariants, constraints | People, always |
+| Architecture | the architect |
+| Detailed design | agents, recorded in `spec/blueprint/` |
+| Verification design | the verification lead, with the verifier |
+| What counts as critical | `spec/canon/policy/review.md` |
+````
 
 The "who decides what" table records the team's settings. [Handing over decisions](../delegation/) explains how they move.
 

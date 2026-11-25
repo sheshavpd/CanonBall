@@ -17,6 +17,24 @@ The [starter repository](https://github.com/sheshavpd/CanonBall/tree/main) alrea
 
 The [worked example](https://github.com/sheshavpd/CanonBall/tree/refunds-example) shows the same repository after a refunds service has been built with it, one commit per station.
 
+### What the starter's tool does, and what it leaves to you
+
+`tools/canonball` covers the core of the method and nothing more:
+
+- **It checks the canon.** Clause files are well formed, every word they use is in the vocabulary, every trace and cited tenet exists, and every example has a check.
+- **It records evidence.** It runs the checks, keeps a line of evidence for each, and keeps a red proof for each check that fails against an injected fault.
+- **It computes the Verification Record**, for `spec/` or for a milestone's release candidate.
+- **It computes the state of each milestone** from its approvals, its review and the release rule.
+- **It performs the release** and records the CanonBall.
+
+Several parts of the method described in this guide are left to the team, to adopt when a real need appears:
+
+- staleness by content hash;
+- held-out scenarios, and the separate accounts that keep each agent to its own paths;
+- task states;
+- the Pending and Unknown statuses;
+- a trace through every adapter.
+
 ## Pick the system
 
 Choose one system you already run. A good candidate has the following traits.
@@ -76,9 +94,11 @@ Alongside the environment, build the minimum of [observability](../observability
 Run `tools/canonball run`, then `tools/canonball record`. The orchestrator joins the examples, the lines of evidence and the red proofs, and prints one row per clause, naming the weakest link of every clause it cannot accept.
 
 ```text
-INV-004   unsupported   checks 3/3   seen to fail 2/3
-          weakest link: INV-004#violates/1: test_concurrent_copies_pay_once never seen to fail
+INV-004   unsupported                 checks 3/3   seen to fail 2/3
+          weakest link: INV-004#violates/1: verify.checks.test_inv004_no_double_payout.NoDoublePayout.test_two_concurrent_copies_pay_once never seen to fail
 ```
+
+That row is from the refunds example at CanonBall 12, with the recorded failure of its concurrency check removed.
 
 Publish the table as a page rather than committing it, so that nobody can edit a status.
 

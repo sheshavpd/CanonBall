@@ -21,16 +21,23 @@ A milestone that has been built and verified arrives with the Verification Recor
 The **reviewer** is an agent with its own account. It can read everything, writes nothing but its review, and had no part in building the code or writing the checks. For every milestone and every piece of unplanned work, it asks:
 
 1. **Does every behavior trace to a clause?** Code that does something no clause asked for is a finding.
-2. **Does the actual change in behavior match the predicted one?** The verification environment runs the same recorded requests against the old build and the new one, and the orchestrator lists every response that differs. The reviewer explains each difference as a bug, a gap in the canon, or a wrong prediction.
+2. **Does the actual change in behavior match the predicted one?** The reviewer compares the prediction in `change.md` with what the diff and the checks show, and explains each difference as a bug, a gap in the canon, or a wrong prediction.
 3. **Are the design choices written down?** A choice the agents made silently cannot be revisited.
 4. **Is the evidence honest?** Each check encodes its example, each has a recorded failure, and nothing in `verify/` was weakened.
 5. **How large is the blast radius?** What can break if this is wrong, for whom, and can it be undone?
 
 ## What it found
 
-The predicted change was that small refunds move from review to automatic approval and nothing else changes. The actual change has a second line: when the gateway loses a reply, the new build retries the payout five times where the old one retried three. The builder had edited the payout code, which the design said would not be touched. No clause asks for the change, and retries are exactly where a refund gets paid twice.
+The predicted change was that a refund moves from review to automatic approval while the total refunded on the order stays under $100, and nothing else changes. The diff has one more change: the payout retry count, `PAYOUT_RETRIES` in `src/refunds/service.py`, went from 3 to 5. When the gateway loses a reply, the new build would retry the payout five times where the old one retried three. The builder had edited the payout code, which the design said would not be changed. No clause asks for it, and retries are exactly where a refund gets paid twice.
 
-The reviewer sends it back and the builder removes it. Anyone who wants five retries can raise it as a request at [Collect](../collect/).
+The reviewer sends it back, and the builder sets the count back to 3, in the same commit as the review; every check still passes. The finding stays in `review.md`, and anyone who wants more retries can raise it as a request at [Collect](../collect/).
+
+```text
+reviewer: reviewer agent
+verdict: pass
+blast radius: medium
+person required: yes
+```
 
 ## When a person reviews too
 
@@ -38,28 +45,28 @@ A person reviews when the policy lists the change as critical, or when the revie
 
 | A person reviews when the change | Why |
 |---|---|
-| touches a constraint or an action that cannot be undone | Someone must answer for it |
-| alters a clause about safety or money | The cost of being wrong is high |
-| changes code that touches the outside world | It is the code evidence covers least |
+| touches a constraint (ENV) or an action that cannot be undone | Someone must answer for it |
+| adds or alters a tier 2 clause (safety, money) | The cost of being wrong is high |
+| changes code that touches the outside world (adapters, permissions) | It is the code evidence covers least |
 | makes the status of any clause worse | Something was traded away |
 | behaves differently from what was predicted, and the difference is kept | Nobody agreed to it |
 | has a blast radius the reviewer rates as large | Many customers or clauses are exposed if it is wrong |
 
 This person-review is the **release gate**. When no case applies, the milestone goes to release on the agent review alone.
 
-M2 changes which refunds are paid without a person looking, which concerns money, so the refunds owner reviews it.
+DEC-031 is a tier 2 clause and M2 moves money without review, so the reviewer marks a person as required, and the refunds owner reviews it.
 
 ## What the person reads
 
 The refunds owner reads the evidence and the change in behavior instead of the diff.
 
-- **The Verification Record.** DEC-031 is accepted: three checks, each seen to fail. No other clause got worse.
+- **The Verification Record** for the release candidate. DEC-031 is accepted: three checks, each seen to fail. INV-004 has a fourth check, on the automatic path. No other clause got worse: 4 accepted, 1 accepted, with stated risk.
 - **Predicted against actual behavior.** After the fix, they match.
 - **The assurance case for INV-004**, since money is involved: why a refund still cannot be paid twice when the gateway loses a reply.
 
-The owner signs off, and the sign-off is recorded on the milestone as a named person taking responsibility for the remaining risk.
+The owner signs off, and the sign-off is recorded in `review.md` (`signed off by: refunds owner, 2026-03-09`) as a named person taking responsibility for the remaining risk.
 
-The one kind of code a person is asked to read is code that touches the outside world, and after the fix M2 changes none.
+The one kind of code a person is asked to read is code that touches the outside world. After the fix, M2 leaves the gateway adapter and the payout code as they were.
 
 ## Why both
 

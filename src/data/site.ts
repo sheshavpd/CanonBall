@@ -23,7 +23,7 @@ export const written = [
   {
     id: 'vocabulary', name: 'Vocabulary', slug: 'vocabulary',
     what: 'The words the team uses, each defined once.',
-    example: 'Delivery: the carrier’s delivered scan for the last item of an order.',
+    example: 'Delivery: the carrier’s delivered scan for the last item of an order. Not the dispatch.',
     why: 'So that a person, an agent and a check all mean the same thing by the same word.',
   },
   {
@@ -65,7 +65,7 @@ export const written = [
   {
     id: 'example', name: 'Example', slug: 'examples',
     what: 'One worked case of a clause: given, when, then.',
-    example: 'Given a $40 refund for order 4471 has been paid, when the same request arrives again, then the customer has been paid $40, once.',
+    example: 'Given order 4471 and a refund request with request key K, when the same request, with request key K, is sent a second time and both are reviewed, then one payout is made for order 4471.',
     why: 'Plain sentences hide decisions. People approve examples, and each check is written from one.',
   },
 ] as const;
@@ -94,9 +94,9 @@ export const steps = [
   { n: 'Collect', k: 'p', say: 'Three requests gather into one milestone. An agent drafts a one-page proposal, and the product manager confirms it and ranks it.', ids: ['notes', 'index', 'm2', 'change'], focus: 'change' },
   { n: 'Shape', k: 'p', say: 'People and agents settle the decision and its examples, the design and the evidence plan. They are written as whole files beside the proposal. Nothing in spec/ changes yet.', ids: ['agents', 'tenets', 'vocab', 'm2', 'diff', 'tasks'], focus: 'diff' },
   { n: 'Build', k: 'a', say: 'The builder writes the code, and uses the observability tools to see what it does.', ids: ['src', 'observe'], focus: 'src' },
-  { n: 'Verify', k: 'v', say: 'Verification engineering. A different agent extends the environment, writes the checks, and shows each one failing first.', ids: ['verify', 'envs', 'checks', 'red', 'faults', 'holdout'], focus: 'verify' },
+  { n: 'Verify', k: 'v', say: 'Verification engineering. A different agent extends the environment, writes the checks, and shows each one failing first.', ids: ['verify', 'envs', 'checks', 'red', 'faults'], focus: 'verify' },
   { n: 'Review', k: 'a', say: 'An agent reviews the milestone against its clauses and the Verification Record. This one is on the path that moves money, so its owner reviews it too.', ids: ['record', 'policy', 'case'], focus: 'record' },
-  { n: 'Release', k: 'v', say: 'The orchestrator, a program, copies the proposed files into spec/. The spec now describes the new system, and CanonBall 13 is published and deployed.', ids: ['spec', 'canon', 'dec', 'bp', 'ball'], focus: 'ball' },
+  { n: 'Release', k: 'v', say: 'The orchestrator, a program, copies the proposed files into spec/. The spec now describes the new system, and CanonBall 13 is recorded, ready for its build to be deployed.', ids: ['spec', 'canon', 'dec', 'bp', 'ball'], focus: 'ball' },
   { n: 'Operate', k: '', say: 'A customer is wrongly refused. The on-call agent reads the decision log, and the fix comes back on the express belt.', ids: ['observe', 'monitors', 'asm', 'inc', 'unpl'], focus: 'inc' },
 ] as const;
 
