@@ -18,6 +18,11 @@ Given an order delivered on 1 March
 When the customer requests a refund on 20 March
 Then the request is accepted
 
+### satisfies/2: A request 29 days after a late delivery
+Given an order dispatched on 2 March and delivered on 4 March
+When the customer requests a refund on 2 April
+Then the request is accepted
+
 ### violates/1: A request 35 days after delivery
 Given an order delivered on 1 March
 When the customer requests a refund on 5 April

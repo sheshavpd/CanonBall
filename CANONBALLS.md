@@ -6,6 +6,15 @@ This repository begins at CanonBall 12. Its entry was written when the repositor
 releases before it, and the archive folder it names, are not part of this history, and its build is the
 first commit of this branch.
 
+## CanonBall 14
+
+- released: 2026-04-06
+- from: roadmap/archive/inc-007-window-from-delivery
+- build: a61e326
+- record: 5 accepted, 1 accepted, with stated risk
+- adds or changes: INV-009 Window from delivery
+- adds or changes: REQ-012 Refund window
+
 ## CanonBall 13
 
 - released: 2026-03-10
