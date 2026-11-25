@@ -1,0 +1,7 @@
+{
+  "check": "verify.checks.test_inv009_window_from_delivery.WindowFromDelivery.test_window_is_not_counted_from_dispatch",
+  "example": "INV-009#violates/1",
+  "fault": "verify/faults/count-from-dispatch.patch",
+  "outcome": "failed",
+  "at": "2026-11-25T01:28:29+00:00"
+}

@@ -8,7 +8,7 @@ Why now:   customers whose delivery came days after dispatch are refused inside 
            cannot explain the refusal (tenet 2: a slow refund over a wrongly refused one).
 Adds:      a new example for REQ-012 (satisfies/2), and INV-009, which pins down what REQ-012 already says
 
-status: agreed   (written by canonball)
+status: ready   (written by canonball)
 
 ## Predicted change in behavior
 

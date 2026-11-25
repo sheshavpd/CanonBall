@@ -29,7 +29,7 @@ class Decision:
 
 def window_start(order: Order) -> tuple[str, dt.date]:
     """The day the refund window is counted from, and which day of the order that is."""
-    return "dispatch", order.dispatched_on
+    return "delivery", order.delivered_on  # REQ-012, INV-009: never the dispatch
 
 
 AUTO_APPROVE_BELOW_CENTS = 10_000  # DEC-031: $100

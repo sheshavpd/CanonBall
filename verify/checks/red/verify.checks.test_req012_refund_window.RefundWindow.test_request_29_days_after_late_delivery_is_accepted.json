@@ -1,0 +1,7 @@
+{
+  "check": "verify.checks.test_req012_refund_window.RefundWindow.test_request_29_days_after_late_delivery_is_accepted",
+  "example": "REQ-012#satisfies/2",
+  "fault": "verify/faults/count-from-dispatch.patch",
+  "outcome": "failed",
+  "at": "2026-11-25T01:28:29+00:00"
+}

@@ -1,0 +1,13 @@
+diff --git a/src/refunds/decide.py b/src/refunds/decide.py
+index 81eef22..1a81700 100644
+--- a/src/refunds/decide.py
++++ b/src/refunds/decide.py
+@@ -29,7 +29,7 @@ class Decision:
+ 
+ def window_start(order: Order) -> tuple[str, dt.date]:
+     """The day the refund window is counted from, and which day of the order that is."""
+-    return "delivery", order.delivered_on  # REQ-012, INV-009: never the dispatch
++    return "dispatch", order.dispatched_on
+ 
+ 
+ AUTO_APPROVE_BELOW_CENTS = 10_000  # DEC-031: $100

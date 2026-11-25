@@ -9,7 +9,8 @@ The declaration is spec/blueprint/environments/VE-002.md. One command up, one co
                                     # down: the store and the log are gone
 
 The four verbs:
-    rig       starting state: orders, existing refunds, partly refunded orders, today's date
+    rig       starting state: orders (late delivery among them), existing refunds, partly refunded
+              orders, today's date
     act       the service API (refunds.service.Service)
     perturb   failures: perturb.gateway.refuse(), .duplicate(), .lose_reply()
     observe   what happened: observe.gateway.payouts(), observe.store, observe.decisions()

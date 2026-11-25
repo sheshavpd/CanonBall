@@ -1,0 +1,7 @@
+{
+  "check": "verify.checks.test_inv009_window_from_delivery.WindowFromDelivery.test_day_30_after_late_delivery_is_accepted",
+  "example": "INV-009#satisfies/1",
+  "fault": "verify/faults/count-from-dispatch.patch",
+  "outcome": "failed",
+  "at": "2026-11-25T01:28:29+00:00"
+}

@@ -19,6 +19,15 @@ class RefundWindow(unittest.TestCase):
         refund = world.act.request_refund(order, 12000, key="req012-s1")
         self.assertNotEqual(refund.state, "refused")
 
+    @example_of("REQ-012#satisfies/2", "A request 29 days after a late delivery")
+    def test_request_29_days_after_late_delivery_is_accepted(self):
+        world = self.world
+        order = world.rig.order(total_cents=12000, dispatched_on=dt.date(2026, 3, 2),
+                                delivered_on=dt.date(2026, 3, 4))  # late delivery
+        world.rig.today(dt.date(2026, 4, 2))
+        refund = world.act.request_refund(order, 12000, key="req012-s2")
+        self.assertNotEqual(refund.state, "refused")
+
     @example_of("REQ-012#violates/1", "A request 35 days after delivery")
     def test_request_on_day_35_is_refused(self):
         world = self.world
