@@ -1,0 +1,16 @@
+# Settings read by tools/canonball. Everything else lives in Markdown that people can read.
+
+[project]
+name = "your-system"
+
+[checks]
+# Runs every check once. Each check writes one line of evidence to $CANONBALL_EVIDENCE.
+# verify/canonball_check.py does this for Python's unittest. For another language,
+# write one JSON line per check: {"check", "example", "outcome": "passed"|"failed"|"error"}.
+command = "python3 -m unittest discover -s verify/checks -t . -p 'test_*.py'"
+
+[review]
+# An agent reviews every change. A person reviews as well when a change touches
+# a clause of these tiers or kinds, or when the reviewer asks for one.
+person_for_tiers = [2]
+person_for_kinds = ["constraint"]

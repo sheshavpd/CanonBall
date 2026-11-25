@@ -1,0 +1,611 @@
+#!/usr/bin/env python3
+"""canonball: the orchestrator for a CanonBall repository.
+
+A deterministic program, not an agent. It reads the repository and computes:
+whether the canon is well formed, which examples have checks, which checks have
+been seen to fail, the Verification Record, the state of each milestone, and
+whether a milestone may be released. It writes only what the method says a
+program writes: evidence, red proofs, status lines, spec/ at release, and
+CANONBALLS.md.
+
+Standard library only. Python 3.11 or later.
+
+  canonball check                 is the canon well formed and traced to checks?
+  canonball run                   run the checks and record evidence
+  canonball fault PATCH...        run the checks against an injected fault; keep red proofs
+  canonball record [ITEM]         compute the Verification Record (for spec/, or a release candidate)
+  canonball status                compute the state of every milestone and unplanned item
+  canonball release ITEM          release a milestone or unplanned item, publishing a CanonBall
+  canonball new KIND NAME         start a milestone, unplanned item or clause from a template
+"""
+from __future__ import annotations
+
+import datetime as _dt
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+import tomllib
+from dataclasses import dataclass, field
+from pathlib import Path
+
+KINDS = {"promise": "REQ", "invariant": "INV", "decision": "DEC", "constraint": "ENV", "assumption": "ASM"}
+NOT_CLAUSES = {"vocabulary.md", "tenets.md", "purpose.md", "README.md"}
+EXAMPLE_HEAD = re.compile(r"^###\s+((?:satisfies|violates)/\d+)\s*:\s*(.+?)\s*$", re.M)
+EXAMPLE_REF = re.compile(r"\b([A-Z]{3}-\d{3,}#(?:satisfies|violates)/\d+)\b")
+RANK = {"accepted": 3, "accepted, with stated risk": 2, "unknown": 1, "unsupported": 0}
+SKIP_COPY = {".git", ".canonball", "node_modules", "__pycache__", ".venv", "venv"}
+
+
+# ---------------------------------------------------------------- reading the repository
+
+def find_root() -> Path:
+    here = Path.cwd().resolve()
+    for p in [here, *here.parents]:
+        if (p / "canonball.toml").exists():
+            return p
+    sys.exit("canonball: no canonball.toml found in this directory or any parent")
+
+
+ROOT = find_root()
+CONFIG = tomllib.loads((ROOT / "canonball.toml").read_text())
+CANON = ROOT / "spec" / "canon"
+ROADMAP = ROOT / "roadmap"
+STATE = ROOT / ".canonball"
+EVIDENCE = STATE / "evidence.jsonl"
+RED = ROOT / "verify" / "checks" / "red"
+
+
+def rel(p: Path) -> str:
+    try:
+        return str(p.relative_to(ROOT))
+    except ValueError:
+        return str(p)
+
+
+def front_matter(text: str) -> tuple[dict, str]:
+    """A small subset of YAML: `key: value` and `key: [a, b]`, between --- lines at the top."""
+    if not text.startswith("---"):
+        return {}, text
+    end = text.find("\n---", 3)
+    if end < 0:
+        return {}, text
+    meta: dict = {}
+    for line in text[3:end].splitlines():
+        line = line.split(" #", 1)[0].rstrip()
+        if not line.strip() or ":" not in line:
+            continue
+        key, val = line.split(":", 1)
+        val = val.strip()
+        if val.startswith("[") and val.endswith("]"):
+            meta[key.strip()] = [v.strip() for v in val[1:-1].split(",") if v.strip()]
+        else:
+            meta[key.strip()] = val
+    return meta, text[end + 4:].lstrip("\n")
+
+
+def key_values(text: str) -> dict[str, list[str]]:
+    """`key: value` lines anywhere in a file, for approvals.md and review.md. Keys repeat."""
+    out: dict[str, list[str]] = {}
+    for line in text.splitlines():
+        m = re.match(r"^\s*-?\s*([A-Za-z][A-Za-z ]+?)\s*:\s*(.+)$", line)
+        if m:
+            out.setdefault(m.group(1).strip().lower(), []).append(m.group(2).strip())
+    return out
+
+
+@dataclass
+class Clause:
+    id: str
+    kind: str
+    path: Path
+    meta: dict
+    statement: str
+    examples: dict[str, str] = field(default_factory=dict)   # "satisfies/1" -> title
+
+    @property
+    def example_ids(self) -> list[str]:
+        return [f"{self.id}#{e}" for e in self.examples]
+
+
+def read_clause(path: Path) -> Clause | None:
+    meta, body = front_matter(path.read_text())
+    if "id" not in meta:
+        return None
+    statement = body.split("## Examples", 1)[0].strip()
+    examples = {m.group(1): m.group(2) for m in EXAMPLE_HEAD.finditer(body)}
+    return Clause(meta["id"], meta.get("kind", ""), path, meta, statement, examples)
+
+
+def clauses_in(folder: Path) -> dict[str, Clause]:
+    out: dict[str, Clause] = {}
+    if folder.is_dir():
+        for p in sorted(folder.glob("*.md")):
+            if p.name in NOT_CLAUSES:
+                continue
+            c = read_clause(p)
+            if c:
+                out.setdefault(c.id, c)
+    return out
+
+
+def vocabulary(folder: Path) -> list[str]:
+    f = folder / "vocabulary.md"
+    if not f.exists():
+        return []
+    return [m.group(1).strip().lower() for m in re.finditer(r"^##\s+(.+)$", f.read_text(), re.M)]
+
+
+def tenet_count() -> int:
+    f = CANON / "tenets.md"
+    return len(re.findall(r"^\d+\.\s", f.read_text(), re.M)) if f.exists() else 0
+
+
+@dataclass
+class Item:
+    """A milestone (roadmap/<name>/) or an unplanned item (roadmap/unplanned/<name>/)."""
+    path: Path
+    unplanned: bool
+
+    @property
+    def name(self) -> str:
+        return self.path.name
+
+    @property
+    def canon_diff(self) -> Path:
+        return self.path / "diff" / "canon"
+
+    @property
+    def blueprint_diff(self) -> Path:
+        return self.path / "diff" / "blueprint"
+
+    def touched(self) -> dict[str, Clause]:
+        return clauses_in(self.canon_diff)
+
+    def deletes(self) -> list[str]:
+        if not self.canon_diff.is_dir():
+            return []
+        return [p.name[: -len(".delete")] for p in self.canon_diff.glob("*.delete")]
+
+
+def items() -> list[Item]:
+    out: list[Item] = []
+    if ROADMAP.is_dir():
+        for p in sorted(ROADMAP.iterdir()):
+            if p.is_dir() and p.name not in {"notes", "unplanned", "archive"}:
+                out.append(Item(p, False))
+        un = ROADMAP / "unplanned"
+        if un.is_dir():
+            out += [Item(p, True) for p in sorted(un.iterdir()) if p.is_dir()]
+    return out
+
+
+def find_item(name: str) -> Item:
+    for it in items():
+        if it.name == name or rel(it.path).rstrip("/") == name.rstrip("/"):
+            return it
+    sys.exit(f"canonball: no milestone or unplanned item named {name!r} in roadmap/")
+
+
+def candidate(item: Item | None) -> dict[str, Clause]:
+    """spec/canon with an item's proposed files applied: the release candidate."""
+    current = clauses_in(CANON)
+    if item is None:
+        return current
+    by_file = {c.path.name: c for c in current.values()}
+    for name in item.deletes():
+        by_file.pop(name, None)
+    for c in item.touched().values():
+        by_file[c.path.name] = c
+    return {c.id: c for c in by_file.values()}
+
+
+def check_refs() -> dict[str, list[str]]:
+    """Example ids named in verify/checks/, mapped to the files that name them."""
+    refs: dict[str, list[str]] = {}
+    folder = ROOT / "verify" / "checks"
+    if folder.is_dir():
+        for p in sorted(folder.rglob("*")):
+            if p.is_file() and RED not in p.parents:
+                try:
+                    text = p.read_text()
+                except UnicodeDecodeError:
+                    continue
+                for ref in set(EXAMPLE_REF.findall(text)):
+                    refs.setdefault(ref, []).append(rel(p))
+    return refs
+
+
+# ---------------------------------------------------------------- check
+
+def cmd_check(_args: list[str]) -> int:
+    errors: list[str] = []
+    warnings: list[str] = []
+    vocab = vocabulary(CANON)
+    for term in sorted({t for t in vocab if vocab.count(t) > 1}):
+        errors.append(f"vocabulary.md defines {term!r} more than once")
+    tenets = tenet_count()
+    refs = check_refs()
+    spec = clauses_in(CANON)
+    ids = [read_clause(p).id for p in CANON.glob("*.md") if p.name not in NOT_CLAUSES and read_clause(p)]
+    for dup in sorted({i for i in ids if ids.count(i) > 1}):
+        errors.append(f"spec/canon: clause id {dup} is used by more than one file")
+
+    def lint(c: Clause, known: dict[str, Clause], words: list[str], proposed: bool) -> None:
+        where = rel(c.path)
+        prefix = KINDS.get(c.kind)
+        if prefix is None:
+            errors.append(f"{where}: kind must be one of {', '.join(KINDS)}")
+        elif not c.id.startswith(prefix + "-"):
+            errors.append(f"{where}: a {c.kind} has an id starting {prefix}-, not {c.id}")
+        if not c.statement:
+            errors.append(f"{where}: no statement")
+        if not c.examples:
+            errors.append(f"{where}: no examples. Write at least one '### satisfies/1: ...' under '## Examples'")
+        for t in c.meta.get("traces", []):
+            if t not in known:
+                errors.append(f"{where}: traces to {t}, which is not a clause")
+        for term in c.meta.get("terms", []):
+            if term.lower() not in words:
+                errors.append(f"{where}: uses {term!r}, which vocabulary.md does not define")
+        for cite in c.meta.get("cites", []):
+            n = re.search(r"\d+", cite)
+            if not n or not 1 <= int(n.group()) <= tenets:
+                errors.append(f"{where}: cites {cite!r}, which is not a tenet in tenets.md")
+        if c.kind == "assumption" and not c.meta.get("monitor"):
+            warnings.append(f"{where}: an assumption should name the monitor that watches it (monitor: ...)")
+        for ex in c.example_ids:
+            if ex not in refs:
+                (warnings if proposed else errors).append(f"{where}: example {ex} has no check in verify/checks/")
+
+    for c in spec.values():
+        lint(c, spec, vocab, proposed=False)
+    every_example = {e for c in spec.values() for e in c.example_ids}
+    for it in items():
+        if not (it.path / "change.md").exists():
+            errors.append(f"{rel(it.path)}: no change.md")
+        cand = candidate(it)
+        words = vocab + vocabulary(it.canon_diff)
+        for c in it.touched().values():
+            lint(c, cand, words, proposed=True)
+            every_example |= set(c.example_ids)
+    for ref, files in sorted(refs.items()):
+        if ref not in every_example:
+            errors.append(f"{files[0]}: names example {ref}, which no clause has")
+    if RED.is_dir():
+        for p in sorted(RED.glob("*.json")):
+            fault = json.loads(p.read_text()).get("fault", "")
+            if fault and not (ROOT / fault).exists():
+                warnings.append(f"{rel(p)}: its fault {fault} no longer exists")
+
+    for w in warnings:
+        print(f"warning  {w}")
+    for e in errors:
+        print(f"error    {e}")
+    print(f"{len(spec)} clauses in spec/canon, {len(items())} items in roadmap/, "
+          f"{len(errors)} errors, {len(warnings)} warnings")
+    return 1 if errors else 0
+
+
+# ---------------------------------------------------------------- run and fault
+
+def checks_command() -> str:
+    cmd = CONFIG.get("checks", {}).get("command")
+    if not cmd:
+        sys.exit("canonball: set [checks] command in canonball.toml")
+    return cmd
+
+
+def run_checks(cwd: Path, evidence: Path, run: str, fault: str = "") -> int:
+    evidence.parent.mkdir(parents=True, exist_ok=True)
+    evidence.write_text("")
+    env = dict(os.environ, CANONBALL_EVIDENCE=str(evidence), CANONBALL_RUN=run, CANONBALL_FAULT=fault,
+               CANONBALL_COMMIT=git_commit())
+    return subprocess.run(checks_command(), shell=True, cwd=cwd, env=env).returncode
+
+
+def read_evidence(path: Path) -> list[dict]:
+    if not path.exists():
+        return []
+    return [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
+
+
+def git_commit() -> str:
+    try:
+        sha = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
+        dirty = subprocess.run(["git", "status", "--porcelain"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
+        return f"{sha}{'+' if dirty else ''}" if sha else ""
+    except OSError:
+        return ""
+
+
+def cmd_run(_args: list[str]) -> int:
+    code = run_checks(ROOT, EVIDENCE, "normal")
+    lines = read_evidence(EVIDENCE)
+    if not lines:
+        print("\nNo checks recorded any evidence. Write checks in verify/checks/ marked with the example they encode.")
+        return 0
+    passed = sum(1 for e in lines if e["outcome"] == "passed")
+    print(f"\n{len(lines)} lines of evidence in {rel(EVIDENCE)}: {passed} passed, {len(lines) - passed} did not")
+    return code
+
+
+def cmd_fault(args: list[str]) -> int:
+    if not args:
+        sys.exit("usage: canonball fault verify/faults/NAME.patch ...")
+    RED.mkdir(parents=True, exist_ok=True)
+    status = 0
+    for arg in args:
+        patch = (ROOT / arg).resolve()
+        if not patch.exists():
+            sys.exit(f"canonball: no such patch {arg}")
+        with tempfile.TemporaryDirectory() as tmp:
+            scratch = Path(tmp) / "scratch"
+            shutil.copytree(ROOT, scratch, ignore=lambda _d, names: [n for n in names if n in SKIP_COPY])
+            applied = subprocess.run(["git", "apply", str(patch)], cwd=scratch, capture_output=True, text=True)
+            if applied.returncode != 0:
+                print(f"{arg}: the patch does not apply\n{applied.stderr}")
+                status = 1
+                continue
+            ev = Path(tmp) / "evidence.jsonl"
+            run_checks(scratch, ev, "fault", rel(patch))
+            lines = read_evidence(ev)
+        failed = [e for e in lines if e["outcome"] == "failed"]
+        for e in failed:
+            proof = RED / f"{e['check']}.json"
+            if not proof.exists():
+                proof.write_text(json.dumps({"check": e["check"], "example": e["example"], "fault": rel(patch),
+                                             "outcome": "failed", "at": e.get("at", "")}, indent=2) + "\n")
+        print(f"\n{arg}: {len(failed)} of {len(lines)} checks failed, as they should; red proofs kept in {rel(RED)}/")
+        for e in failed:
+            print(f"  failed  {e['check']}  ({e['example']})")
+        if not failed:
+            print("  No check caught this fault. Either the checks are too weak or the fault changes nothing.")
+            status = 1
+    return status
+
+
+# ---------------------------------------------------------------- the Verification Record
+
+@dataclass
+class Status:
+    clause: Clause
+    status: str
+    checks: int = 0
+    passing: int = 0
+    seen_to_fail: int = 0
+    missing: list[str] = field(default_factory=list)
+
+
+def record_for(clauses: dict[str, Clause]) -> list[Status]:
+    evidence = read_evidence(EVIDENCE)
+    have_evidence = EVIDENCE.exists()
+    latest: dict[str, dict] = {}
+    for e in evidence:
+        latest[e["check"]] = e
+    by_example: dict[str, list[dict]] = {}
+    for e in latest.values():
+        by_example.setdefault(e["example"], []).append(e)
+    red = {p.stem for p in RED.glob("*.json")} if RED.is_dir() else set()
+    out: list[Status] = []
+    for c in sorted(clauses.values(), key=lambda c: (list(KINDS).index(c.kind) if c.kind in KINDS else 9, c.id)):
+        s = Status(c, "unknown")
+        if c.kind == "assumption":
+            monitor = c.meta.get("monitor", "")
+            if monitor and (ROOT / monitor).exists():
+                s.status = "accepted, with stated risk"
+            else:
+                s.status = "unsupported"
+                s.missing.append(f"no monitor at {monitor}" if monitor else "no monitor named")
+            out.append(s)
+            continue
+        if not have_evidence:
+            out.append(s)
+            continue
+        for ex in c.example_ids:
+            runs = by_example.get(ex, [])
+            if not runs:
+                s.missing.append(f"{ex}: no check ran")
+            for e in runs:
+                s.checks += 1
+                if e["outcome"] == "passed":
+                    s.passing += 1
+                else:
+                    s.missing.append(f"{ex}: {e['check']} {e['outcome']}")
+                if e["check"] in red:
+                    s.seen_to_fail += 1
+                else:
+                    s.missing.append(f"{ex}: {e['check']} never seen to fail")
+        s.status = "accepted" if not s.missing and s.checks else "unsupported"
+        out.append(s)
+    return out
+
+
+def print_record(rows: list[Status], title: str) -> str:
+    lines = [title, ""]
+    for r in rows:
+        if r.clause.kind == "assumption":
+            detail = f"monitored by {r.clause.meta.get('monitor', '-')}"
+        else:
+            detail = f"checks {r.passing}/{r.checks}   seen to fail {r.seen_to_fail}/{r.checks}"
+        lines.append(f"{r.clause.id:<9} {r.status:<27} {detail}")
+        for m in r.missing[:3]:
+            lines.append(f"{'':<9} weakest link: {m}")
+    counts = {k: sum(1 for r in rows if r.status == k) for k in RANK}
+    lines += ["", ", ".join(f"{n} {k}" for k, n in counts.items() if n) or "no clauses"]
+    text = "\n".join(lines)
+    print(text)
+    return text
+
+
+def cmd_record(args: list[str]) -> int:
+    item = find_item(args[0]) if args else None
+    rows = record_for(candidate(item))
+    title = f"Verification Record for the release candidate {item.name}" if item else "Verification Record for spec/"
+    if not EVIDENCE.exists():
+        title += "\n(no evidence yet: run `canonball run`)"
+    text = print_record(rows, title)
+    STATE.mkdir(exist_ok=True)
+    (STATE / "record.md").write_text("```text\n" + text + "\n```\n")
+    return 0 if all(r.status in ("accepted", "accepted, with stated risk") for r in rows) else 1
+
+
+# ---------------------------------------------------------------- status and release
+
+def critical(item: Item, review: dict[str, list[str]]) -> list[str]:
+    """Reasons a person must also review this item, from the policy in canonball.toml."""
+    policy = CONFIG.get("review", {})
+    tiers = {str(t) for t in policy.get("person_for_tiers", [2])}
+    kinds = set(policy.get("person_for_kinds", ["constraint"]))
+    reasons = []
+    for c in item.touched().values():
+        if c.kind in kinds:
+            reasons.append(f"{c.id} is a {c.kind}")
+        if str(c.meta.get("tier", "")) in tiers:
+            reasons.append(f"{c.id} is tier {c.meta.get('tier')}")
+    if any(v.lower().startswith("yes") for v in review.get("person required", [])):
+        reasons.append("the reviewer asked for a person")
+    if any(v.lower().startswith("large") for v in review.get("blast radius", [])):
+        reasons.append("the reviewer rated the blast radius large")
+    return reasons
+
+
+def evaluate(item: Item) -> tuple[str, list[str]]:
+    """The computed state of an item, and what is holding it."""
+    held: list[str] = []
+    touched = item.touched()
+    approvals = (item.path / "approvals.md").read_text() if (item.path / "approvals.md").exists() else ""
+    if touched:
+        for cid in touched:
+            if not re.search(rf"\b{re.escape(cid)}\b.*\bapproved\b", approvals, re.I):
+                held.append(f"{cid}: examples not approved in approvals.md")
+    elif not approvals.strip():
+        held.append("approvals.md: one owner must approve change.md")
+    if held:
+        return "draft", held
+    review_path = item.path / "review.md"
+    if not review_path.exists():
+        return "agreed", ["review.md: no review yet"]
+    review = key_values(review_path.read_text())
+    if not any(v.lower().startswith("pass") for v in review.get("verdict", [])):
+        return "in review", ["review.md: verdict is not pass"]
+    reasons = critical(item, review)
+    if reasons and not review.get("signed off by"):
+        return "in review", [f"a person must sign off ({'; '.join(reasons)}): add 'signed off by: NAME'"]
+    # The release rule, on the release candidate.
+    before = {r.clause.id: r.status for r in record_for(clauses_in(CANON))}
+    after = record_for(candidate(item))
+    accepted_worse = {v.split()[0] for v in review.get("accepts worse", [])}
+    for r in after:
+        if r.clause.id in touched and r.status not in ("accepted", "accepted, with stated risk"):
+            held.append(f"{r.clause.id} is {r.status}: " + (r.missing[0] if r.missing else "no evidence"))
+        elif r.clause.id not in touched and r.clause.id in before:
+            if RANK[r.status] < RANK[before[r.clause.id]] and r.clause.id not in accepted_worse:
+                held.append(f"{r.clause.id} got worse ({before[r.clause.id]} to {r.status})")
+    return ("reviewed", held) if held else ("ready", [])
+
+
+def write_status(item: Item, state: str) -> None:
+    f = item.path / "change.md"
+    if not f.exists():
+        return
+    text = f.read_text()
+    line = f"status: {state}   (written by canonball)"
+    text = re.sub(r"^status:.*$", line, text, count=1, flags=re.M) if re.search(r"^status:", text, re.M) else text.rstrip() + f"\n\n{line}\n"
+    f.write_text(text)
+
+
+def cmd_status(_args: list[str]) -> int:
+    all_items = items()
+    if not all_items:
+        print("Nothing in roadmap/. Start one with `canonball new milestone NAME`.")
+    for it in all_items:
+        state, held = evaluate(it)
+        write_status(it, state)
+        print(f"{rel(it.path):<44} {state}")
+        for h in held:
+            print(f"{'':<44}   {h}")
+    return 0
+
+
+def canonball_number() -> int:
+    log = ROOT / "CANONBALLS.md"
+    nums = [int(n) for n in re.findall(r"^## CanonBall (\d+)", log.read_text(), re.M)] if log.exists() else []
+    return max(nums, default=0) + 1
+
+
+def cmd_release(args: list[str]) -> int:
+    if not args:
+        sys.exit("usage: canonball release ITEM")
+    item = find_item(args[0])
+    state, held = evaluate(item)
+    if state != "ready":
+        print(f"{item.name} is {state}, not ready to release:")
+        for h in held:
+            print(f"  {h}")
+        return 1
+    touched = item.touched()
+    for name in item.deletes():
+        (CANON / name).unlink(missing_ok=True)
+    for src, dst in [(item.canon_diff, CANON), (item.blueprint_diff, ROOT / "spec" / "blueprint")]:
+        if src.is_dir():
+            for p in src.rglob("*"):
+                if p.is_file() and not p.name.endswith(".delete"):
+                    target = dst / p.relative_to(src)
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(p, target)
+    write_status(item, "released")
+    archive = ROADMAP / "archive" / item.name
+    archive.parent.mkdir(parents=True, exist_ok=True)
+    shutil.move(str(item.path), archive)
+    rows = record_for(clauses_in(CANON))
+    counts = ", ".join(f"{n} {k}" for k, n in ((k, sum(1 for r in rows if r.status == k)) for k in RANK) if n)
+    number = canonball_number()
+    entry = [f"## CanonBall {number}", "", f"- released: {_dt.date.today().isoformat()}", f"- from: {rel(archive)}",
+             f"- build: {git_commit() or 'uncommitted'}", f"- record: {counts}"]
+    entry += [f"- adds or changes: {c.id} {c.meta.get('title', '')}".rstrip() for c in touched.values()]
+    log = ROOT / "CANONBALLS.md"
+    head = log.read_text() if log.exists() else "# CanonBalls\n\nEach release, newest first. Written by canonball.\n"
+    parts = head.split("\n## ", 1)
+    log.write_text(parts[0].rstrip() + "\n\n" + "\n".join(entry) + "\n" + ("\n## " + parts[1] if len(parts) > 1 else ""))
+    print(f"Released {item.name} as CanonBall {number}. spec/ now includes it; the folder is in {rel(archive)}.")
+    print("Commit the result, tag it, and deploy the build it names.")
+    return 0
+
+
+# ---------------------------------------------------------------- new
+
+def cmd_new(args: list[str]) -> int:
+    templates = ROOT / "templates"
+    if len(args) >= 2 and args[0] in ("milestone", "unplanned"):
+        folder = ROADMAP / ("unplanned" if args[0] == "unplanned" else "") / args[1]
+        if folder.exists():
+            sys.exit(f"canonball: {rel(folder)} already exists")
+        for sub in ("diff/canon", "diff/blueprint", "tasks"):
+            (folder / sub).mkdir(parents=True)
+        shutil.copy(templates / "change.md", folder / "change.md")
+        print(f"Created {rel(folder)}/. Write change.md, then propose clauses in diff/canon/.")
+        return 0
+    if len(args) >= 3 and args[0] in KINDS:
+        kind, cid, where = args[0], args[1], Path(args[2])
+        target = (ROOT / where) if where.suffix == ".md" else (ROOT / where / f"{cid}.md")
+        text = (templates / "clause.md").read_text().replace("KIND", kind).replace("ID-000", cid)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(text)
+        print(f"Created {rel(target)}")
+        return 0
+    sys.exit("usage: canonball new milestone NAME | new unplanned NAME | new KIND ID FOLDER\n"
+             f"       KIND is one of {', '.join(KINDS)}")
+
+
+COMMANDS = {"check": cmd_check, "run": cmd_run, "fault": cmd_fault, "record": cmd_record,
+            "status": cmd_status, "release": cmd_release, "new": cmd_new}
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2 or sys.argv[1] not in COMMANDS:
+        print(__doc__.strip())
+        sys.exit(0 if len(sys.argv) < 2 else 2)
+    sys.exit(COMMANDS[sys.argv[1]](sys.argv[2:]))

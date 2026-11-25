@@ -1,0 +1,22 @@
+name: CanonBall
+
+# On every pull request: the canon is well formed, every example has a check,
+# every check runs, and the state of each milestone is computed.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  canonball:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: tools/canonball check
+      - run: tools/canonball run
+      - run: tools/canonball record || true
+      - run: tools/canonball status
