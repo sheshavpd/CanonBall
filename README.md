@@ -22,13 +22,13 @@ see [`canonball.toml`](canonball.toml) for how checks report evidence.
 
 ## A worked example
 
-The branch [`example/refunds`](https://github.com/sheshavpd/CanonBall/tree/example/refunds) is this starter
+The branch [`refunds-example`](https://github.com/sheshavpd/CanonBall/tree/refunds-example) is this starter
 after a refunds service has been built with it. Its history has one commit per station: a milestone taken from
-three requests to a release, then an incident repaired on the express belt. Each commit is tagged, and each
-chapter of the [walkthrough](https://canonball.org/guide/workflow/) links to its diff.
+three requests to a release, then an incident repaired on the express belt. Each chapter of the
+[walkthrough](https://canonball.org/guide/workflow/) links to the diff its station produced.
 
 ```sh
-git clone -b example/refunds https://github.com/sheshavpd/CanonBall refunds
+git clone -b refunds-example https://github.com/sheshavpd/CanonBall refunds
 cd refunds
 git log --oneline          # one commit per station
 tools/canonball run && tools/canonball record
