@@ -5,6 +5,8 @@ writes each one's state into its `change.md`.
 
 | Milestone | What changes |
 |---|---|
+| [M2 faster small refunds](M2-faster-small-refunds/change.md) | Refunds under $100 are approved automatically. |
+| M3 refunds as store credit | A customer can take a refund as store credit (roadmap/notes/store-credit.md). |
 
 ## Released
 
