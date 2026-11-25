@@ -4,6 +4,6 @@ Which good thing wins when two conflict, in priority order. When two tenets conf
 Each is written "X over Y", and a sensible team could have chosen the opposite. Agents cite a tenet when they
 recommend a choice; people still decide. Keep the list to a handful.
 
-<!-- Replace these with your own. -->
-1. A person's review over speed, when money or safety is involved.
-2. Behavior a customer can predict over behavior that is cleverer.
+1. A person's review over speed, when money moves.
+2. A slow refund over a wrongly refused one.
+3. A rule support can explain over a rule that approves more.

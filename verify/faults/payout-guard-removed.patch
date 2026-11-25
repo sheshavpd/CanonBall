@@ -1,0 +1,13 @@
+diff --git a/src/refunds/service.py b/src/refunds/service.py
+index b10b1c0..61bce8e 100644
+--- a/src/refunds/service.py
++++ b/src/refunds/service.py
+@@ -48,8 +48,6 @@ class Service:
+     def pay(self, refund_id: int) -> Refund:
+         """Pay an approved refund through the gateway. The only path by which money leaves."""
+         refund = self.store.refund(refund_id)
+-        if refund.amount_cents > REVIEW_REQUIRED_ABOVE_CENTS and not refund.reviewed_by:
+-            return refund  # ENV-003: held until a person reviews it
+         if not self.store.claim_for_payout(refund_id):
+             return self.store.refund(refund_id)  # not approved, or another caller is paying it
+         state, payout_id = self._send(refund)

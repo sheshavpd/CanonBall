@@ -1,0 +1,7 @@
+{
+  "check": "verify.checks.test_inv004_no_double_payout.NoDoublePayout.test_retry_after_lost_reply_pays_once",
+  "example": "INV-004#satisfies/2",
+  "fault": "verify/faults/new-key-on-retry.patch",
+  "outcome": "failed",
+  "at": "2026-11-25T01:23:15+00:00"
+}

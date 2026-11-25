@@ -1,0 +1,107 @@
+#!/usr/bin/env python3
+"""observe: read what the refunds service decided.
+
+  observe decisions --order N [--log PATH]   the decisions logged for an order
+  observe replay --order N [--log PATH]      re-run each logged decision with the current code
+
+The log is PATH, else $REFUNDS_DECISION_LOG, else .canonball/decisions.jsonl. Read-only: it never
+writes to the log, the store or the gateway. A replay calls the decision logic, which has no side
+effects. The fields it reads are listed in observe/signals.md.
+"""
+from __future__ import annotations
+
+import argparse
+import datetime as dt
+import json
+import os
+import re
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "src"))
+
+
+def log_path(arg: str | None) -> Path:
+    if arg:
+        return Path(arg)
+    if os.environ.get("REFUNDS_DECISION_LOG"):
+        return Path(os.environ["REFUNDS_DECISION_LOG"])
+    return ROOT / ".canonball" / "decisions.jsonl"
+
+
+def read_log(path: Path, order: int) -> list[dict]:
+    if not path.exists():
+        sys.exit(f"observe: no decision log at {path}")
+    lines = [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
+    return [d for d in lines if d.get("order") == order]
+
+
+def clause_titles() -> dict[str, str]:
+    """Clause id -> its title, from spec/canon and from proposed clauses in roadmap/."""
+    titles: dict[str, str] = {}
+    files = sorted((ROOT / "spec" / "canon").glob("*.md")) + sorted((ROOT / "roadmap").glob("**/diff/canon/*.md"))
+    for p in files:
+        text = p.read_text()
+        cid = re.search(r"^id:\s*(\S+)", text, re.M)
+        title = re.search(r"^title:\s*(.+?)\s*$", text, re.M)
+        if cid and title:
+            titles.setdefault(cid.group(1), title.group(1)[:1].lower() + title.group(1)[1:])
+    return titles
+
+
+def day(iso: str) -> str:
+    d = dt.date.fromisoformat(iso)
+    return f"{d.day} {d.strftime('%B')}"
+
+
+def block(decision: dict, titles: dict[str, str]) -> str:
+    clause, inputs = decision["clause"], decision["inputs"]
+    rows = [("result", decision["result"].replace("_", " "))]
+    if clause == "REQ-012":
+        rows += [("reason", decision["reason"]),
+                 ("counted from", f"{inputs['counted_from']}, {day(inputs['window_start'])}"),
+                 ("delivered", day(inputs["delivered_on"]))]
+    else:
+        rows += [("reason", decision["reason"])]
+    width = max(len(label) for label, _ in rows) + 2
+    head = f"{clause}  {titles.get(clause, '')}".rstrip()
+    return "\n".join([head] + [f"  {label:<{width}}{value}" for label, value in rows])
+
+
+def replay(decision: dict) -> dict:
+    from refunds.decide import Order, decide_refund
+    i = decision["inputs"]
+    order = Order(decision["order"], i["order_total_cents"], dt.date.fromisoformat(i["dispatched_on"]),
+                  dt.date.fromisoformat(i["delivered_on"]))
+    d = decide_refund(order, i["amount_cents"], i["refunded_cents"], dt.date.fromisoformat(i["today"]))
+    return {"order": decision["order"], "clause": d.clause, "result": d.result, "reason": d.reason, "inputs": d.inputs}
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(prog="observe", description="Read what the refunds service decided.")
+    parser.add_argument("command", choices=["decisions", "replay"])
+    parser.add_argument("--order", type=int, required=True)
+    parser.add_argument("--log")
+    args = parser.parse_args()
+    decisions = read_log(log_path(args.log), args.order)
+    if not decisions:
+        print(f"no decisions logged for order {args.order}")
+        return 1
+    titles = clause_titles()
+    out = []
+    for d in decisions:
+        if args.command == "decisions":
+            out.append(block(d, titles))
+        else:
+            again = replay(d)
+            text = block(again, titles)
+            if (again["clause"], again["result"]) != (d["clause"], d["result"]):
+                text += f"\n  {'logged':<14}{d['clause']} {d['result'].replace('_', ' ')}, {d['reason']}"
+            out.append(text)
+    print("\n\n".join(out))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

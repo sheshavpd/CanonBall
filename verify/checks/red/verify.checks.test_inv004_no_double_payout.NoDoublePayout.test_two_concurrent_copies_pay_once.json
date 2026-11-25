@@ -1,0 +1,7 @@
+{
+  "check": "verify.checks.test_inv004_no_double_payout.NoDoublePayout.test_two_concurrent_copies_pay_once",
+  "example": "INV-004#violates/1",
+  "fault": "verify/faults/request-key-ignored.patch",
+  "outcome": "failed",
+  "at": "2026-11-25T01:23:15+00:00"
+}

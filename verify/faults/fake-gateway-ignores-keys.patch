@@ -1,0 +1,13 @@
+diff --git a/verify/envs/fake_gateway.py b/verify/envs/fake_gateway.py
+index 5212f28..81aa881 100644
+--- a/verify/envs/fake_gateway.py
++++ b/verify/envs/fake_gateway.py
+@@ -38,7 +38,7 @@ class FakeGateway(Gateway):
+             if self._refuse:
+                 self._refuse -= 1
+                 raise PayoutRefused(request_key)
+-            payout = self._by_key.get(request_key)
++            payout = None
+             if payout is None:
+                 payout = Payout(f"po-{len(self._transfers) + 1}", request_key, order_id, amount_cents)
+                 self._by_key[request_key] = payout

@@ -1,0 +1,7 @@
+{
+  "check": "verify.checks.test_asm011_fake_gateway.FakeGatewayHonorsRequestKeys.test_fake_gateway_pays_once_per_request_key",
+  "example": "ASM-011#satisfies/1",
+  "fault": "verify/faults/fake-gateway-ignores-keys.patch",
+  "outcome": "failed",
+  "at": "2026-11-25T01:23:15+00:00"
+}

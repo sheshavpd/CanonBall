@@ -1,0 +1,14 @@
+diff --git a/src/refunds/service.py b/src/refunds/service.py
+index b10b1c0..aec6d47 100644
+--- a/src/refunds/service.py
++++ b/src/refunds/service.py
+@@ -60,7 +60,8 @@ class Service:
+         """Send the payout, retrying a lost reply with the same request key (ASM-011)."""
+         for attempt in range(1 + PAYOUT_RETRIES):
+             try:
+-                payout = self.gateway.pay(refund.request_key, refund.order_id, refund.amount_cents)
++                key = refund.request_key if attempt == 0 else f"{refund.request_key}/retry-{attempt}"
++                payout = self.gateway.pay(key, refund.order_id, refund.amount_cents)
+                 return "paid", payout.id
+             except ReplyLost:
+                 continue  # the gateway may have paid; asking again with the same key finds the payout

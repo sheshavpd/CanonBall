@@ -1,7 +1,7 @@
 # Settings read by tools/canonball. Everything else lives in Markdown that people can read.
 
 [project]
-name = "your-system"
+name = "refunds"
 
 [checks]
 # Runs every check once. Each check writes one line of evidence to $CANONBALL_EVIDENCE.

@@ -4,19 +4,33 @@ Read this file before every task. It has two parts. The first describes this rep
 
 ## This repository
 
-<!-- Replace this section. Keep it short: it is read on every task. -->
-
-**What the system is.** One or two sentences: what it does and for whom.
+**What the system is.** The refunds service of an online shop. It decides each refund request a customer
+makes, and pays approved refunds through the payment gateway. Money is in cents in code and in dollars in
+prose.
 
 **Commands.**
 
 ```text
 tools/canonball check     is the canon well formed, and is every example checked?
-tools/canonball run       run every check and record the evidence
+tools/canonball run       run every check in VE-002 and record the evidence
+tools/canonball fault verify/faults/NAME.patch
+                          run the checks against an injected fault; keep the red proofs
+tools/canonball record    the Verification Record for spec/
 tools/canonball status    the state of every milestone and unplanned item
+
+observe/tools/observe decisions --order N [--log PATH]
+                          the decisions logged for an order (default log: $REFUNDS_DECISION_LOG)
+observe/tools/observe replay --order N [--log PATH]
+                          re-run those decisions with the current code
 ```
 
-Add the commands that build and run this system, start its verification environment, and read what it emits (`observe/tools/`).
+VE-002, the verification environment, is `verify/envs/ve002.py`. Constructing a `World` brings it up
+(an in-memory store, a fake payment gateway, a decision log); `close()` takes it down. Its four verbs are
+`rig`, `act`, `perturb` and `observe`. Python 3.11 or later, standard library only.
+
+**Code.** Decision logic in `src/refunds/decide.py`, with no side effects. The service, which reads, logs,
+records and pays, in `src/refunds/service.py`. Adapters in `src/refunds/adapters/`. See
+`spec/blueprint/architecture.md`.
 
 **Who decides what here.**
 
@@ -28,7 +42,14 @@ Add the commands that build and run this system, start its verification environm
 | Verification design | the verification lead, with the verifier |
 | What counts as critical | `spec/canon/policy/review.md` |
 
-**Owners.** Who approves which clauses, by capability.
+**Owners.**
+
+| Clauses | Owner |
+|---|---|
+| Promises and product decisions about refunds (REQ, DEC) | the product manager |
+| Payout limits (ENV-003) | finance |
+| Payout safety (INV-004, ASM-011) and sign-off on money paths | the refunds owner |
+| VE-002 and the evidence plan | the verification lead |
 
 ---
 

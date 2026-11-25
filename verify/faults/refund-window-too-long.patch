@@ -1,0 +1,13 @@
+diff --git a/src/refunds/decide.py b/src/refunds/decide.py
+index aa4858f..3cab89f 100644
+--- a/src/refunds/decide.py
++++ b/src/refunds/decide.py
+@@ -8,7 +8,7 @@ from __future__ import annotations
+ import datetime as dt
+ from dataclasses import dataclass
+ 
+-WINDOW_DAYS = 30  # REQ-012
++WINDOW_DAYS = 60  # REQ-012
+ 
+ 
+ @dataclass(frozen=True)

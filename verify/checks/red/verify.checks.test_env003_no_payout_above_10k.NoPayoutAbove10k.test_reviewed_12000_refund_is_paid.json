@@ -1,0 +1,7 @@
+{
+  "check": "verify.checks.test_env003_no_payout_above_10k.NoPayoutAbove10k.test_reviewed_12000_refund_is_paid",
+  "example": "ENV-003#satisfies/1",
+  "fault": "verify/faults/payout-guard-ignores-review.patch",
+  "outcome": "failed",
+  "at": "2026-11-25T01:23:15+00:00"
+}

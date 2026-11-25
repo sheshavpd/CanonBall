@@ -1,0 +1,12 @@
+diff --git a/src/refunds/service.py b/src/refunds/service.py
+index b10b1c0..c8a68f3 100644
+--- a/src/refunds/service.py
++++ b/src/refunds/service.py
+@@ -31,6 +31,7 @@ class Service:
+ 
+     def request_refund(self, order_id: int, amount_cents: int, key: str) -> Refund:
+         """A customer asks for `amount_cents` back on an order. `key` is the request key."""
++        key = f"{key}-{self.new_trace()}"
+         existing = self.store.refund_by_key(key)
+         if existing is not None:
+             return existing  # the same request again: INV-004

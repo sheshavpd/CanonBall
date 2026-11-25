@@ -1,0 +1,55 @@
+"""Decision logic for refunds.
+
+Pure functions: no store, no network, no clock. Every input is an argument, so every
+decision can be logged with the inputs it used and replayed later (observe/tools/observe).
+"""
+from __future__ import annotations
+
+import datetime as dt
+from dataclasses import dataclass
+
+WINDOW_DAYS = 30  # REQ-012
+
+
+@dataclass(frozen=True)
+class Order:
+    id: int
+    total_cents: int
+    dispatched_on: dt.date
+    delivered_on: dt.date
+
+
+@dataclass(frozen=True)
+class Decision:
+    result: str   # "in_review" or "refused"
+    reason: str
+    clause: str
+    inputs: dict
+
+
+def window_start(order: Order) -> tuple[str, dt.date]:
+    """The day the refund window is counted from, and which day of the order that is."""
+    return "dispatch", order.dispatched_on
+
+
+def decide_refund(order: Order, amount_cents: int, refunded_cents: int, today: dt.date) -> Decision:
+    """Decide a refund request for `amount_cents` on `order`, made on `today`.
+
+    `refunded_cents` is what has already been refunded on the order.
+    """
+    counted_from, start = window_start(order)
+    day = (today - start).days
+    inputs = {
+        "order_total_cents": order.total_cents,
+        "dispatched_on": order.dispatched_on.isoformat(),
+        "delivered_on": order.delivered_on.isoformat(),
+        "amount_cents": amount_cents,
+        "refunded_cents": refunded_cents,
+        "today": today.isoformat(),
+        "counted_from": counted_from,
+        "window_start": start.isoformat(),
+    }
+    reason = f"day {day} of {WINDOW_DAYS}"
+    if day > WINDOW_DAYS:
+        return Decision("refused", reason, "REQ-012", inputs)
+    return Decision("in_review", reason, "REQ-012", inputs)

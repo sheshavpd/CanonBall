@@ -1,0 +1,7 @@
+{
+  "check": "verify.checks.test_req012_refund_window.RefundWindow.test_request_on_day_19_is_accepted",
+  "example": "REQ-012#satisfies/1",
+  "fault": "verify/faults/refund-window-too-short.patch",
+  "outcome": "failed",
+  "at": "2026-11-25T01:23:14+00:00"
+}
