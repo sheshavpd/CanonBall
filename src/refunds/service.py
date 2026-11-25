@@ -15,7 +15,7 @@ from refunds.adapters.gateway import Gateway, PayoutRefused, ReplyLost
 from refunds.adapters.store import Refund, Store
 from refunds.decide import decide_refund
 
-PAYOUT_RETRIES = 5                      # retries after a lost reply, all with the same request key
+PAYOUT_RETRIES = 3                      # retries after a lost reply, all with the same request key
 REVIEW_REQUIRED_ABOVE_CENTS = 1_000_000  # ENV-003: no payout above $10,000 without review
 
 
