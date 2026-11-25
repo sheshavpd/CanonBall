@@ -19,6 +19,9 @@ The carrier's delivered scan for the last item of an order. Not the dispatch.
 ## Refund
 Money returned to the customer for an order. Each refund is separate; an order can have more than one.
 
+## Refund amount
+The money returned by one refund. Not the order total.
+
 ## Payout
 One transfer through the payment gateway.
 

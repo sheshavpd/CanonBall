@@ -9,7 +9,7 @@ Why now:   the review queue is the slowest step for small refunds. Support handl
            wait every day, and reviewers spend most of their time on refunds they almost never turn down.
 Adds:      DEC-031 auto-approve under $100; "refund amount" in vocabulary.md
 
-status: ready   (written by canonball)
+status: released   (written by canonball)
 
 ## Predicted change in behavior
 
