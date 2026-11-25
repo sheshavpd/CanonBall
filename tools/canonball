@@ -15,7 +15,7 @@ Standard library only. Python 3.11 or later.
   canonball fault PATCH...        run the checks against an injected fault; keep red proofs
   canonball record [ITEM]         compute the Verification Record (for spec/, or a release candidate)
   canonball status                compute the state of every milestone and unplanned item
-  canonball release ITEM          release a milestone or unplanned item, publishing a CanonBall
+  canonball release ITEM [--date D] release a milestone or unplanned item, publishing a CanonBall
   canonball new KIND NAME         start a milestone, unplanned item or clause from a template
 """
 from __future__ import annotations
@@ -87,13 +87,16 @@ def front_matter(text: str) -> tuple[dict, str]:
     return meta, text[end + 4:].lstrip("\n")
 
 
-def key_values(text: str) -> dict[str, list[str]]:
-    """`key: value` lines anywhere in a file, for approvals.md and review.md. Keys repeat."""
+REVIEW_KEYS = ("reviewer", "verdict", "blast radius", "person required", "signed off by", "accepts worse")
+
+
+def review_fields(text: str) -> dict[str, list[str]]:
+    """The fields of review.md: known keys at the start of a line. Prose and bullet points are ignored."""
     out: dict[str, list[str]] = {}
     for line in text.splitlines():
-        m = re.match(r"^\s*-?\s*([A-Za-z][A-Za-z ]+?)\s*:\s*(.+)$", line)
+        m = re.match(rf"^({'|'.join(REVIEW_KEYS)})\s*:\s*(.+?)\s*(?:#.*)?$", line, re.I)
         if m:
-            out.setdefault(m.group(1).strip().lower(), []).append(m.group(2).strip())
+            out.setdefault(m.group(1).lower(), []).append(m.group(2))
     return out
 
 
@@ -257,7 +260,7 @@ def cmd_check(_args: list[str]) -> int:
                 errors.append(f"{where}: cites {cite!r}, which is not a tenet in tenets.md")
         if c.kind == "assumption" and not c.meta.get("monitor"):
             warnings.append(f"{where}: an assumption should name the monitor that watches it (monitor: ...)")
-        for ex in c.example_ids:
+        for ex in ([] if c.kind == "assumption" else c.example_ids):
             if ex not in refs:
                 (warnings if proposed else errors).append(f"{where}: example {ex} has no check in verify/checks/")
 
@@ -354,6 +357,7 @@ def cmd_fault(args: list[str]) -> int:
             run_checks(scratch, ev, "fault", rel(patch))
             lines = read_evidence(ev)
         failed = [e for e in lines if e["outcome"] == "failed"]
+        errored = [e for e in lines if e["outcome"] == "error"]
         for e in failed:
             proof = RED / f"{e['check']}.json"
             if not proof.exists():
@@ -362,6 +366,8 @@ def cmd_fault(args: list[str]) -> int:
         print(f"\n{arg}: {len(failed)} of {len(lines)} checks failed, as they should; red proofs kept in {rel(RED)}/")
         for e in failed:
             print(f"  failed  {e['check']}  ({e['example']})")
+        for e in errored:
+            print(f"  error   {e['check']}  (an exception is not a failing assertion; no red proof kept)")
         if not failed:
             print("  No check caught this fault. Either the checks are too weak or the fault changes nothing.")
             status = 1
@@ -479,9 +485,11 @@ def evaluate(item: Item) -> tuple[str, list[str]]:
     touched = item.touched()
     approvals = (item.path / "approvals.md").read_text() if (item.path / "approvals.md").exists() else ""
     if touched:
+        lines = [l for l in approvals.splitlines() if re.search(r"\b(approved|confirmed|agreed) by\b", l, re.I)
+                 and not re.search(r"\bnot\b", l, re.I)]
         for cid in touched:
-            if not re.search(rf"\b{re.escape(cid)}\b.*\bapproved\b", approvals, re.I):
-                held.append(f"{cid}: examples not approved in approvals.md")
+            if not any(re.search(rf"\b{re.escape(cid)}\b", l) for l in lines):
+                held.append(f"{cid}: examples not approved in approvals.md ('{cid} examples: approved by NAME, DATE')")
     elif not approvals.strip():
         held.append("approvals.md: one owner must approve change.md")
     if held:
@@ -489,7 +497,7 @@ def evaluate(item: Item) -> tuple[str, list[str]]:
     review_path = item.path / "review.md"
     if not review_path.exists():
         return "agreed", ["review.md: no review yet"]
-    review = key_values(review_path.read_text())
+    review = review_fields(review_path.read_text())
     if not any(v.lower().startswith("pass") for v in review.get("verdict", [])):
         return "in review", ["review.md: verdict is not pass"]
     reasons = critical(item, review)
@@ -538,8 +546,13 @@ def canonball_number() -> int:
 
 
 def cmd_release(args: list[str]) -> int:
+    date = _dt.date.today().isoformat()
+    if "--date" in args:
+        i = args.index("--date")
+        date = args[i + 1] if i + 1 < len(args) else sys.exit("usage: canonball release ITEM [--date YYYY-MM-DD]")
+        del args[i:i + 2]
     if not args:
-        sys.exit("usage: canonball release ITEM")
+        sys.exit("usage: canonball release ITEM [--date YYYY-MM-DD]")
     item = find_item(args[0])
     state, held = evaluate(item)
     if state != "ready":
@@ -548,6 +561,7 @@ def cmd_release(args: list[str]) -> int:
             print(f"  {h}")
         return 1
     touched = item.touched()
+    build = git_commit() or "uncommitted"   # the build being released, named before spec/ changes
     for name in item.deletes():
         (CANON / name).unlink(missing_ok=True)
     for src, dst in [(item.canon_diff, CANON), (item.blueprint_diff, ROOT / "spec" / "blueprint")]:
@@ -564,8 +578,8 @@ def cmd_release(args: list[str]) -> int:
     rows = record_for(clauses_in(CANON))
     counts = ", ".join(f"{n} {k}" for k, n in ((k, sum(1 for r in rows if r.status == k)) for k in RANK) if n)
     number = canonball_number()
-    entry = [f"## CanonBall {number}", "", f"- released: {_dt.date.today().isoformat()}", f"- from: {rel(archive)}",
-             f"- build: {git_commit() or 'uncommitted'}", f"- record: {counts}"]
+    entry = [f"## CanonBall {number}", "", f"- released: {date}", f"- from: {rel(archive)}",
+             f"- build: {build}", f"- record: {counts}"]
     entry += [f"- adds or changes: {c.id} {c.meta.get('title', '')}".rstrip() for c in touched.values()]
     log = ROOT / "CANONBALLS.md"
     head = log.read_text() if log.exists() else "# CanonBalls\n\nEach release, newest first. Written by canonball.\n"
