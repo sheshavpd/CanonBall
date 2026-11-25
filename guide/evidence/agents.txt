@@ -1,0 +1,133 @@
+# Evidence and the Verification Record
+
+> Each run of each check leaves one line of evidence, and the orchestrator computes the status of every clause from those lines.
+
+- Site: CanonBall. The lifecycle agents can run and people can trust.
+- HTML page: https://canonball.org/guide/evidence/
+- This file: https://canonball.org/guide/evidence/agents.txt
+
+---
+Guide part: Verification and observability. Chapter 22 of 28.
+
+Key points:
+- Status is computed from evidence, and no person or agent can write it.
+- Every check must be seen to fail before its pass counts.
+- The Record names the weakest link and never averages.
+- The reviewer agent and the person at the release gate read the same Verification Record.
+
+## Status is computed
+
+In CanonBall, no clause, task or release is declared done. The **orchestrator**, the program that computes every state and carries out a release, works the status out from what exists.
+
+The **Verification Record** is the computed status of every clause. The orchestrator reads the assurance cases and the results of the checks, applies rules that people own, and publishes the outcome. No agent and no person can write a status into the Record, because it is not a file in the repository.
+
+The reviewer agent reads the Record for every change, and so does the person at the release gate when [review](../review/agents.txt) calls for one. Whether a task is finished, and whether a change is ready to [release](../release/agents.txt), are computed in the same way.
+
+## A check must fail before its pass counts
+
+Test-driven development has a rule: watch the test fail before making it pass. A check that has never failed proves nothing, because it may assert something that is always true, test the fake, or not run at all. CanonBall makes the rule a condition of acceptance.
+
+[Interactive figure: a check must fail before its pass counts] Three checks for INV-004 pass. The third has never been seen to fail, so the computed status is "unsupported". After a fault is injected, the third check fails as it should, and that failing run is kept. Run again on the real build, all three pass and the status becomes "accepted".
+
+Every check is run once against a build that has been broken on purpose. The break is an **injected fault**, a small patch to the code that is kept in `verify/faults/`. The failing run is kept in `verify/checks/red/` as a **recorded failure**, and the check's pass counts only when that file exists. Here is INV-004 at CanonBall 13, first with the recorded failure of one check removed, then as released.
+
+```text
+INV-004   unsupported                 checks 4/4   seen to fail 3/4
+          weakest link: INV-004#violates/1: verify.checks.test_inv004_no_double_payout.NoDoublePayout.test_two_concurrent_copies_pay_once never seen to fail
+INV-004   accepted                    checks 4/4   seen to fail 4/4
+```
+
+Both rows show four passing checks, and only the second supports the clause. Mutation testing applies the same idea across a whole suite, whereas here it is applied to each check in turn.
+
+## A line of evidence
+
+Each run of each check writes one line.
+
+```json
+{"check": "verify.checks.test_inv004_no_double_payout.NoDoublePayout.test_two_concurrent_copies_pay_once", "example": "INV-004#violates/1", "outcome": "passed", "run": "normal", "fault": "", "commit": "75ac2f0", "at": "2026-11-25T01:46:33+00:00"}
+```
+
+The line records which check ran, which example it encodes and so which clause it is evidence for, whether it was a normal run or a run against an injected fault, what code it ran against, what happened, and when. VE-002 fixes its own random seed, so that is enough for someone else to run it again; evidence that cannot be reproduced is treated as a claim.
+
+## Five statuses
+
+[Figure: Lines of evidence roll up to parts, and parts to a status. The weakest link is named.]
+Three checks pass and feed part P1, which is evidenced. Part P4 has no evidence. The clause is therefore unsupported, and the Verification Record names P4 as the open obligation.
+
+The status of a clause is a decision, not a confidence score.
+
+| Status | Meaning |
+|---|---|
+| **Accepted** | Every part has evidence that is in range and current. |
+| **Accepted, with stated risk** | Accepted, with an assumption that is watched but not proven. |
+| **Unsupported** | Some part lacks evidence, or a check failed. The Record says which. |
+| **Pending** | Agreed, and waiting on another team to provide something. |
+| **Unknown** | Not yet assessed, or the code the case rests on has changed. |
+
+The Record can be trusted because it never averages and never omits. A clause with three strong parts and one missing part is unsupported, and the Record names the missing part. A part that ran and saw nothing is shown as unsupported rather than left out.
+
+For the refunds service at CanonBall 13, the Record's summary reads "4 accepted, 1 accepted, with stated risk". The orchestrator omits a status no clause has.
+
+## Evidence that does not count
+
+A passing run is not always evidence, and runs of the following kinds are marked and set aside.
+
+| Marked as | Why it does not count |
+|---|---|
+| **Stale** | The code, the environment, or a fake has changed since the run. |
+| **Out of range** | The run was outside what the environment was validated for. |
+| **Self-produced** | The builder ran it, and nothing independent checked it. |
+| **Discounted** | The environment has stopped catching injected faults. |
+| **Never reached** | The check was about a race, and the race never happened. |
+
+## How staleness works
+
+Everything that evidence depends on carries a content hash: the code a clause relies on, the environment's declaration, each fake. When any of them changes, its hash changes, and the evidence that relied on it is stale until the check runs again. Because one mechanism serves every kind of dependency, evidence cannot silently outlive the thing it was about.
+
+The same mechanism keeps runs affordable. A change re-runs only the checks for clauses whose code it touched, in the way a build system skips what has not changed.
+
+## When a check fails
+
+Every failing check is classified before anyone acts on it.
+
+| Label | Meaning | Next step |
+|---|---|---|
+| **Bug** | The build is wrong. | Fix the code. |
+| **Gap** | A clause is missing. | Propose one. |
+| **Noise** | The environment misbehaved. | Fix the environment. |
+| **Ambiguity** | The clause has two readings. | Ask a person. |
+
+The label decides what happens next, and it is recorded. Retrying a failed check until it passes is not allowed, because it would weaken the evidence without telling anyone.
+
+## Assumptions and monitors
+
+A clause that depends on the outside world cannot be fully proven. In the refunds canon, ASM-011 says that the payment gateway pays at most once per request key, and no check in VE-002 can establish that about the real gateway. Such an assumption gets a **treatment**, which states:
+
+- how it is observed in production;
+- how long a failure would take to show;
+- what the system does when it fails;
+- what is accepted when a failure could not be detected at all.
+
+A monitor that raises an alarm is a treatment rather than evidence that the clause holds, so it supports "accepted, with stated risk" at most.
+
+When a monitor fires, an incident opens, and the repair comes back as a small piece of unplanned work with a new example and often a new invariant. In this way operating the system improves the canon; [Operate](../operate/agents.txt) follows one incident from the first report to the release.
+
+## The policy
+
+The rules that turn evidence into status live in `spec/canon/policy/`. People write them, and no agent can.
+
+The policy says what counts as evidence for each tier, what counts as an independent check, which kinds of oracle are trusted, and which changes are critical enough that a person must review them before release. A change that would lower the bar is reviewed explicitly.
+
+---
+
+## References
+
+- Previous chapter: Verification environments: https://canonball.org/guide/environments/agents.txt
+- Next chapter: Observability: letting agents see: https://canonball.org/guide/observability/agents.txt
+- Related: Verification engineering: https://canonball.org/guide/verification-engineering/agents.txt
+- Related: Verification environments: https://canonball.org/guide/environments/agents.txt
+- Related: Review: an agent every time, a person when critical: https://canonball.org/guide/review/agents.txt
+- Related: Operate: run it, and feed what breaks back in: https://canonball.org/guide/operate/agents.txt
+- Related: What a CanonBall is: https://canonball.org/guide/canonball/agents.txt
+- Glossary: https://canonball.org/glossary/agents.txt
+- Site overview and index of every chapter: https://canonball.org/agents.txt

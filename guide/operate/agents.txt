@@ -1,0 +1,110 @@
+# Operate: run it, and feed what breaks back in
+
+> The running system is watched and diagnosed by an agent with tools to see inside it, and what breaks returns to the belt as work.
+
+- Site: CanonBall. The lifecycle agents can run and people can trust.
+- HTML page: https://canonball.org/guide/operate/
+- This file: https://canonball.org/guide/operate/agents.txt
+
+---
+Guide part: One milestone, station by station. Chapter 9 of 28.
+
+Station 7 of 7 on the conveyor: Operate.
+
+- Who works here: agents: On-call agent; people: Operator.
+- Reads: observe/, verify/monitors/.
+- Writes: incidents/, roadmap/unplanned/.
+- In the example repository, the incident: https://github.com/sheshavpd/CanonBall/compare/75ac2f0b91922ee9fe53c7cd4ae17d15d6c015aa...0d1173c02d04be039bd788818ff5e278706205fd
+- In the example repository, the repair, released as CanonBall 14: https://github.com/sheshavpd/CanonBall/compare/0d1173c02d04be039bd788818ff5e278706205fd...c62fe85ef3d324565196039b037cae60f255eb1e
+
+Key points:
+- Back pressure is the upkeep a running system demands: incidents, bugs and reliability problems.
+- The on-call agent diagnoses from logs and traces, and a person decides anything risky.
+- A repair takes the express belt through the same stations and ships as its own CanonBall.
+- Every incident leaves an example behind, and improves the verification environment that missed it.
+
+## What arrives
+
+CanonBall 13 is running, with **monitors** on the assumptions the evidence rested on. The refunds service assumes the payment gateway pays at most once per request key (ASM-011). No test can prove that about someone else's system, so a monitor watches for it in production. The **on-call agent** watches the monitors, the error rates and the support queue.
+
+## Back pressure
+
+A running system asks for upkeep. Customers find cases nobody wrote an example for, dependencies change, and load grows. This is **back pressure**: work that arrives from the system itself, on its own schedule. It travels on the same belt as planned work, because a repair that skips verification is a common cause of the next incident.
+
+## A refusal on day 29
+
+Three weeks after the release, a customer writes to support. Their refund for order 5512, requested on 2 April, was refused as too late, and they are sure they asked within 30 days. No monitor fired, because none watches refusals.
+
+The on-call agent opens incident INC-007 and asks the system what it decided for that order.
+
+```text
+$ observe/tools/observe decisions --order 5512
+REQ-012  refund window
+  result        refused
+  reason        day 31 of 30
+  counted from  dispatch, 2 March
+  delivered     4 March
+```
+
+The window was counted from the day the order was dispatched. The vocabulary says **delivery** means the carrier's delivered scan, so one part of the code had read the wrong date.
+
+The cause was read from the decision log. Without the log, the agent would have had a refused refund, a date, and a long list of things that might be wrong.
+
+The incident also records that REQ-012 showed as accepted the whole time. Its checks passed because none of them used an order whose dispatch and delivery dates differed. Accepted means supported by the evidence so far, and that evidence had a gap.
+
+## The person's part
+
+Paying this customer now is money moving outside the normal path, so the **operator** approves it. The repair adds an example and an invariant, and both need a person's approval like any other.
+
+## The repair takes the express belt
+
+The fix restores what was already promised, so it does not wait for a milestone. It gets a small folder, `roadmap/unplanned/inc-007-window-from-delivery/`, and passes the same stations.
+
+| Station | What happens |
+|---|---|
+| Shape | The failing case becomes an example. An invariant is proposed to pin down what REQ-012 already says: INV-009, the refund window is counted from delivery, never from dispatch. The product manager approves both. |
+| Build | The builder corrects one line, `window_start` in `src/refunds/decide.py`, to read the day of delivery. |
+| Verify | The verifier adds late delivery to the starting states VE-002 declares, writes three checks, for the new REQ-012 example and both INV-009 examples, and sees each fail against `verify/faults/count-from-dispatch.patch`, which puts the defect back. |
+| Review | The reviewer agent reviews it. It decides who is paid, so the refunds owner looks too. |
+| Release | CanonBall 14, released on 6 April 2026: 5 accepted, 1 accepted, with stated risk. |
+
+## What the system keeps
+
+The incident is filed in `incidents/` and stays there.
+
+```text
+# INC-007  Refund refused on day 29
+
+Detected:     a support report. The customer of order 5512 asked for a refund on 2 April 2026, 29 days after
+              delivery, and was refused as too late. No monitor fired: none watches refusals.
+Diagnosis:    the on-call agent read the decision log for the order (below). The REQ-012 decision was
+              "day 31 of 30", counted from dispatch on 2 March 2026. Delivery was 4 March 2026.
+Cause:        the refund window was counted from the day of dispatch, where REQ-012 says delivery.
+Repair:       inc-007-window-from-delivery (roadmap/unplanned/ until released, then roadmap/archive/)
+Example added: REQ-012 satisfies/2. Given an order dispatched on 2 March and delivered on 4 March, when
+              the customer requests a refund on 2 April, then the request is accepted.
+Proposed:     INV-009 The refund window is counted from delivery, never from dispatch.
+Environment:  VE-002 could always set up an order whose dispatch and delivery days differ, but no check
+              used one: every order it set up was delivered on the day of dispatch. The repair adds late
+              delivery to its starting states, and checks that start from it.
+```
+
+The canon now has an invariant whose two checks have been seen to fail, and the verification environment covers a case it missed.
+
+After every problem that reaches production, the team asks why the environment did not catch it, and the answer goes into the environment. Over time, this practice is expected to reduce back pressure.
+
+## Back to the start
+
+The belt forms a loop, in which what Operate learns arrives at [Collect](../collect/agents.txt) as requests and at the express belt as repairs, while the next milestone is already being shaped. The statements people write to steer all of this work are described in [the primitives](../primitives/agents.txt).
+
+---
+
+## References
+
+- Previous chapter: Release: a CanonBall leaves the belt: https://canonball.org/guide/release/agents.txt
+- Next chapter: The primitives: https://canonball.org/guide/primitives/agents.txt
+- Related: Observability: letting agents see: https://canonball.org/guide/observability/agents.txt
+- Related: Evidence and the Verification Record: https://canonball.org/guide/evidence/agents.txt
+- Related: Collect: requests gather into a milestone: https://canonball.org/guide/collect/agents.txt
+- Glossary: https://canonball.org/glossary/agents.txt
+- Site overview and index of every chapter: https://canonball.org/agents.txt

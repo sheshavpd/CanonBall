@@ -1,0 +1,91 @@
+# Tenets
+
+> A tenet says which good thing wins when two conflict, so an agent facing an undecided choice recommends the same way every time.
+
+- Site: CanonBall. The lifecycle agents can run and people can trust.
+- HTML page: https://canonball.org/guide/tenets/
+- This file: https://canonball.org/guide/tenets/agents.txt
+
+---
+Guide part: What people write. Chapter 12 of 28.
+
+Key points:
+- A tenet is written "X over Y" and says which good thing wins when two conflict.
+- Agents cite a tenet when they recommend, and a person still decides.
+- When a tenet settles a question, the answer is recorded as a decision that cites it.
+- A tenet is not a clause: nothing checks it, and it never appears in the Verification Record.
+
+## A choice nobody made
+
+At [Shape](../shape/agents.txt), an example for the refunds team's new decision exposes a case nobody has decided: two $60 refunds on one order, each under the $100 limit and together over it.
+
+Both answers can be defended: one pays the customer sooner, and the other keeps a person in front of the larger sum. Left alone, an agent picks one, and may pick the other next month. Told to ask, it still has nothing to recommend from, because it lacks one fact: which of the two this team puts first.
+
+## What a tenet is
+
+A **tenet** is a short statement of which good thing wins when two conflict, written "X over Y". People write the tenets in `spec/canon/tenets.md`, one of [the files every agent reads first](../agents-md/agents.txt).
+
+```markdown
+# Tenets
+
+Which good thing wins when two conflict, in priority order. When two tenets conflict, the higher one wins.
+Each is written "X over Y", and a sensible team could have chosen the opposite. Agents cite a tenet when they
+recommend a choice; people still decide. Keep the list to a handful.
+
+1. A person's review over speed, when money moves.
+2. A slow refund over a wrongly refused one.
+3. A rule support can explain over a rule that approves more.
+```
+
+The list is kept to a handful, in priority order, because nobody can apply a long ranking.
+
+## Why not "values"
+
+A value names a good thing nobody disagrees with: speed, safety, fairness to the customer. Every team would sign that list, so it gives an agent no guidance. For the split refunds, speed and safety point in opposite directions, and the list is silent.
+
+A tenet says which one wins, and one test separates the two: could a sensible team have written the opposite? A shop selling low-priced goods might put speed over review. If no team would write the opposite, the statement is a value and settles nothing.
+
+## How an agent uses one
+
+The elicitor, the agent that drafts clauses, brings the question to the product manager with a recommendation and cites the tenet behind it.
+
+```text
+Question    Two $60 refunds on one order. Does the $100 limit
+            apply to each refund, or to the total refunded
+            on the order?
+Recommend   The total refunded on the order.
+Cites       Tenet 1. A person's review over speed,
+            when money moves.
+```
+
+The product manager decides, and agrees; a tenet supports a recommendation, and the decision remains a person's.
+
+## From a tenet to a decision
+
+When a tenet settles a specific question, the answer is recorded as a [decision](../primitives/agents.txt), and the decision file cites the tenet. The decision is DEC-031: "A refund is approved automatically while the total refunded on the order stays under $100." One of its examples is "Two $60 refunds on one order", in which the second refund goes to review. Its front matter carries `cites: [tenet 1]`, and its text says "Settled by tenet 1: a person's review over speed, when money moves."
+
+From then on the case is decided, and its example becomes a check. A question that comes up twice with no tenet to settle it is a sign that a tenet is missing.
+
+## What a tenet is not
+
+| | A clause | A tenet |
+|---|---|---|
+| Says | One thing the system is held to | Which good thing wins when two conflict |
+| Has examples and checks | Yes | No |
+| Appears in the Verification Record | Yes | Never |
+| Applies | Every time | When no clause settles the question |
+
+A statement that must hold every time belongs in a [clause](../primitives/agents.txt). "No payout above $10,000 without review" ranks nothing over anything and allows no exception, so it is a constraint.
+
+---
+
+## References
+
+- Previous chapter: Vocabulary: https://canonball.org/guide/vocabulary/agents.txt
+- Next chapter: Examples, and writing clauses agents read correctly: https://canonball.org/guide/examples/agents.txt
+- Related: The primitives: https://canonball.org/guide/primitives/agents.txt
+- Related: Vocabulary: https://canonball.org/guide/vocabulary/agents.txt
+- Related: Shape: settle what the milestone promises: https://canonball.org/guide/shape/agents.txt
+- Related: Handing over decisions: https://canonball.org/guide/delegation/agents.txt
+- Glossary: https://canonball.org/glossary/agents.txt
+- Site overview and index of every chapter: https://canonball.org/agents.txt

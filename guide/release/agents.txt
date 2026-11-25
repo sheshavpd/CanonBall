@@ -1,0 +1,97 @@
+# Release: a CanonBall leaves the belt
+
+> When the release rule holds, the orchestrator makes the milestone's proposed files the specification and publishes a CanonBall.
+
+- Site: CanonBall. The lifecycle agents can run and people can trust.
+- HTML page: https://canonball.org/guide/release/
+- This file: https://canonball.org/guide/release/agents.txt
+
+---
+Guide part: One milestone, station by station. Chapter 8 of 28.
+
+Station 6 of 7 on the conveyor: Release.
+
+- Who works here: a program: Orchestrator.
+- Reads: Verification Record.
+- Writes: spec/, roadmap/archive/, roadmap/index.md, CANONBALLS.md.
+- In the example repository: https://github.com/sheshavpd/CanonBall/compare/8ca1c6a101e0f44ae1867ad8092f1bbc18b9d96c...75ac2f0b91922ee9fe53c7cd4ae17d15d6c015aa
+
+Key points:
+- A milestone is released when every clause it touches is accepted and no other clause got worse.
+- A release is the only thing that changes spec/.
+- What ships is a CanonBall: the canon, the build and the Verification Record, fixed together.
+
+## What arrives
+
+A reviewed milestone arrives. At this station neither a person nor an agent decides anything; the orchestrator applies a rule.
+
+## The release rule
+
+Checks for a milestone run against the **release candidate**: `spec/` with the milestone's proposed files applied. The milestone may be released when two things are true of the Verification Record computed for that candidate.
+
+1. Every clause the milestone touches is accepted.
+2. No clause it did not touch has become worse, unless a named person accepted that at the release gate.
+
+The second condition protects everything already promised. A milestone carries no list of things it must not break, because the Record checks every clause every time.
+
+[Figure: A release copies the proposed files into spec/ and publishes a CanonBall.]
+Before the release, spec/canon holds four clauses (REQ-012, INV-004, ENV-003, ASM-011) and the milestone folder, roadmap/M2-faster-small-refunds/, holds one proposed clause, DEC-031. After the release, spec/canon holds five clauses, the milestone folder is archived, and CanonBall 13 has been published.
+
+## What the orchestrator does
+
+When the rule holds and the review has passed, the orchestrator:
+
+1. copies the files in `diff/` over the files of the same name in `spec/`;
+2. archives the milestone folder in `roadmap/archive/`;
+3. records a CanonBall in `CANONBALLS.md`, naming the build it releases;
+4. tells the team to commit the result, tag it, and deploy that build.
+
+For M2 this is one command, `tools/canonball release M2-faster-small-refunds`, and the same commit moves M2 to Released in `roadmap/index.md`. If another milestone was released in the meantime, the release candidate is the new `spec/` with this milestone's files applied, and the rule is applied to that candidate before anything is copied.
+
+No person edits `spec/` by hand, so `spec/` describes the system as released and as supported by evidence. How the build is rolled out and rolled back is the pipeline's job; CanonBall says which build goes out and what it promises.
+
+## What a CanonBall holds
+
+```markdown
+## CanonBall 13
+
+- released: 2026-03-10
+- from: roadmap/archive/M2-faster-small-refunds
+- build: 8ca1c6a
+- record: 4 accepted, 1 accepted, with stated risk
+- adds or changes: DEC-031 Auto-approve under $100
+```
+
+The entry names the build, the commit the review signed off, and the canon is `spec/canon` at the commit that records the entry.
+
+A CanonBall fixes together, at one moment, what the system promises, the code that keeps the promises, and the evidence that it does. Together they answer the question "what does this system promise, and how do you know?" without anyone reading code. [What a CanonBall is](../canonball/agents.txt) describes the format in full.
+
+The one clause "accepted, with stated risk" is ASM-011, the assumption about the payment gateway. It cannot be proven from inside the system, so it is watched in production.
+
+## When the rule does not hold
+
+The milestone stays on the belt. The Record names the clause that is holding it and the part of that clause with no evidence, so the work goes back to a specific place.
+
+| What the Record shows | Where the milestone goes |
+|---|---|
+| A touched clause is unsupported | [Verify](../verify/agents.txt), for the missing evidence |
+| A check fails | [Build](../build/agents.txt) |
+| An untouched clause got worse | [Build](../build/agents.txt), or [Review](../review/agents.txt) if someone means to accept it |
+
+Whether a milestone is done is therefore computed from the evidence rather than judged by opinion.
+
+## What leaves
+
+`spec/` now describes a system in which small refunds are approved automatically, and that system is running as CanonBall 13. From here it is [operated](../operate/agents.txt).
+
+---
+
+## References
+
+- Previous chapter: Review: an agent every time, a person when critical: https://canonball.org/guide/review/agents.txt
+- Next chapter: Operate: run it, and feed what breaks back in: https://canonball.org/guide/operate/agents.txt
+- Related: What a CanonBall is: https://canonball.org/guide/canonball/agents.txt
+- Related: Evidence and the Verification Record: https://canonball.org/guide/evidence/agents.txt
+- Related: The repository layout: https://canonball.org/guide/repository/agents.txt
+- Glossary: https://canonball.org/glossary/agents.txt
+- Site overview and index of every chapter: https://canonball.org/agents.txt

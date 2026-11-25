@@ -1,0 +1,283 @@
+# CanonBall: The lifecycle agents can run and people can trust.
+
+> CanonBall is a method for building and operating software with AI agents. People write down what the system must do. Agents build it and produce the evidence. Every release ships the clauses, the build and the evidence together.
+
+- Site: CanonBall. The lifecycle agents can run and people can trust.
+- HTML page: https://canonball.org/
+- This file: https://canonball.org/agents.txt
+
+---
+
+## How to use this site as an agent
+
+Every page has a plain-text twin at the same path with agents.txt appended.
+This file is the overview and the index of every chapter. Chapter files contain the full chapter text in Markdown, with each figure replaced by a description.
+References at the end of each file link to other agents.txt files, never to HTML.
+
+## Why now
+
+Agents write working code faster than people can read it. Reviewing every change wastes the agent. Skipping review turns each change into a risk nobody measured. The question changed from "can we build this?" to "what does this change do, and what does the system still promise afterwards?". Most of the engineering now goes into showing that a promise holds.
+
+## How work moves
+
+[Animated figure: the conveyor] Requests arrive and gather into a milestone. The milestone passes seven stations on a belt and leaves as a CanonBall. Each station names who works there.
+
+1. Collect. Requests gather into a milestone, and a one-page proposal says what it will change. Who: agents: Elicitor; people: Product manager.
+2. Shape. People and agents settle the milestone’s promises, decisions and invariants, how it will be built and how it will be proven, and record it all in the milestone. Who: agents: Elicitor, Planner, Verifier; people: Product manager, Architect, Verification lead, Constraint owner. Agreement gate: people approve the examples before anything is built.
+3. Build. The builder writes the code in named tasks and watches what it does through the observability tools. Who: agents: Builder; in some cases: Architect (if the team keeps detailed design).
+4. Verify. A different agent builds the verification environment and the checks, and shows each check failing before its pass counts. Who: agents: Verifier; people: Verification lead.
+5. Review. An agent reviews every milestone. A person reviews as well only when the change is critical or its blast radius is large. Who: agents: Reviewer; in some cases: Owner of what is at risk (if critical). Release gate: a person accepts the remaining risk, only when the change is critical.
+6. Release. The orchestrator, a program, copies the proposed files into spec/, and records a CanonBall: the canon, the build and the Verification Record together. The build it names is then deployed. Who: a program: Orchestrator.
+7. Operate. The system runs. Monitors watch what was promised, and what breaks comes back as work. Who: agents: On-call agent; people: Operator.
+
+Below the main belt runs an express belt for repairs and upkeep that change no promise. An incident returns from Operate along a dashed line, enters the express belt as a single fix, and passes the same stations alone, without waiting for a milestone.
+An observability rail (logs, traces, metrics, state, replay) runs under the belts from Build to Operate. The Verify station is drawn as a built chamber, the verification environment, which work on both belts passes through.
+At Review, every milestone and every express item stops for an agent. Only a milestone marked critical also waits behind a barrier until a person has reviewed it.
+
+Forward pressure: people push new requests in.
+Back pressure: the running system demands upkeep. Incidents, bugs and reliability problems come back as work.
+
+Three practices are marked 1 to 3 on the figure. Together they make it possible for agents to do most of the work reliably:
+1. Work moves in milestones. Requests are gathered before anything is built, so their promises, decisions and invariants are settled once and an agent receives a complete, consistent specification. Repairs and upkeep that change no promise take the express belt through the same stations.
+2. Verification environments are engineered. Agents produce most of the evidence, so the environment that produces it is designed with a person and maintained like product code. People can rely on the evidence because they understand how it was obtained.
+3. Observability is built for agents. An agent begins each task with no memory of the system. Logs, traces, metrics and state give it the context it needs to build, verify and operate. With them it diagnoses from evidence rather than speculation.
+
+More: https://canonball.org/guide/workflow/agents.txt
+
+## What gets written down
+
+People steer agents with a few written things. Each is a short file in plain language, and most are written at the Shape station.
+
+People write:
+
+- Vocabulary. The words the team uses, each defined once.
+  Example: Delivery: the carrier’s delivered scan for the last item of an order. Not the dispatch.
+  Why it exists: So that a person, an agent and a check all mean the same thing by the same word.
+  More: https://canonball.org/guide/vocabulary/agents.txt
+- Tenet. Which good thing wins when two conflict.
+  Example: A person’s review over speed, when money moves.
+  Why it exists: An agent facing an undecided choice recommends the way the team would, and says which tenet it used.
+  More: https://canonball.org/guide/tenets/agents.txt
+- Promise. What the system does for someone.
+  Example: A customer can request a refund within 30 days of delivery.
+  Why it exists: It is the reason any code exists. Everything else traces back to one.
+  More: https://canonball.org/guide/primitives/agents.txt
+- Invariant. What must always be true.
+  Example: A refund is never issued twice for the same order.
+  Why it exists: It keeps a promise safe to make. After an incident, it is how the fix becomes permanent.
+  More: https://canonball.org/guide/primitives/agents.txt
+- Decision. A choice that could have gone another way, written down.
+  Example: A refund is approved automatically while the total refunded on the order stays under $100.
+  Why it exists: Otherwise an agent decides it for you, and may decide differently next time.
+  More: https://canonball.org/guide/primitives/agents.txt
+- Constraint. What is never allowed, whatever the goal.
+  Example: No payout above $10,000 without review.
+  Why it exists: Some lines are not the product team’s to move. A constraint has its own owner, with a veto.
+  More: https://canonball.org/guide/primitives/agents.txt
+- Assumption. A fact about the outside world the system relies on.
+  Example: The payment gateway pays at most once per request key.
+  Why it exists: Evidence holds only while the assumption does, so each one is watched in production.
+  More: https://canonball.org/guide/primitives/agents.txt
+- Example. One worked case of a clause: given, when, then.
+  Example: Given order 4471 and a refund request with request key K, when the same request, with request key K, is sent a second time and both are reviewed, then one payout is made for order 4471.
+  Why it exists: Plain sentences hide decisions. People approve examples, and each check is written from one.
+  More: https://canonball.org/guide/examples/agents.txt
+
+Machines answer:
+
+- Evidence. The result of a check that could have failed.
+  Why it exists: A pass means nothing unless the same check has been seen to fail.
+  More: https://canonball.org/guide/evidence/agents.txt
+- Verification Record. The status of every clause, computed from evidence.
+  Why it exists: Nobody gets to write "done". The weakest link is named, not averaged away.
+  More: https://canonball.org/guide/evidence/agents.txt
+- A CanonBall. One release: the clauses, the build and the Verification Record, fixed together.
+  Why it exists: It answers "what does this system promise, and how do you know?" without reading code.
+  More: https://canonball.org/guide/canonball/agents.txt
+
+A promise, an invariant, a decision, a constraint and an assumption are each a kind of clause: one file with an ID and its examples. The approved clauses together are the canon.
+
+## Start from the repository
+
+The starter repository is https://github.com/sheshavpd/CanonBall/tree/main. Create a repository from it, fill in the top of AGENTS.md, and point an agent at it. It holds the layout, the templates, the policy pages, an AGENTS.md whose appendix teaches the method, and tools/canonball, the orchestrator (check, run, fault, record, status, release, new).
+The worked example is the branch refunds-example: https://github.com/sheshavpd/CanonBall/tree/refunds-example. It is the starter after a refunds service was built with it, with one commit per station: CanonBall 12, then Collect, Shape, Build, Verify, Review and Release of milestone M2 (CanonBall 13), then the incident INC-007 and its repair (CanonBall 14). Each station chapter links to the diff its station produced.
+
+## The repository
+
+The repository is laid out by the work: every station writes to its own place. Every folder answers one question and has one kind of writer. The example is a refunds service.
+
+- AGENTS.md (read first). How to work here. Written by: people own it.
+  The first file an agent reads. The top part is about this repository: its commands, its owners, and who leads which decisions. The appendix is a short summary of CanonBall, the same in every repository that uses it.
+- spec/ (what is true today). The system as it stands. Written by: changed only by a release.
+  What is true of the system today: the clauses it keeps, the design that keeps them, and the words they use. Nothing proposed lives here.
+  - spec/canon/ (what we promise). Canon: what the system promises. Written by: people approve.
+    The clauses people have approved, one per file, in plain language, each with examples. It is the only part people must read in full.
+    - spec/canon/vocabulary.md. Vocabulary. Written by: people approve.
+      Each noun is defined once. Synonyms are not allowed, and a clause that uses an undefined word is blocked. Agents read this file before anything else, so the same words run from the promise to the code, the check and the incident report.
+    - spec/canon/tenets.md. Tenets. Written by: people write.
+      Which good thing wins when two conflict. A handful of lines, in priority order. An agent cites one when it recommends, so its recommendations lean the way the team would.
+    - spec/canon/REQ-012-refund-window.md. A promise. Written by: people approve.
+      What the system does for someone. Everything below it in the repository exists because of a promise like this one.
+    - spec/canon/INV-004-no-double-payout.md. An invariant. Written by: people approve.
+      What must always be true. People approve its worked examples, and the examples fix the meaning: here, that "twice" means the same request paid two times. A second, separate refund on an order is a new refund.
+    - spec/canon/DEC-031-auto-approve-under-100.md. A decision. Written by: people approve.
+      A choice that could have gone another way, written down. This one is proposed by the change in roadmap/. It becomes canon only when that change is released.
+    - spec/canon/ENV-003-no-payout-above-10k.md. A constraint. Written by: its own owner, with a veto.
+      What is never allowed, whatever the goal. It protects people, money and actions that cannot be undone. If the answer to "can the product team change this?" is "not our call", it is a constraint. Safety engineers call these safety constraints.
+    - spec/canon/ASM-011-gateway-request-keys.md. An assumption. Written by: people approve.
+      A fact about the outside world the system relies on. No test can prove it about someone else's system, so it is watched in production by a monitor.
+    - spec/canon/policy/. What counts as evidence. Written by: people only.
+      The rules that turn evidence into a status, say when a person must accept a release, and set how far each kind of decision is handed to agents. No agent may write here.
+  - spec/blueprint/ (how we keep it). Blueprint: how the clauses are kept. Written by: agents write.
+    The agents' design: the architecture, an assurance case for each clause that needs an argument, and the declaration of each verification environment. Agents may revise it freely as long as it never contradicts canon.
+    - spec/blueprint/cases/INV-004.md. The case for one clause. Written by: planner agent.
+      It splits the clause into parts, names the environment that checks each part, and argues why the parts are enough. Cases about money and safety are reviewed by a person. This is the argument of the case for INV-004.
+    - spec/blueprint/environments/VE-002.md. An environment, declared. Written by: verifier agent.
+      Every verification environment states what it is, what it controls, and what it cannot show. Evidence counts only inside those limits.
+- roadmap/ (what is proposed). Everything proposed. Written by: people rank it.
+  One folder per change. spec/ is the system as it stands. This is what might become it.
+  - roadmap/notes/. Requests as they arrive. Written by: anyone asks, the elicitor files.
+    Every request is a card: a complaint from support, a number from finance, a worry from risk. Related cards are gathered into one milestone.
+  - roadmap/index.md. The order of work. Written by: people rank.
+    The list of changes in priority order. Ranking it is the recurring human act. Agents build what has been agreed while people shape what comes next.
+  - roadmap/M2-faster-small-refunds/. One milestone. Written by: agents draft, people agree.
+    A folder for one milestone: its page, the files it proposes, and the agents' tasks. An incident repair has the same shape, only smaller.
+    - roadmap/M2-faster-small-refunds/change.md. What changes in the system?. Written by: people agree.
+      The change proposal: one page, drafted by an agent from conversations and agreed to by a person. People approve its examples. They do not review its code.
+    - roadmap/M2-faster-small-refunds/diff/. The proposed files. Written by: agents draft.
+      Whole files in final form: the clauses this change adds and the design for them. The plan for evidence, in change.md, is fixed before any code exists. Checks run against the release candidate: spec/ with these files applied.
+    - roadmap/M2-faster-small-refunds/tasks/. The agents' breakdown. Written by: agents.
+      The planner slices the change into named tasks. Each task says where it works, what it traces to, and when it is done: a check that passes. Nobody marks a task done.
+  - roadmap/unplanned/. Unplanned work. Written by: agents draft.
+    The express belt: incident repairs, bug fixes, refactorings and upkeep. Work that restores a promise or changes none. Each gets a small page and a few proposed files, skips the batching, and passes the same stations as a milestone.
+- src/ (what runs). What runs. Written by: builder agent.
+  The code. CanonBall does not dictate its layout. It does recommend one habit: keep decision logic apart from the code that touches the outside world. Logic with no side effects can be checked for every input. The thin layer that calls a database or a payment gateway is where people still read code.
+- verify/ (how we know). Verification engineering. Written by: verifier agent.
+  This is where most of the engineering now goes. Writing the change is the small part. The work is building a place where a clause can be shown to hold, and shown to fail when it should. The builder can run everything here and change none of it.
+  - verify/envs/ve002.py. The environment. Written by: verifier agent.
+    VE-002 itself. Constructing a World starts it and close() destroys it: the service, its real local store, and a fake payment gateway. It drives the system and observes it. It never judges.
+  - verify/checks/. One check per example. Written by: verifier agent.
+    Each check names the example it encodes. An example with no check is visible, and so is a check with no example. This one is in test_inv004_no_double_payout.py.
+  - verify/checks/red/. Proof that a check can fail. Written by: verifier agent.
+    A check that has never failed proves nothing. Each one is run against an injected fault by tools/canonball fault, and the failing run is kept here. Only then does its pass count.
+  - verify/faults/. Injected faults. Written by: verifier agent.
+    Fault injection: small patches that break one thing on purpose, applied to a scratch copy. An environment must also catch faults it was not tuned on, or its evidence is discounted.
+  - verify/monitors/. Monitors. Written by: verifier agent.
+    They watch, in production, the assumptions the evidence rested on. When one fires, an incident opens. This is how operating the system feeds back into building it.
+- observe/ (how agents see inside). Observability. Written by: builder and verifier agents.
+  What the system emits, and the commands agents use to read it. Agents build, verify and operate by looking inside the system. Without this they guess.
+- incidents/ (what went wrong). Incidents. Written by: kept permanently.
+  Each incident adds an example, and usually proposes a new invariant, before the fix is released. The set of guarded failures only grows, so the same failure does not happen twice.
+- Verification Record (whether it is true). The Verification Record. Written by: computed by the orchestrator.
+  The status of every clause, computed from evidence under rules that people own. No person and no agent writes "done". The weakest link is named, not averaged away.
+- CanonBall 13 (what was released). A CanonBall. Written by: fixed at every release.
+  What each release ships: the canon as it now stands, the build that keeps it, and the Verification Record that shows it. It answers "what does this system promise, and how do you know?" without anyone reading code.
+
+## Milestone M2 through the repository, one station at a time
+
+1. Collect. Three requests gather into one milestone. An agent drafts a one-page proposal, and the product manager confirms it and ranks it. Touches: roadmap/notes/, roadmap/index.md, roadmap/M2-faster-small-refunds/, roadmap/M2-faster-small-refunds/change.md.
+2. Shape. People and agents settle the decision and its examples, the design and the evidence plan. They are written as whole files beside the proposal. Nothing in spec/ changes yet. Touches: AGENTS.md, spec/canon/tenets.md, spec/canon/vocabulary.md, roadmap/M2-faster-small-refunds/, roadmap/M2-faster-small-refunds/diff/, roadmap/M2-faster-small-refunds/tasks/.
+3. Build. The builder writes the code, and uses the observability tools to see what it does. Touches: src/, observe/.
+4. Verify. Verification engineering. A different agent extends the environment, writes the checks, and shows each one failing first. Touches: verify/, verify/envs/ve002.py, verify/checks/, verify/checks/red/, verify/faults/.
+5. Review. An agent reviews the milestone against its clauses and the Verification Record. This one is on the path that moves money, so its owner reviews it too. Touches: Verification Record, spec/canon/policy/, spec/blueprint/cases/INV-004.md.
+6. Release. The orchestrator, a program, copies the proposed files into spec/. The spec now describes the new system, and CanonBall 13 is recorded, ready for its build to be deployed. Touches: spec/, spec/canon/, spec/canon/DEC-031-auto-approve-under-100.md, spec/blueprint/, CanonBall 13.
+7. Operate. A customer is wrongly refused. The on-call agent reads the decision log, and the fix comes back on the express belt. Touches: observe/, verify/monitors/, spec/canon/ASM-011-gateway-request-keys.md, incidents/, roadmap/unplanned/.
+
+## Verification engineering
+
+When agents write the code, establishing that a change is correct takes the larger share of the effort. The environments in which promises are checked are designed with a person who understands them, because evidence is only as credible as the method that produced it. A verification environment has seven parts: boundary, stimulus, world, probes, oracle, coverage, control. It also states what it cannot show. A check must be seen to fail, against an injected fault, before its pass counts.
+More: https://canonball.org/guide/verification-engineering/agents.txt
+
+## Observability
+
+An agent begins each task with no memory of the system, so it depends on what the system can tell it. Three rules: every decision the system makes is logged with the clause it applied and the inputs it used; one trace follows each request through every adapter; agents have commands to read logs, traces, metrics and state, and to replay a request. One investment serves three stations: the builder sees what its code does, the verifier explains every failure, and the on-call agent diagnoses incidents. People see the same view.
+Example. A customer was refused a refund on day 29. The decision log for the order reads: REQ-012 refund window, result refused, reason day 31 of 30, counted from dispatch on 2 March, delivered 4 March. The window was counted from dispatch, and the vocabulary says delivery.
+More: https://canonball.org/guide/observability/agents.txt
+
+## A recommended architecture
+
+Keep decisions apart from side effects. Decision logic, the functional core, takes explicit inputs and returns what should happen, with no database, network or clock. Side effects go out through adapters, the imperative shell. This is a recommendation, not a requirement. Ports and adapters is the same idea.
+More: https://canonball.org/guide/architecture/agents.txt
+
+## Handing over decisions
+
+Each kind of decision has its own level of automation, from 0 to 5:
+
+0. Agent analyzes, a person decides
+1. Agent recommends, a person decides
+2. Agent decides, a person approves first
+3. Agent acts, a person reviews after
+4. Agent acts, people audit a sample
+5. Agent acts, people watch the metrics
+
+A team starts at level 1 everywhere. Settings move on track record, never on a model release. An agent reviews every change at every setting; a person reviews as well whenever the policy lists the change as critical. Illustrative settings (day one / billing service later / robot fleet later):
+
+- What the system promises: 1 / 1 / 1 (stays with people)
+- What is never allowed: 1 / 1 / 1 (stays with people)
+- Choices a customer would notice: 1 / 2 / 1
+- Architecture: 1 / 2 / 1
+- Detailed design: 1 / 4 / 3
+- Verification design: 1 / 3 / 2
+- Decision logic: 1 / 5 / 4
+- Code that touches the outside world: 1 / 2 / 2
+More: https://canonball.org/guide/delegation/agents.txt
+
+## All pages
+
+- Chapter 1. When writing code is cheap: https://canonball.org/guide/why/agents.txt
+  An agent can write a change in minutes, but finding out what the change does takes as long as it ever did.
+- Chapter 2. How work moves: https://canonball.org/guide/workflow/agents.txt
+  Requests gather into a milestone, the milestone passes seven stations where people and agents work together, and it leaves as a CanonBall.
+- Chapter 3. Collect: requests gather into a milestone: https://canonball.org/guide/collect/agents.txt
+  Requests are gathered into a milestone before anyone builds, so that their promises can be decided together.
+- Chapter 4. Shape: settle what the milestone promises: https://canonball.org/guide/shape/agents.txt
+  People and agents settle the milestone's promises, decisions and invariants, how it will be built and how it will be proven, before any code exists.
+- Chapter 5. Build: write the code: https://canonball.org/guide/build/agents.txt
+  The builder agent writes the code from the agreed milestone, and uses the observability tools to see what the code does.
+- Chapter 6. Verify: prove it in an engineered environment: https://canonball.org/guide/verify/agents.txt
+  A different agent builds the place where the milestone is tested, with a person who understands how each clause is checked.
+- Chapter 7. Review: an agent every time, a person when critical: https://canonball.org/guide/review/agents.txt
+  An agent reviews every milestone, and a person reviews as well only when the change is critical or its blast radius is large.
+- Chapter 8. Release: a CanonBall leaves the belt: https://canonball.org/guide/release/agents.txt
+  When the release rule holds, the orchestrator makes the milestone's proposed files the specification and publishes a CanonBall.
+- Chapter 9. Operate: run it, and feed what breaks back in: https://canonball.org/guide/operate/agents.txt
+  The running system is watched and diagnosed by an agent with tools to see inside it, and what breaks returns to the belt as work.
+- Chapter 10. The primitives: https://canonball.org/guide/primitives/agents.txt
+  People steer agents with five kinds of written statement, called clauses.
+- Chapter 11. Vocabulary: https://canonball.org/guide/vocabulary/agents.txt
+  vocabulary.md defines each noun once, and people and agents both work from it.
+- Chapter 12. Tenets: https://canonball.org/guide/tenets/agents.txt
+  A tenet says which good thing wins when two conflict, so an agent facing an undecided choice recommends the same way every time.
+- Chapter 13. Examples, and writing clauses agents read correctly: https://canonball.org/guide/examples/agents.txt
+  A plain sentence hides decisions, and a worked example exposes them.
+- Chapter 14. AGENTS.md: how an agent learns the method: https://canonball.org/guide/agents-md/agents.txt
+  AGENTS.md is the first file an agent reads: a top part about this repository, and an appendix of about 3 KB that states the method.
+- Chapter 15. Four layers: canon, blueprint, build, Verification Record: https://canonball.org/guide/layers/agents.txt
+  A CanonBall system has four layers, with authority running down through them and evidence running back up.
+- Chapter 16. The repository layout: https://canonball.org/guide/repository/agents.txt
+  CanonBall organizes a repository so that each folder answers one question and is written at a known station.
+- Chapter 17. What a CanonBall is: https://canonball.org/guide/canonball/agents.txt
+  A CanonBall is the canon bound, at one moment, to the build that keeps it and the Verification Record that shows it.
+- Chapter 18. People and agents: https://canonball.org/guide/people-and-agents/agents.txt
+  Seven agent roles do the work under separate permissions, and people keep the decisions a machine cannot check.
+- Chapter 19. Handing over decisions: https://canonball.org/guide/delegation/agents.txt
+  Each kind of decision has a level of automation that moves on track record, so that one method can serve cautious teams and fast ones.
+- Chapter 20. Verification engineering: https://canonball.org/guide/verification-engineering/agents.txt
+  When agents write the code, most of the engineering effort is expected to go into verification: deciding what counts as evidence for each clause, and building the environments that produce it.
+- Chapter 21. Verification environments: https://canonball.org/guide/environments/agents.txt
+  A verification environment is designed by a person and an agent together, with seven parts, a stated limit, and a measure of whether it can be trusted.
+- Chapter 22. Evidence and the Verification Record: https://canonball.org/guide/evidence/agents.txt
+  Each run of each check leaves one line of evidence, and the orchestrator computes the status of every clause from those lines.
+- Chapter 23. Observability: letting agents see: https://canonball.org/guide/observability/agents.txt
+  An agent can build, verify and operate only what it can see inside, so the system is built to show every decision it makes.
+- Chapter 24. An architecture agents can work in: https://canonball.org/guide/architecture/agents.txt
+  CanonBall recommends one structural habit because it decides how expensive evidence is: keep the logic that decides apart from the code that acts.
+- Chapter 25. Larger systems: units and roles: https://canonball.org/guide/composition/agents.txt
+  Large systems are built from units of the same shape, and a parent trusts its children through contracts called roles.
+- Chapter 26. Start in a week: https://canonball.org/guide/start/agents.txt
+  The minimum fits on one existing system in about a week, and everything else is adopted when a real need appears.
+- Chapter 27. What is still a bet: https://canonball.org/guide/open-bets/agents.txt
+  Parts of this method rest on decades-old technology, and parts rest on things nobody has yet measured.
+- Chapter 28. Where the words come from: https://canonball.org/guide/sources/agents.txt
+  Most of the ideas and vocabulary in CanonBall come from established work, and each term is mapped here to its source.
+- Glossary: https://canonball.org/glossary/agents.txt

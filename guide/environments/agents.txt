@@ -1,0 +1,132 @@
+# Verification environments
+
+> A verification environment is designed by a person and an agent together, with seven parts, a stated limit, and a measure of whether it can be trusted.
+
+- Site: CanonBall. The lifecycle agents can run and people can trust.
+- HTML page: https://canonball.org/guide/environments/
+- This file: https://canonball.org/guide/environments/agents.txt
+
+---
+Guide part: Verification and observability. Chapter 21 of 28.
+
+Key points:
+- Every environment has the same seven parts, whatever it tests.
+- It states what it cannot show, and evidence counts only inside that.
+- It must catch faults it was not tuned on, or its evidence is discounted.
+- The verification lead and the verifier agent design it, and it is kept like product code: reviewed, versioned, and improved after every escaped defect.
+
+## What an environment is
+
+A **verification environment** is a place built to produce evidence about a clause. It extends the familiar test harness with a declared boundary, a statement of what it cannot show, and a measurement of its own reliability.
+
+## Seven parts
+
+Every environment, at every [verification level](../verification-engineering/agents.txt), has the same seven parts. Several of them come from hardware testbenches: the stimulus, the probes and the oracle are the driver, the monitor and the scoreboard of a testbench, and coverage keeps its name.
+
+[Figure: The seven parts of a verification environment.]
+Seven parts, with the refunds example for each. Boundary: the system under test, here the refunds service at this commit. Stimulus: how it is driven, here calls to the service's API. World: what surrounds it, real or faked, here a real local store and a fake payment gateway. Probes: what can be observed, here what the store holds and what the gateway paid. Oracle: what decides pass or fail, here a mechanical check on what the probes saw. Coverage: what was exercised, here the examples run and the injected faults caught. Control: what can be fixed in place, here the seed, the clock, and start and teardown.
+
+The **probes** are the system's [observability](../observability/agents.txt) tools pointed at the test world. A check sees the system through them, and when it fails, the verifier agent uses them to explain why.
+
+## It states what it cannot show
+
+Each environment is declared in a short file. This one is `spec/blueprint/environments/VE-002.md`, the environment of the refunds service, at CanonBall 13.
+
+```markdown
+id: VE-002
+name: payments-sandbox
+boundary: the refunds service, at this commit
+world: real local store; a fake payment gateway
+control: seeded; one command up, one command down
+
+## Starting states it can set up
+- an order, with its day of dispatch and day of delivery
+- a refund waiting for review, or approved and waiting for payout
+- an order that has already been partly refunded
+
+## Failures it can simulate
+- a refusal
+- a duplicate request
+- a lost reply (the gateway pays and the reply never arrives)
+
+## What it cannot show
+Real gateway timing. Whether the real gateway honors
+request keys. Production request shapes.
+```
+
+The last section is written first, before any code, because it lists the claims this environment must decline to support. Evidence counts only inside what the environment can show: a check that passes here says nothing about real gateway timing, and the Verification Record does not count it toward any claim about that. Whether the real gateway honors request keys therefore stays an assumption in the canon, ASM-011, watched in production.
+
+## Four verbs
+
+An environment exposes a small, fixed set of actions, through which checks, held-out scenarios and exploring agents all drive it.
+
+| Verb | Does |
+|---|---|
+| `rig` | Sets up the starting state |
+| `act` | Drives the system through a real channel |
+| `perturb` | Makes something in the world misbehave |
+| `observe` | Reads what actually happened, from an authoritative place |
+
+The fake gateway in VE-002 can simulate three failures: a refusal, a duplicate request, and a lost reply, in which the gateway pays and the reply never arrives. Milestone M2 added a starting state, an order that has already been partly refunded, and its evidence plan required the automatic path to be run against the existing lost-reply failure. This is that check, in `verify/checks/test_inv004_no_double_payout.py`.
+
+```python
+    @example_of("INV-004#satisfies/2", "A retry after a lost reply finds the original payout")
+    def test_retry_after_lost_reply_on_automatic_path_pays_once(self):
+        """The same example on the automatic path of DEC-031: no review, the payout reply is lost."""
+        world = self.world
+        order = world.rig.order(total_cents=15000)
+        world.perturb.gateway.lose_reply()
+        refund = world.act.request_refund(order, 4000, key="lost-reply-auto-1")
+        self.assertEqual(refund.state, "paid")
+        paid = world.observe.gateway.payouts(order=order)
+        assert len(paid) == 1
+```
+
+The environment drives and observes, and only the check decides pass or fail, because a helper that returns "passed" has become an oracle that nobody reviewed. The `observe` verb reads an authoritative place, such as the database or the fake's log of what it executed, and never the test driver's own belief about what it did.
+
+## Three kinds of fidelity
+
+An environment can be unrealistic in its **world** (how real are the surroundings?), in its **actors** (do the simulated users behave like real ones?) and in its **oracle** (does "passed" actually mean correct?). The three fail independently, and the oracle is usually the weakest, so oracles are preferred in a fixed order: a mechanical check first, then comparison against a reference model, then a model used as a judge with its noise measured, and human review last.
+
+## Rules that keep an environment trustworthy
+
+| Rule | What it means |
+|---|---|
+| **Evidence counts only within the validated range** | A simulator validated up to 2 m/s gives no evidence about a scenario at 3 m/s, even if the scenario passes. |
+| **It must catch faults it was not tuned on** | Injected faults it has never seen are kept where the verifier cannot read them. If the share it catches falls, its evidence is discounted. |
+| **Fakes pass the real thing's tests** | A fake runs the real dependency's contract tests where they exist, so a fake that drifts fails its own test. VE-002's fake gateway has a check of its own, under ASM-011, that it pays once per request key. |
+| **Stricter is free, weaker is reviewed** | Anyone may add a scenario or tighten a check. A person reviews a removed scenario, a looser threshold or a different oracle, because one quiet edit could weaken all the evidence the environment produced. |
+
+## Races and timing
+
+Some clauses concern what happens when two things overlap. A **window** is the interval between two effects in which an interruption changes the outcome, such as the gap between the gateway paying out and its reply arriving. An environment says, for each window, whether it can hold it open, whether it is atomic here, or whether it is left to real timing. A check about a race that never opened the window is recorded as never reached and does not count.
+
+## Designing one
+
+The verification lead and the verifier agent design an environment before it is built, and which of them leads is [the team's choice](../delegation/agents.txt). The design of VE-002 settled the following.
+
+- **Which failures the system must survive under test:** the three that the fake gateway simulates. A failure left off that list is never tried.
+- **What is faked, and how faithfully:** the payment gateway is a fake that behaves as ASM-011 says, with a check of its own, and the store is real and local, SQLite in memory.
+- **What the environment cannot show:** the last section of the declaration.
+
+Once built, the environment is kept like product code. The verification lead reads the declaration, and a person reviews any change that weakens it. The declaration lives in `spec/blueprint/environments/` and the code in `verify/envs/`, and a change to either makes the evidence they produced [stale](../evidence/agents.txt).
+
+The environment is also improved after every **escaped defect**, a defect that reached production past every check. The reason it was missed becomes a new starting state, a new `perturb` action, or a new line in the declaration's last section. After incident INC-007, for example, VE-002 gained an order whose dispatch and delivery dates differ, as [Operate](../operate/agents.txt) describes.
+
+## What is hard
+
+The realism of a simulator is the hardest part to get right. The method makes weak fidelity visible without making good fidelity cheap, and on physical systems most of the effort can be expected to go into what cannot be simulated at all.
+
+---
+
+## References
+
+- Previous chapter: Verification engineering: https://canonball.org/guide/verification-engineering/agents.txt
+- Next chapter: Evidence and the Verification Record: https://canonball.org/guide/evidence/agents.txt
+- Related: Verification engineering: https://canonball.org/guide/verification-engineering/agents.txt
+- Related: Evidence and the Verification Record: https://canonball.org/guide/evidence/agents.txt
+- Related: Observability: letting agents see: https://canonball.org/guide/observability/agents.txt
+- Related: Verify: prove it in an engineered environment: https://canonball.org/guide/verify/agents.txt
+- Related: An architecture agents can work in: https://canonball.org/guide/architecture/agents.txt
+- Glossary: https://canonball.org/glossary/agents.txt
+- Site overview and index of every chapter: https://canonball.org/agents.txt

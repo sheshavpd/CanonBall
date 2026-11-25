@@ -1,0 +1,102 @@
+# Examples, and writing clauses agents read correctly
+
+> A plain sentence hides decisions, and a worked example exposes them.
+
+- Site: CanonBall. The lifecycle agents can run and people can trust.
+- HTML page: https://canonball.org/guide/examples/
+- This file: https://canonball.org/guide/examples/agents.txt
+
+---
+Guide part: What people write. Chapter 13 of 28.
+
+Key points:
+- An example is one concrete case of a clause, written as given, when, then.
+- People approve examples, never formal statements or code.
+- Every example becomes one check, every check names its example, and every check is seen to fail once.
+
+## What a sentence leaves open
+
+"A refund is never issued twice for the same order" reads as a complete rule, yet it leaves several things open. Is a second, partial refund on the same order "twice", or only a repeat of the same refund? What about two requests that arrive together, before either has been paid? What about a payout that went through while its reply was lost, so the client tries again?
+
+Each answer is a decision, and if the sentence is all you approve, an agent makes those decisions for you. The refunds team answered them as follows: a second, separate refund on the same order is a new refund and is allowed. Only a repeat of the same request counts as twice, whether it arrives at the same moment or as a retry after a lost reply.
+
+## What an example is
+
+An **example** is one concrete case of a clause, written in a fixed shape: *given* a starting state, *when* something happens, *then* an outcome.
+
+```markdown
+### satisfies/1: The same request sent twice pays once
+Given order 4471 and a refund request with request key K
+When the same request, with request key K, is sent a second time and both are reviewed
+Then one payout is made for order 4471
+```
+
+The practice is known as specification by example, and behavior-driven development calls each case a *scenario*. Every clause has examples of two kinds: a **satisfies** example shows a situation in which the clause holds, and a **violates** example shows one the clause forbids. The invariant about refunds, INV-004, has three, and the case of order 4471 is the first of them, as its file writes it.
+
+```text
+### satisfies/1: The same request sent twice pays once
+### satisfies/2: A retry after a lost reply finds the original payout
+### violates/1: Two concurrent copies of one request both pay out
+```
+
+The violating example tells the reader more about what "never twice" means than the sentence does.
+
+## People approve examples
+
+In CanonBall a person approves examples, never a formal statement and never a bare sentence. The sentence is accepted only through the cases that pin it down.
+
+This directs human attention to the step that most needs it. The step from prose to a precise property is the one step no tool can check, and if the property is wrong, every check built on it verifies the wrong thing perfectly. Examples let a person confirm the meaning before any of that machinery is built.
+
+The approval happens at the [Shape station](../shape/agents.txt), where an agent drafts the examples for a milestone and people settle them. The station ends at the **agreement gate**, where a person agrees to what the system will promise.
+
+## From an example to a check
+
+[Figure: An example becomes a check, and a check produces evidence.]
+Three boxes in a row. An example (given, when, then), approved by a person. A check that encodes it, written by the verifier agent. A line of evidence, produced by running the check: which check, which example, which commit, which outcome.
+
+Each example becomes one check, built at the [Verify station](../verify/agents.txt), and the check names the example it encodes. That link is enforced in both directions: an example with no check shows up as a gap, and a check with no example has no reason to exist.
+
+Every check must also be seen to fail once, against a build broken on purpose, before its pass counts. [Evidence](../evidence/agents.txt) gives the reason.
+
+## Conventions that help agents read
+
+A short clause can be read correctly only when the writer and the reader share conventions for what its words and sentence shapes mean. An agent applies these conventions while drafting and points out where a clause departs from them.
+
+### Sentence shapes for promises
+
+Most promises fit one of the shapes of EARS, the Easy Approach to Requirements Syntax, a requirements notation.
+
+| Shape | Pattern |
+|---|---|
+| Always | The system shall ... |
+| On an event | When *trigger*, the system shall ... |
+| In a state | While *state*, the system shall ... |
+| Unwanted case | If *condition*, then the system shall ... |
+| Optional feature | Where *feature* is present, the system shall ... |
+
+### Words with one meaning
+
+**Must**, **must not**, **should** and **may** each mean one thing, as they do in internet standards. *Must* is binding, *should* marks a default that can be overridden for a recorded reason, and *may* marks an option.
+
+### Plain prose, said back
+
+A clause states one idea per sentence, in the active voice, and gives quantities with units: "within 200 ms", never "quickly". Words such as "appropriate" and "as needed" each hide a decision.
+
+After drafting a clause, the agent restates it in its own words. If the restatement surprises the author, the clause is reworked before anyone approves it.
+
+## What an example cannot do
+
+Examples pin down meaning at the points you thought to write and say nothing about the points you did not, so a clause with five examples can still be wrong in a sixth situation. The agent proposes extra examples, and every incident adds the one that was missing. Examples make a missing case cheap to add, and they cannot tell you that it is missing.
+
+---
+
+## References
+
+- Previous chapter: Tenets: https://canonball.org/guide/tenets/agents.txt
+- Next chapter: AGENTS.md: how an agent learns the method: https://canonball.org/guide/agents-md/agents.txt
+- Related: The primitives: https://canonball.org/guide/primitives/agents.txt
+- Related: Vocabulary: https://canonball.org/guide/vocabulary/agents.txt
+- Related: Shape: settle what the milestone promises: https://canonball.org/guide/shape/agents.txt
+- Related: Evidence and the Verification Record: https://canonball.org/guide/evidence/agents.txt
+- Glossary: https://canonball.org/glossary/agents.txt
+- Site overview and index of every chapter: https://canonball.org/agents.txt

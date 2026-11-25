@@ -1,0 +1,145 @@
+# An architecture agents can work in
+
+> CanonBall recommends one structural habit because it decides how expensive evidence is: keep the logic that decides apart from the code that acts.
+
+- Site: CanonBall. The lifecycle agents can run and people can trust.
+- HTML page: https://canonball.org/guide/architecture/
+- This file: https://canonball.org/guide/architecture/agents.txt
+
+---
+Guide part: Building with it. Chapter 24 of 28.
+
+Key points:
+- The split is a recommendation, and the rest of the method works on any codebase.
+- Logic with no side effects can be tested exhaustively, replayed exactly, and rewritten safely.
+- The same split makes observability cheap: each decision can be logged with the clause it applied and the inputs it used.
+- People stop reading the logic and keep reading the thin layer that touches the outside world.
+
+## Why structure matters more with agents
+
+A person can hold a tangled system in their head, because they were there when it became tangled. An agent has only the files in front of it, so the quality of its work depends on how much of the system it can reason about from those files.
+
+Good architecture has always made software easier to change. For a team that works with agents, it also determines how cheaply anyone can find out whether a change is right and what the running system did.
+
+## A recommendation
+
+The rest of the method works on any codebase. The structure recommended here is the one that makes evidence and observability cheapest, and a team should adopt it where it fits and leave it where it does not.
+
+## Separate the code that decides from the code that acts
+
+[Figure: Inputs arrive as data, the logic decides, and adapters carry out the effects.]
+Three boxes in a row. Inputs come in as data: the request, the current time, a sensor reading. Decision logic, the functional core: no database, no network, no clock; the same inputs always give the same answer; checked for every input. Adapters, the imperative shell: paying out, sending an email, writing a row; people still review this code.
+
+Most code decides and acts at once. A typical function reads the database, checks a rule, calls the payment gateway and writes a row, so testing the rule requires a database and a gateway. The remedy is to move the rule into a function of its own.
+
+From the worked example, [`src/refunds/decide.py`](https://github.com/sheshavpd/CanonBall/blob/refunds-example/src/refunds/decide.py), after CanonBall 14:
+
+```python
+# Decides. No store, no network, no clock: every input is an argument.
+def decide_refund(order, amount_cents, refunded_cents, today) -> Decision:
+    counted_from, start = window_start(order)          # delivery, never dispatch
+    day = (today - start).days
+    inputs = {...}                                    # everything the decision used
+    reason = f"day {day} of {WINDOW_DAYS}"
+    if day > WINDOW_DAYS:
+        return Decision("refused", reason, "REQ-012", inputs)
+    total = refunded_cents + amount_cents
+    if total < AUTO_APPROVE_BELOW_CENTS:
+        return Decision("approved", f"total refunded {dollars(total)}, under $100", "DEC-031", inputs)
+    return Decision("in_review", f"total refunded {dollars(total)}, not under $100", "DEC-031", inputs)
+```
+
+And from [`src/refunds/service.py`](https://github.com/sheshavpd/CanonBall/blob/refunds-example/src/refunds/service.py):
+
+```python
+# Acts. Gathers the inputs, asks for a decision, records it, carries it out.
+def request_refund(self, order_id, amount_cents, key):
+    existing = self.store.refund_by_key(key)
+    if existing is not None:
+        return existing                                 # the same request again: INV-004
+    order = self.store.order(order_id)
+    refunded = self.store.total_refunded(order_id)
+    decision = decide_refund(order, amount_cents, refunded, self.today())
+    self.decisions.write(order_id, decision, self.new_trace())
+    refund = self.store.add_refund(order_id, key, amount_cents, decision.result)
+    if refund.state == "approved":
+        return self.pay(refund.id)
+    return refund
+```
+
+The first function contains every rule about who gets a refund and touches nothing, and the second contains no rules and touches everything. Milestone M2 of the refunds service relies on this split: at [Shape](../shape/agents.txt) the architect decides that the rule for small refunds, DEC-031, goes into the first function and that the code that pays out is left alone.
+
+## Two terms
+
+**Decision logic** is code that, given explicit inputs, returns what should happen. It reads no clock, generates no random numbers, and performs no input or output. The time, a sensor reading, the output of a model: each is passed in as data.
+
+An **adapter** is the one place where a particular side effect happens. Until something passes through an adapter, nothing has happened.
+
+## Established names
+
+The pattern is well established under several names, and a team should use whichever name it already knows.
+
+| Name | From |
+|---|---|
+| Functional core, imperative shell | Gary Bernhardt |
+| Ports and adapters, or hexagonal architecture | Alistair Cockburn |
+| Pure functions and effects at the edges | Functional programming generally |
+| Deciders | Event-sourced systems |
+
+## Why it makes evidence cheap
+
+| Property of decision logic | What you gain |
+|---|---|
+| No side effects | Thousands of generated inputs can be tested in seconds. |
+| Explicit state and inputs | A model checker can explore every reachable state. |
+| Deterministic | Any run can be replayed exactly from its recorded inputs. |
+| Small and separate | The list of code that can break a clause is short and easy to name. |
+
+The last row has the largest effect. Every [assurance case](../verification-engineering/agents.txt) lists the code its clause depends on. If the rules about refunds live in one function, that list has one entry; if they are spread across handlers, queries and jobs, the list is long and changes often, and the evidence goes stale constantly.
+
+Adapters help in a different way. Each one is a narrow point through which an effect must pass, which makes it the natural place to enforce a [constraint](../primitives/agents.txt), add an extra check, or require a person's approval before something irreversible happens.
+
+## Why it makes observability cheap
+
+Agents build, verify and operate by looking inside the system, and the same split keeps that affordable. Decision logic receives everything it uses as an argument, so nothing it relied on is hidden, and each decision can also name the clause it applied, as `decide_refund` above returns `"REQ-012"` or `"DEC-031"` with its inputs.
+
+The service already holds the inputs and the clause, so it writes one log line per decision with the clause, the inputs and the outcome, while the decision logic itself still performs no output. In incident INC-007 the on-call agent reads a line of this kind to see which clause refused a refund and which dates the decision was given, as [Operate](../operate/agents.txt) describes.
+
+In code that decides and acts at once, the inputs are spread across queries and calls, and every handler has to assemble that line by hand. [Observability](../observability/agents.txt) covers what a system emits and the tools agents use to read it.
+
+## What people still control
+
+Who leads the architecture is a team's choice: an architect may write it, or agents may write and revise it, as [handing over decisions](../delegation/agents.txt) describes. Wherever that is set, people keep the following levers on the design.
+
+| Lever | What it gives a person |
+|---|---|
+| **The interface** | What consumers depend on is a promise, and changing it needs approval. |
+| **The constraints** | They have their own owner. |
+| **How the product is divided** | Capabilities are split by whom they serve. This is decided early and sets how much work can run in parallel. |
+| **The edges** | A small, fixed menu of deployment choices. The policy lists adapter code as critical, so a person [reviews](../review/agents.txt) every change to it. |
+| **Anything they choose** | Any design choice can be promoted to a [decision](../primitives/agents.txt) in the canon. |
+
+## Where it does not fit
+
+- **Interface-heavy products.** Most of the value is in layout and interaction, which have no decision logic to extract.
+- **Prototypes.** The structure costs more than a throwaway is worth.
+- **Hot numeric code.** Passing state in and out explicitly can cost performance the product needs.
+
+In these cases the rest of the method still applies, but the evidence sits at a higher [verification level](../verification-engineering/agents.txt), where it is slower to produce and less complete.
+
+## Starting on an existing system
+
+An existing system need not be restructured all at once. Start with the code behind its two or three most important invariants: extract the decision into a function with no side effects, leave the surrounding handler as the adapter, and write the checks against the function. Repeat when the next clause needs it.
+
+---
+
+## References
+
+- Previous chapter: Observability: letting agents see: https://canonball.org/guide/observability/agents.txt
+- Next chapter: Larger systems: units and roles: https://canonball.org/guide/composition/agents.txt
+- Related: Build: write the code: https://canonball.org/guide/build/agents.txt
+- Related: Observability: letting agents see: https://canonball.org/guide/observability/agents.txt
+- Related: Verification environments: https://canonball.org/guide/environments/agents.txt
+- Related: Handing over decisions: https://canonball.org/guide/delegation/agents.txt
+- Glossary: https://canonball.org/glossary/agents.txt
+- Site overview and index of every chapter: https://canonball.org/agents.txt

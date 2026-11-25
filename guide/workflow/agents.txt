@@ -1,0 +1,127 @@
+# How work moves
+
+> Requests gather into a milestone, the milestone passes seven stations where people and agents work together, and it leaves as a CanonBall.
+
+- Site: CanonBall. The lifecycle agents can run and people can trust.
+- HTML page: https://canonball.org/guide/workflow/
+- This file: https://canonball.org/guide/workflow/agents.txt
+
+---
+Guide part: Start here. Chapter 2 of 28.
+
+Key points:
+- Work moves in milestones, and each milestone passes seven stations: Collect, Shape, Build, Verify, Review, Release, Operate.
+- At most stations a person and an agent work together: people decide what is promised, and agents build and prove it.
+- Repairs and upkeep take an express belt through the same stations.
+- The process provides milestones, engineered verification environments and observability so that agents can do most of the work well.
+
+## The picture
+
+[Animated figure: the conveyor] Requests arrive and gather into a milestone. The milestone passes seven stations on a belt and leaves as a CanonBall. Each station names who works there.
+
+1. Collect. Requests gather into a milestone, and a one-page proposal says what it will change. Who: agents: Elicitor; people: Product manager.
+2. Shape. People and agents settle the milestone’s promises, decisions and invariants, how it will be built and how it will be proven, and record it all in the milestone. Who: agents: Elicitor, Planner, Verifier; people: Product manager, Architect, Verification lead, Constraint owner. Agreement gate: people approve the examples before anything is built.
+3. Build. The builder writes the code in named tasks and watches what it does through the observability tools. Who: agents: Builder; in some cases: Architect (if the team keeps detailed design).
+4. Verify. A different agent builds the verification environment and the checks, and shows each check failing before its pass counts. Who: agents: Verifier; people: Verification lead.
+5. Review. An agent reviews every milestone. A person reviews as well only when the change is critical or its blast radius is large. Who: agents: Reviewer; in some cases: Owner of what is at risk (if critical). Release gate: a person accepts the remaining risk, only when the change is critical.
+6. Release. The orchestrator, a program, copies the proposed files into spec/, and records a CanonBall: the canon, the build and the Verification Record together. The build it names is then deployed. Who: a program: Orchestrator.
+7. Operate. The system runs. Monitors watch what was promised, and what breaks comes back as work. Who: agents: On-call agent; people: Operator.
+
+Below the main belt runs an express belt for repairs and upkeep that change no promise. An incident returns from Operate along a dashed line, enters the express belt as a single fix, and passes the same stations alone, without waiting for a milestone.
+An observability rail (logs, traces, metrics, state, replay) runs under the belts from Build to Operate. The Verify station is drawn as a built chamber, the verification environment, which work on both belts passes through.
+At Review, every milestone and every express item stops for an agent. Only a milestone marked critical also waits behind a barrier until a person has reviewed it.
+
+Forward pressure: people push new requests in.
+Back pressure: the running system demands upkeep. Incidents, bugs and reliability problems come back as work.
+
+Three practices are marked 1 to 3 on the figure. Together they make it possible for agents to do most of the work reliably:
+1. Work moves in milestones. Requests are gathered before anything is built, so their promises, decisions and invariants are settled once and an agent receives a complete, consistent specification. Repairs and upkeep that change no promise take the express belt through the same stations.
+2. Verification environments are engineered. Agents produce most of the evidence, so the environment that produces it is designed with a person and maintained like product code. People can rely on the evidence because they understand how it was obtained.
+3. Observability is built for agents. An agent begins each task with no memory of the system. Logs, traces, metrics and state give it the context it needs to build, verify and operate. With them it diagnoses from evidence rather than speculation.
+
+
+The figure reads from left to right. Requests arrive as cards, and related cards are gathered into a tray, which is a **milestone**. The milestone passes through seven **stations**. At the sixth it is released as a **CanonBall**, the name for one release of the system, and at the seventh it is in operation.
+
+## The stations
+
+| Station | What happens | Who |
+|---|---|---|
+| [Collect](../collect/agents.txt) | Requests gather into a milestone. A one-page proposal says what it will change. | Product manager, elicitor agent |
+| [Shape](../shape/agents.txt) | The promises, decisions and invariants are settled and written down, with the design and the evidence plan. | Product manager, architect, verification lead, constraint owner; elicitor, planner and verifier agents |
+| [Build](../build/agents.txt) | The code is written. | Builder agent |
+| [Verify](../verify/agents.txt) | The verification environment and the checks are built, and each check is seen to fail before its pass counts. | Verifier agent, verification lead |
+| [Review](../review/agents.txt) | An agent reviews every milestone. A person reviews as well only when the change is critical. | Reviewer agent. The owner of what is at risk, only when critical. |
+| [Release](../release/agents.txt) | The proposed files become the specification, and a CanonBall is published and deployed. | The orchestrator, a program |
+| [Operate](../operate/agents.txt) | The system runs. What breaks comes back as work. | On-call agent, operator |
+
+The people named in the table are roles rather than positions, and on a team of five, two or three people might hold all of them.
+
+## Two pressures
+
+Work enters the belt from two directions. **Forward pressure** is people asking for something new: a customer need, a number finance wants to move, an idea. **Back pressure** is the running system asking for upkeep: an incident, a bug, a reliability problem. A system that is not maintained gradually stops keeping its promises, and this work arrives on the system's schedule rather than the team's.
+
+Both kinds of work pass through the same stations. Planned work travels on the main belt as a milestone. Repairs and upkeep travel on the **express belt** beneath it, which does not wait for a batch but stops at every station.
+
+## What the process does for the agents
+
+The numbers 1 to 3 on the belt mark practices that the process provides so that agents can work well. Many teams already use them in some form. Each one supplies something an agent cannot supply for itself.
+
+1. **Work moves in milestones.** An agent builds whatever it is given, quickly and literally. Given one ticket at a time, it builds each ticket without knowing the decisions the next ticket will need. Gathering related requests into a milestone lets people settle the promises, decisions and invariants once, and gives the agent a complete and consistent specification to build against. [Collect](../collect/agents.txt) describes how a milestone is sized and when work may go on its own.
+2. **Verification environments are engineered.** Agents produce most of the evidence that the system works, so the environment that produces it is designed with a person and maintained like product code. A person who understands how each promise is checked can rely on the result without reading the code. [Verify](../verify/agents.txt) shows an environment being extended for M2.
+3. **Observability is built for agents.** An experienced engineer debugs with knowledge accumulated over years, whereas an agent begins each task with none and depends on what the system can tell it. Decision logs, traces and tools to read them let it diagnose a fault from evidence. [Observability](../observability/agents.txt) describes what to build.
+
+## People and agents at the same station
+
+At most stations a person and an agent work on the same piece of work, each contributing what the other cannot.
+
+| Station | The person brings | The agent brings |
+|---|---|---|
+| Collect | What matters most, and in what order | Every request, gathered and drafted into one page |
+| Shape | The decisions | The questions, the examples and a recommendation for each choice |
+| Verify | What would convince them | The environment, the checks and the injected faults |
+| Review | Accountability, when the change is critical | A reading of everything that changed |
+| Operate | The call on anything risky | The diagnosis |
+
+Because agents do most of the building, people are free to shape the next milestone while the current one is being built and verified.
+
+## Terms used at the stations
+
+- A **clause** is one written statement the system is held to: a file with an ID and worked examples. The approved clauses together are the **canon**.
+- The refunds example uses five kinds of clause. A **promise** (REQ) is what the system does for someone. An **invariant** (INV) is what must always be true. A **decision** (DEC) is a choice that could have gone another way, written down. A **constraint** (ENV) is what is never allowed, and has its own owner. An **assumption** (ASM) is a fact about the outside world the system relies on. [The primitives](../primitives/agents.txt) covers them in full.
+- The **Verification Record** is the status of every clause, computed from evidence. A clause is **accepted** when every part of it has evidence, and **unsupported** when some part does not.
+- The **orchestrator** is a program, not an agent. It computes the state of the work from what is in the repository, and it performs the release.
+- The **policy** is a short set of rules, owned by people, that says what counts as evidence and which changes are critical.
+
+## The example
+
+The running example is a refunds service for an online shop and its milestone M2. When the milestone starts, the service is at CanonBall 12 and keeps four clauses:
+
+- **REQ-012**, a promise. A customer can request a refund within 30 days of delivery.
+- **INV-004**, an invariant. A refund is never issued twice for the same order. Its examples say what "twice" means: the same request paid two times. A second, separate refund on an order is allowed.
+- **ENV-003**, a constraint. No payout above $10,000 without review.
+- **ASM-011**, an assumption. The payment gateway pays at most once per request key.
+
+The example is a real repository. The branch [`refunds-example`](https://github.com/sheshavpd/CanonBall/tree/refunds-example) is the [starter repository](https://github.com/sheshavpd/CanonBall/tree/main) after this service was built with it, and its history has one commit per station. Each station chapter links to the diff its station produced, so the files described here can be read as they were committed.
+
+```sh
+git clone -b refunds-example https://github.com/sheshavpd/CanonBall refunds
+cd refunds
+git log --oneline
+tools/canonball record
+```
+
+The team in the example has used the method for some time. It has handed detailed design to agents, and it still sends anything on the path that moves money to a person. A new team keeps more with people, as [Handing over decisions](../delegation/agents.txt) describes.
+
+The milestone's work starts at [Collect](../collect/agents.txt).
+
+---
+
+## References
+
+- Previous chapter: When writing code is cheap: https://canonball.org/guide/why/agents.txt
+- Next chapter: Collect: requests gather into a milestone: https://canonball.org/guide/collect/agents.txt
+- Related: Collect: requests gather into a milestone: https://canonball.org/guide/collect/agents.txt
+- Related: People and agents: https://canonball.org/guide/people-and-agents/agents.txt
+- Related: The repository layout: https://canonball.org/guide/repository/agents.txt
+- Glossary: https://canonball.org/glossary/agents.txt
+- Site overview and index of every chapter: https://canonball.org/agents.txt

@@ -1,0 +1,114 @@
+# People and agents
+
+> Seven agent roles do the work under separate permissions, and people keep the decisions a machine cannot check.
+
+- Site: CanonBall. The lifecycle agents can run and people can trust.
+- HTML page: https://canonball.org/guide/people-and-agents/
+- This file: https://canonball.org/guide/people-and-agents/agents.txt
+
+---
+Guide part: How it is organized. Chapter 18 of 28.
+
+Key points:
+- The agent that writes the code never writes the checks that judge it, and the repository's permissions enforce the separation.
+- People act at two gates: the agreement gate, where they approve what the system promises, and the release gate, where they accept the risk of a critical change.
+- People's roles are hats, and one person may wear several.
+- People own by capability, while agents build across every component.
+
+## The dividing line
+
+A change passes [seven stations](../workflow/agents.txt), and people and agents work together at most of them. What separates their work is the kind of decision involved. An agent may make any decision that can be verified and reversed, within bounds that people set. The following kinds of decision stay with people.
+
+| Kind | Why it stays with a person |
+|---|---|
+| **Goals and trade-offs** | There is no correct answer, only values. |
+| **Accountability** | Someone must answer for an action that cannot be undone. |
+| **Judgment nobody can check** | Taste, ethics, usability. |
+| **Novelty** | A situation the canon does not cover. |
+| **Trust with other people** | Customers, regulators, partners. |
+
+## Five hats for people
+
+The people's roles are hats, and on a small team one person wears several.
+
+| Hat | Answers for | Works at |
+|---|---|---|
+| **Product manager** | Which requests form a milestone, the order of the roadmap, and what the system promises | Collect, Shape |
+| **Architect** | The architecture, and the detailed design where the team keeps it | Shape, sometimes Build |
+| **Verification lead** | The evidence plan and the design of each verification environment | Shape, Verify |
+| **Constraint owner** | What is never allowed. Holds a veto. | Shape |
+| **Operator** | The running system, and anything risky or irreversible done to it | Operate |
+
+The Review station has no hat of its own, because the person who reviews there is the owner of what is at risk. When a change in the refunds service touches the path that moves money, that person is the refunds owner.
+
+## Seven agent roles
+
+| Role | Does | Writes | Works at |
+|---|---|---|---|
+| **Elicitor** | Files requests, drafts proposals and clauses, and raises a question when something is ambiguous | `roadmap/notes/`, proposals and proposed clauses | Collect, Shape |
+| **Planner** | Writes the design, the assurance case for each clause, the predicted change in behavior, and the tasks | The blueprint, as proposed files, and `tasks/` | Shape |
+| **Builder** | Writes the code and the signals it emits | `src/`, `observe/signals.md` | Build |
+| **Verifier** | Writes the evidence plan, and builds environments, checks, injected faults and monitors | `verify/`, `observe/tools/`, and the evidence plan as a proposed file | Shape, Verify |
+| **Reviewer** | Reads everything in a change and rates its blast radius: how much breaks if the change is wrong | Nothing but its review | Review |
+| **On-call agent** | Watches the monitors, diagnoses with the [observability](../observability/agents.txt) tools, and drafts the incident and the unplanned change that repairs it | `incidents/`, and a draft under `roadmap/unplanned/` | Operate |
+| **Holdout keeper** | Runs the held-out scenarios that people write, and reports only pass or fail | Nothing the other agents can read | Apart from the stations |
+
+One further participant is a program. The **orchestrator** computes the state of every change and task from what exists in the repository, compares predicted with actual behavior, computes the Verification Record, and at release copies the proposed files into `spec/` and publishes the CanonBall. Because the program that decides the state of the work is deterministic, the method can tolerate agents that are not.
+
+## Why the roles are separate
+
+The builder and the verifier are separate roles so that the agent that writes the code does not also write the checks that judge it. A second agent can easily share the first one's misreading of a clause, so independence is made to rest on permissions, which can be enforced, rather than on the second agent's intentions, which cannot.
+
+[Figure: Who can write what. Independence is a matter of permissions.]
+A grid of paths against roles: people, and the elicitor, planner, builder, verifier, reviewer and on-call agents. Canon: people approve, the elicitor drafts, the reviewer reads. Policy: people only; no agent may write it. Blueprint: the planner writes, the verifier writes the verification plan, people review critical cases, the reviewer reads. src: the builder writes; the verifier, the reviewer and the on-call agent read; people review the code that touches the outside world. verify: the verifier writes; the builder reads and runs; the reviewer and the on-call agent read. observe: the builder and the verifier write; the reviewer and the on-call agent read; people see the same view. incidents: the on-call agent drafts, people approve. Held-out scenarios: people write; the builder, the verifier and the reviewer have no access. The Verification Record: nobody writes; it is computed, and people, the reviewer and the on-call agent read it.
+
+Each role is a separate account, and the repository rejects a commit outside that role's paths. No agent's account can write the policy, the rules that decide what counts as evidence, which belong to people. The held-out scenarios are also written by people. The holdout keeper runs them and reports only pass or fail, and runs are rationed, so that neither the builder nor the verifier can learn what the scenarios contain.
+
+The same independence applies to people: the verification lead who reviews the case for a critical clause does not own the capability that the case protects.
+
+## Two gates
+
+A **gate** is a point where a person must act before work proceeds.
+
+| | Agreement gate | Release gate |
+|---|---|---|
+| **The question** | Is this what we want the system to promise? | Does someone accept the risk of releasing this? |
+| **Decides** | Meaning | Accountability |
+| **Where** | The end of the [Shape](../shape/agents.txt) station | The [Review](../review/agents.txt) station |
+| **A person reads** | The change proposal, the proposed clauses and their examples | The Record, predicted against actual behavior, and the case for each critical clause |
+| **Needs a person** | Always, when a clause is added or altered | Only when the policy lists the change as critical or the reviewer rates its blast radius as large |
+
+The release gate is the person's part of [Review](../review/agents.txt), applied only to the changes named in the table, and review has no [level of automation](../delegation/agents.txt). After Review the orchestrator applies the [release rule](../release/agents.txt), and no person acts there.
+
+## Every point where a person acts
+
+| When | What a person does | In what form |
+|---|---|---|
+| Once, at the start | Owns the purpose, a capability or the constraints, and writes the [tenets](../tenets/agents.txt) | A page |
+| At Collect | Agrees to the proposal and ranks the roadmap | A page and a list |
+| At Shape | Answers questions, approves the examples, and designs the verification environment with the verifier | Questions with options, examples, a short declaration |
+| At the release gate, when it applies | Reads what the gate requires, then accepts the change or sends it back | A short argument and one line |
+| On an incident | Decides anything risky or irreversible, and approves the new example | An example |
+
+The system is expected to present each of these decisions in the form shown, so that a person is never asked to work through a test file or dig through a raw log. The only code a person is asked to read is the code that touches the outside world: adapters and permission checks.
+
+While agents build and verify one milestone, the product manager collects and shapes the next. The amount of work in progress is therefore limited by people's attention, which is the scarce resource.
+
+## Ownership
+
+People own by **capability**: a named thing the system provides to someone. A capability has exactly one owner, the person who knows its consumer best, and components have no owners at all.
+
+Ownership is a right to approve and places no fence around the work, so agents build across every component. Over time a team hands more of its decisions to agents, in the way [Handing over decisions](../delegation/agents.txt) describes.
+
+---
+
+## References
+
+- Previous chapter: What a CanonBall is: https://canonball.org/guide/canonball/agents.txt
+- Next chapter: Handing over decisions: https://canonball.org/guide/delegation/agents.txt
+- Related: How work moves: https://canonball.org/guide/workflow/agents.txt
+- Related: Shape: settle what the milestone promises: https://canonball.org/guide/shape/agents.txt
+- Related: Review: an agent every time, a person when critical: https://canonball.org/guide/review/agents.txt
+- Related: Handing over decisions: https://canonball.org/guide/delegation/agents.txt
+- Glossary: https://canonball.org/glossary/agents.txt
+- Site overview and index of every chapter: https://canonball.org/agents.txt

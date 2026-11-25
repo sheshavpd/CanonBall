@@ -1,0 +1,140 @@
+# The primitives
+
+> People steer agents with five kinds of written statement, called clauses.
+
+- Site: CanonBall. The lifecycle agents can run and people can trust.
+- HTML page: https://canonball.org/guide/primitives/
+- This file: https://canonball.org/guide/primitives/agents.txt
+
+---
+Guide part: What people write. Chapter 10 of 28.
+
+Key points:
+- A clause is one statement the system is held to, in one file, with worked examples.
+- There are five kinds: a promise, an invariant, a decision, a constraint and an assumption.
+- Each clause also says how much freedom agents have around it.
+- A tenet says which good thing wins when two conflict; it is not a clause, and nothing checks it.
+
+## Why primitives at all
+
+Tell an agent to "build a refunds service" and it will build one. Along the way it makes many decisions you never see: what counts as a duplicate, how long the refund window lasts, what happens when the payment gateway times out. A few of those decisions are yours to make, and the rest do not need your attention.
+
+The primitives are how you draw that line. Each is a short statement in plain language; an agent may do anything that respects them, and everything it does must trace back to one of them.
+
+## A clause
+
+A **clause** is one statement the system is held to. It lives in one file, has a stable ID, and carries worked [examples](../examples/agents.txt). The approved clauses together are the **canon**.
+
+[Figure: The parts of a clause file.]
+The front matter and text of INV-004, annotated line by line. id: a stable identifier that checks and evidence refer to. kind: one of the five kinds. traces: the promise this clause exists for. terms: the defined words it uses. owner: the one person who can approve a change, here the refunds owner. tier: how much is at stake; tier 2 is safety and money. Then the statement in one sentence, and the examples, which are what a person approves.
+
+There are five kinds of clause, and each answers a different question.
+
+[Figure: How the five kinds of clause relate.]
+A promise sits at the center. Invariants and decisions exist to keep it. Constraints surround all three: they bound what any of them may do. Assumptions sit at the edge, describing the outside world the system relies on.
+
+## Promise
+
+**What the system does for someone.**
+
+> A customer can request a refund within 30 days of delivery.
+
+A promise is the reason any code exists. If part of the system cannot be traced back to a promise, nobody can say why it is there.
+
+Requirements engineering calls this a *requirement*, which is why a promise's ID begins with REQ. The word *promise* is used here because that is how the customer experiences it.
+
+## Invariant
+
+**What must always be true.**
+
+> A refund is never issued twice for the same order.
+
+Where a promise says what the system does, an invariant says what it must never get wrong while doing it, which makes the promise safe to offer.
+
+The sentence alone leaves "twice" open, and the invariant's [examples](../examples/agents.txt) fix it: the same request paid two times. A second, separate refund on the same order is a new refund and is allowed.
+
+Invariants are also where experience accumulates. Nobody can list them all in advance; they come from asking "what must never happen?" of each promise, and from incidents. When something breaks in production, the repair adds an example and often an invariant, so the same failure cannot come back unnoticed.
+
+## Decision
+
+**A choice that could have gone another way, written down.**
+
+> A refund is approved automatically while the total refunded on the order stays under $100.
+
+Nothing forces the limit to be $100, or to count everything refunded on the order; a person chose both. If the choice is not recorded, an agent will make it again the next time it touches that code, and may choose differently.
+
+Teams that keep architecture decision records will recognize the idea. Here it applies to any choice a person cares about, large or small. A design choice an agent made can be promoted to a decision at any time, and from then on it is fixed until a person changes it.
+
+## Constraint
+
+**What is never allowed, whatever the goal.**
+
+> No payout above $10,000 without review.
+
+A constraint protects people, money, and actions that cannot be undone. Safety engineers call statements like this *safety constraints*, and the set of them the system's *operating envelope*.
+
+A constraint differs from an invariant in who may change it. If the product team could change the statement after a trade-off discussion, it is an invariant. If the answer to "can we change this?" is "that is not our call", it is a constraint. Every constraint has its own owner, who holds a veto.
+
+## Assumption
+
+**A fact about the outside world that the system relies on.**
+
+> The payment gateway pays at most once per request key.
+
+A system cannot prove things about a world it does not control, but it can state plainly what it is relying on. Every assumption comes with a treatment: how it is watched, how quickly a failure would be noticed, and what the system does when it fails. Evidence for a clause holds only while its assumptions do.
+
+## Telling them apart
+
+| If the statement is about | It is | Who can change it |
+|---|---|---|
+| What someone gets from the system | A promise | The owner of that capability |
+| What must stay true inside the system | An invariant | The owner, after a trade-off |
+| A choice between workable options | A decision | The owner |
+| What must never happen, at any price | A constraint | The constraint's own owner |
+| How the outside world behaves | An assumption | Nobody, since it is either true or not |
+
+## Decided, deferred, open
+
+Every clause also says how much freedom agents have around it.
+
+- **Decided.** The clause is binding as written.
+- **Deferred.** The agents may choose, within stated bounds.
+- **Open.** Nobody has decided. Agents must ask a person and may not guess.
+
+This one field gives people direct control: marking a clause *deferred* hands a decision over, and marking it *open* stops an agent from filling a gap with a guess.
+
+## Changes go one way
+
+Every change to a clause is classified. **Strengthening** promises more or assumes less, and **weakening** does the reverse. A clause may be strengthened freely, but weakening a clause that other people rely on is a breaking change, and each of them must agree to it.
+
+## What belongs in the canon
+
+The canon holds only what a person would need to approve: external promises, safety, money, irreversible actions, and the trade-offs between them. Design choices stay in the [blueprint](../layers/agents.txt), where agents may revise them. One question settles any doubtful line: would a person need to approve a change to it?
+
+## Tenets are not clauses
+
+A clause is checked, and the system either keeps it or does not. People write one more kind of statement to steer agents, the **tenet**, which nothing checks.
+
+A tenet says which good thing wins when two conflict, and it is written "X over Y".
+
+> A person's review over speed, when money moves.
+
+When an agent meets a choice that no clause settles, it cites a tenet in its recommendation, and a person decides. The answer is then recorded as a decision, which is a clause and cites the tenet. The tenet stays what it was: a ranking with no examples and no checks. [Tenets](../tenets/agents.txt) covers how to write them.
+
+## Where clauses get written
+
+Of the seven stations between a request and a running system, described in [How work moves](../workflow/agents.txt), clauses are written at the second, [Shape](../shape/agents.txt). There an agent drafts the clauses for a milestone, which is a batch of related requests, and people settle them with examples. A settled clause joins the canon only at [release](../release/agents.txt).
+
+---
+
+## References
+
+- Previous chapter: Operate: run it, and feed what breaks back in: https://canonball.org/guide/operate/agents.txt
+- Next chapter: Vocabulary: https://canonball.org/guide/vocabulary/agents.txt
+- Related: Vocabulary: https://canonball.org/guide/vocabulary/agents.txt
+- Related: Tenets: https://canonball.org/guide/tenets/agents.txt
+- Related: Examples, and writing clauses agents read correctly: https://canonball.org/guide/examples/agents.txt
+- Related: Shape: settle what the milestone promises: https://canonball.org/guide/shape/agents.txt
+- Related: Four layers: canon, blueprint, build, Verification Record: https://canonball.org/guide/layers/agents.txt
+- Glossary: https://canonball.org/glossary/agents.txt
+- Site overview and index of every chapter: https://canonball.org/agents.txt

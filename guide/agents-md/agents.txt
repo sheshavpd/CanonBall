@@ -1,0 +1,154 @@
+# AGENTS.md: how an agent learns the method
+
+> AGENTS.md is the first file an agent reads: a top part about this repository, and an appendix of about 3 KB that states the method.
+
+- Site: CanonBall. The lifecycle agents can run and people can trust.
+- HTML page: https://canonball.org/guide/agents-md/
+- This file: https://canonball.org/guide/agents-md/agents.txt
+
+---
+Guide part: What people write. Chapter 14 of 28.
+
+Key points:
+- An agent starts every task with no memory, so the method has to be in a file it always reads.
+- The top part is yours: commands, owners, and which decisions people keep.
+- The appendix is the same in every CanonBall repository and can be copied unchanged.
+- AGENTS.md, tenets.md and vocabulary.md are the three files that align an agent before it does anything.
+
+## Why a file
+
+A new engineer learns how a team works over several weeks, from colleagues. An agent starts each task knowing only what it reads at the start of that task, so a way of working that lives in a wiki or in people's heads is invisible to it.
+
+`AGENTS.md` is an open convention for exactly this: a file at the root of a repository that coding agents read before they do anything else. CanonBall uses it to carry the method.
+
+## The files an agent reads first
+
+| File | What it gives the agent | Who owns it |
+|---|---|---|
+| `AGENTS.md` | How work moves here | People |
+| [`tenets.md`](../tenets/agents.txt) | How this team chooses when two good things conflict | People |
+| [`vocabulary.md`](../vocabulary/agents.txt) | What each word means | People |
+
+An agent reads all three before every task; what else it reads depends on the task.
+
+## The top part is yours
+
+The top of the file is specific to the repository. Keep it to what an agent needs on every task: what the system is, the commands, and who decides what. This is the top part of the refunds service's `AGENTS.md`, without its table of owners.
+
+````markdown
+## This repository
+
+**What the system is.** The refunds service of an online shop. It decides each refund request a customer
+makes, and pays approved refunds through the payment gateway. Money is in cents in code and in dollars in
+prose.
+
+**Commands.**
+
+```text
+tools/canonball check     is the canon well formed, and is every example checked?
+tools/canonball run       run every check in VE-002 and record the evidence
+tools/canonball fault verify/faults/NAME.patch
+                          run the checks against an injected fault; keep the red proofs
+tools/canonball record    the Verification Record for spec/
+tools/canonball status    the state of every milestone and unplanned item
+
+observe/tools/observe decisions --order N [--log PATH]
+                          the decisions logged for an order (default log: $REFUNDS_DECISION_LOG)
+observe/tools/observe replay --order N [--log PATH]
+                          re-run those decisions with the current code
+```
+
+VE-002, the verification environment, is `verify/envs/ve002.py`. Constructing a `World` brings it up
+(an in-memory store, a fake payment gateway, a decision log); `close()` takes it down. Its four verbs are
+`rig`, `act`, `perturb` and `observe`. Python 3.11 or later, standard library only.
+
+**Code.** Decision logic in `src/refunds/decide.py`, with no side effects. The service, which reads, logs,
+records and pays, in `src/refunds/service.py`. Adapters in `src/refunds/adapters/`. See
+`spec/blueprint/architecture.md`.
+
+**Who decides what here.**
+
+| Decision | Who |
+|---|---|
+| Promises, product decisions, invariants, constraints | People, always |
+| Architecture | the architect |
+| Detailed design | agents, recorded in `spec/blueprint/` |
+| Verification design | the verification lead, with the verifier |
+| What counts as critical | `spec/canon/policy/review.md` |
+````
+
+The "who decides what" table records the team's settings. [Handing over decisions](../delegation/agents.txt) explains how they move.
+
+## The appendix is the method
+
+Below the top part sits a summary of CanonBall. It is kept short, about 3 KB, because an agent loads every line of it on every task, and detail belongs in the files it points to. The text below is the appendix of the [`AGENTS.md`](https://github.com/sheshavpd/CanonBall/blob/main/AGENTS.md) in the starter repository, which a new repository inherits when it is created from the starter.
+
+```markdown
+## Appendix: how work moves here (CanonBall)
+
+This repository uses CanonBall. People decide what the system promises. Agents build it and produce the evidence that it keeps its promises.
+
+### Read first
+
+1. This file.
+2. `spec/canon/tenets.md`: which good thing wins when two conflict. Cite a tenet when you recommend a choice.
+3. `spec/canon/vocabulary.md`: every domain word, defined once. Use these words and no synonyms.
+
+### Where things are
+
+- `spec/` is the system as it stands. Only a release changes it. Never edit it by hand.
+- `spec/canon/` holds the clauses people approved: promises (REQ), invariants (INV), decisions (DEC), constraints (ENV) and assumptions (ASM). Each clause is one file with worked examples.
+- `roadmap/` holds what is proposed. A milestone is a folder with `change.md`, the proposed files in `diff/canon/` and `diff/blueprint/`, and `tasks/`. `roadmap/unplanned/` holds repairs and upkeep.
+- `src/` is the code. `verify/` holds the environments, checks, injected faults and monitors. `observe/` holds what the system emits and the tools that read it. `incidents/` holds what went wrong.
+
+### The stations
+
+Work moves through seven stations: Collect, Shape, Build, Verify, Review, Release, Operate. Know which station your task belongs to, and write only where that station writes.
+
+| Station | Writes |
+|---|---|
+| Collect | `roadmap/notes/`, `roadmap/index.md`, a milestone's `change.md` |
+| Shape | the milestone's `diff/` and `tasks/` |
+| Build | `src/`, `observe/signals.md` |
+| Verify | `verify/`, `observe/tools/` |
+| Review | the milestone's `review.md` |
+| Release | `spec/`, `CANONBALLS.md` (by `tools/canonball release` only) |
+| Operate | `incidents/`, `roadmap/unplanned/` |
+
+### Rules
+
+- Every behavior a customer or another system could notice traces to a clause. If you need behavior no clause asks for, stop and file a request in `roadmap/notes/`.
+- An undefined word, or a choice nobody has made: stop and ask, with the options and your recommendation, citing a tenet.
+- Near a constraint (ENV), or an action that cannot be undone: stop and ask.
+- The agent that writes code does not write what judges it. A builder may run `verify/` and may not change it; it proposes a correction instead.
+- Every example gets one check, marked with the example it encodes. Every check must be seen to fail against an injected fault (`tools/canonball fault`) before its pass counts.
+- Look before you reason. Use the tools in `observe/` to see what the system did. Log each new decision with the clause it applied and the inputs it used.
+- Never write a status. `tools/canonball` computes the state of every milestone and unplanned item, and the Verification Record, from what is in the repository. A task is done when its code and checks are merged.
+- Work that restores an existing promise, or changes no clause, goes in `roadmap/unplanned/`. Anything that changes what is promised waits for a milestone.
+- An agent reviews every change. A person reviews as well when the policy lists the change as critical. Never hand a person a test file or a raw log to read.
+
+### When you finish a task
+
+Say what you changed, which clauses it traces to, what evidence exists, and what is still open.
+```
+
+The same text is available as a file to copy: [agents-appendix.md](../../agents-appendix.md).
+
+## Keeping it true
+
+The appendix is useful only while it matches how the team works, so a team that changes a rule changes the appendix in the same milestone. People own the file, and a change to it is reviewed by a person.
+
+Agents that keep asking the same question, or keep making the same wrong assumption, are a sign that the file is missing something. The answer goes in `AGENTS.md` if it is about how work moves, in `tenets.md` if it is about a trade-off, and in `vocabulary.md` if it is about a word.
+
+---
+
+## References
+
+- Previous chapter: Examples, and writing clauses agents read correctly: https://canonball.org/guide/examples/agents.txt
+- Next chapter: Four layers: canon, blueprint, build, Verification Record: https://canonball.org/guide/layers/agents.txt
+- Related: Tenets: https://canonball.org/guide/tenets/agents.txt
+- Related: Vocabulary: https://canonball.org/guide/vocabulary/agents.txt
+- Related: The repository layout: https://canonball.org/guide/repository/agents.txt
+- Related: Start in a week: https://canonball.org/guide/start/agents.txt
+- Glossary: https://canonball.org/glossary/agents.txt
+- Site overview and index of every chapter: https://canonball.org/agents.txt

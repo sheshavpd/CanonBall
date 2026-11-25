@@ -1,0 +1,87 @@
+# Build: write the code
+
+> The builder agent writes the code from the agreed milestone, and uses the observability tools to see what the code does.
+
+- Site: CanonBall. The lifecycle agents can run and people can trust.
+- HTML page: https://canonball.org/guide/build/
+- This file: https://canonball.org/guide/build/agents.txt
+
+---
+Guide part: One milestone, station by station. Chapter 5 of 28.
+
+Station 3 of 7 on the conveyor: Build.
+
+- Who works here: agents: Builder; in some cases: Architect (if the team keeps detailed design).
+- Reads: roadmap/M2-…/diff/, roadmap/M2-…/tasks/, observe/.
+- Writes: src/refunds/, observe/signals.md.
+- In the example repository: https://github.com/sheshavpd/CanonBall/compare/a0c4938c80c7e32c76b3088b29d0941aeba2122a...1a1c0c760fafc76c73d065d39c9147e4b233650b
+
+Key points:
+- The builder writes only what the agreed clauses ask for.
+- It finds out what the code did from logs and traces.
+- It can run the checks but cannot change them.
+- On a team that keeps detailed design with a person, the architect works here too.
+
+## What arrives
+
+An agreed milestone arrives: one decision with three examples, a design, and three named tasks.
+
+The builder starts from [the files every agent reads first](../agents-md/agents.txt), then reads the files in the milestone's `diff/`. Those files are its instructions, so it does not need the conversations that produced them.
+
+## Named tasks
+
+The planner has sliced the milestone into tasks.
+
+```text
+tasks/
+  01-total-refunded.md   Read everything already refunded on an order.
+  02-auto-approve.md     Apply DEC-031 in the decision logic, and pay what it approves.
+  03-decision-log.md     Log each DEC-031 decision with its clause and inputs.
+```
+
+Each task names where it works, what it traces to, and when it is done, as a check that passes: "Done when: the DEC-031 satisfies/2 check passes." Nobody marks a task done by hand.
+
+## Reading what the code did
+
+The builder writes the rule first, on the lookup the service already had, starts the service in the verification environment, and tries a split refund by hand: an order whose first $60 refund is still waiting in review, and a second request for $60. The second refund is approved, when it should have gone to review.
+
+Rather than reread its own code and reason about what might be wrong, the builder asks the system what happened.
+
+```text
+$ observe/tools/observe decisions --order 7731
+DEC-031  auto-approve under $100
+  result  approved
+  reason  total refunded $60, under $100
+```
+
+The total should read $120. The old lookup, `total_paid`, counted only refunds the gateway had paid, so the first refund, still in review, was left out. The first task replaces it with `total_refunded` in the store, which counts every refund on the order that is not refused, as the design says. The fix is short because the cause was read from the log.
+
+The third task is what makes this possible. Logging each decision with the clause it applied and the inputs it used is part of the milestone from the start. [Observability](../observability/agents.txt) explains what to build and why agents depend on it.
+
+## What the builder cannot do
+
+- **Change a check.** It can run every check the verifier writes. If it thinks one is wrong, it attaches a proposed correction, and the verifier applies or rejects it.
+- **Change the canon.** If a clause cannot be met as written, the milestone goes back to [Shape](../shape/agents.txt) with a question. The builder must never work around a clause quietly.
+- **Add behavior nobody asked for.** Behavior a customer or another system could notice needs a clause, while plumbing that changes no such behavior, such as logging or configuration, does not. [Review](../review/agents.txt) looks for the first kind.
+
+## Where a person comes in
+
+On this team the architect made the two design calls at Shape, and reads what the agents decided when the milestone is released. A team that keeps detailed design with a person has the architect set the module boundaries and interfaces before the builder starts. That is a setting, described in [Handing over decisions](../delegation/agents.txt).
+
+In both cases the product manager is not needed at this station and is already shaping M3.
+
+## What leaves
+
+The station's output is code in `src/refunds/` for all three tasks, and the new values of the decision log listed in `observe/signals.md`. In practice Build and Verify run side by side from the same plan; the belt shows them in order because nothing counts as built until it is [verified](../verify/agents.txt).
+
+---
+
+## References
+
+- Previous chapter: Shape: settle what the milestone promises: https://canonball.org/guide/shape/agents.txt
+- Next chapter: Verify: prove it in an engineered environment: https://canonball.org/guide/verify/agents.txt
+- Related: An architecture agents can work in: https://canonball.org/guide/architecture/agents.txt
+- Related: Observability: letting agents see: https://canonball.org/guide/observability/agents.txt
+- Related: People and agents: https://canonball.org/guide/people-and-agents/agents.txt
+- Glossary: https://canonball.org/glossary/agents.txt
+- Site overview and index of every chapter: https://canonball.org/agents.txt
