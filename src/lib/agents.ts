@@ -6,6 +6,7 @@ import { glossary } from '../data/glossary';
 import { figures } from '../data/figures';
 import { stations, ideas, pressures, type Station } from '../data/workflow';
 import { appendix } from '../data/appendix';
+import { compareUrl } from './repo';
 import { url } from './links';
 import type { Chapter } from './guide';
 
@@ -107,6 +108,7 @@ function stationText(chapter: Chapter): string {
     `- Reads: ${st.reads.join(', ')}.`,
     `- Writes: ${st.writes.join(', ')}.`,
     ...(st.gate ? [`- ${st.gate.name}: ${st.gate.text}`] : []),
+    ...(st.diff ?? []).map((d) => `- In the example repository${d.label ? `, ${d.label}` : ''}: ${compareUrl(d.from, d.to)}`),
     '',
     '',
   ].join('\n');
@@ -180,6 +182,11 @@ export function homeText(all: Chapter[], s: Site): string {
   out.push(
     '',
     'A promise, an invariant, a decision, a constraint and an assumption are each a kind of clause: one file with an ID and its examples. The approved clauses together are the canon.',
+    '',
+    '## Start from the repository',
+    '',
+    `The starter repository is ${site.repo}/tree/main. Create a repository from it, fill in the top of AGENTS.md, and point an agent at it. It holds the layout, the templates, the policy pages, an AGENTS.md whose appendix teaches the method, and tools/canonball, the orchestrator (check, run, fault, record, status, release, new).`,
+    `The worked example is the branch ${site.example}: ${site.repo}/tree/${site.example}. It is the starter after a refunds service was built with it, with one tagged commit per station (refunds-cb12, refunds-collect, refunds-shape, refunds-build, refunds-verify, refunds-review, refunds-cb13, refunds-operate, refunds-cb14).`,
     '',
     '## The repository',
     '',

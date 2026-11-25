@@ -11,6 +11,12 @@ points:
 related: [workflow, environments, observability, agents-md, open-bets]
 ---
 
+## Start from the starter repository
+
+The [starter repository](https://github.com/sheshavpd/CanonBall/tree/main) already holds the layout, the templates, the policy pages, an `AGENTS.md` whose appendix teaches an agent the method, and `tools/canonball`, the orchestrator: a small program that checks the canon, records evidence and red proofs, computes the Verification Record and performs releases. Create the new repository from it, or copy its folders into an existing one. The rest of this week fills it in.
+
+The [worked example](https://github.com/sheshavpd/CanonBall/tree/example/refunds) shows the same repository after a refunds service has been built with it, one commit per station.
+
 ## Pick the system
 
 Choose one system you already run. A good candidate has the following traits.
@@ -67,10 +73,11 @@ Alongside the environment, build the minimum of [observability](../observability
 
 ### Day 5: compute the Verification Record
 
-Write a script that joins the list of examples, the assurance cases and the lines of evidence, and prints one row per clause. It is the first piece of the orchestrator, the program that computes every state.
+Run `tools/canonball run`, then `tools/canonball record`. The orchestrator joins the examples, the lines of evidence and the red proofs, and prints one row per clause, naming the weakest link of every clause it cannot accept.
 
 ```text
-INV-004 | unsupported | checks 3/3 | seen to fail 2/3 | never failed: violates/1
+INV-004   unsupported   checks 3/3   seen to fail 2/3
+          weakest link: INV-004#violates/1: test_concurrent_copies_pay_once never seen to fail
 ```
 
 Publish the table as a page rather than committing it, so that nobody can edit a status.

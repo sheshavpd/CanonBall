@@ -5,6 +5,7 @@ import RepoExplorer from '../components/RepoExplorer.astro';
 import Dial from '../components/Dial.astro';
 import FailFirst from '../components/FailFirst.astro';
 import Conveyor from '../components/Conveyor.astro';
+import { starterUrl, exampleUrl, fileUrl } from '../lib/repo';
 import { written, computed } from '../data/site';
 import { url, guideUrl } from '../lib/links';
 import { chapters } from '../lib/guide';
@@ -212,6 +213,37 @@ REQ-012  refund window
       </div>
       <Dial />
       <p class="cap">An illustration. Each team writes its own thresholds in advance. A new model release does not move a setting. Agreement with people over many cases does, and one failure that gets through moves it back. <a class="more" href={guideUrl('delegation')}>Handing over decisions</a></p>
+    </div>
+  </section>
+
+  <section class="band" id="start">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">Start</p>
+        <h2 class="t">Begin from a repository that is already laid out.</h2>
+        <p class="sub">The starter repository has the folders, templates and policy pages described here, an <code>AGENTS.md</code> that teaches an agent the method, and <code>tools/canonball</code>, a small program that checks the canon, records evidence, computes the Verification Record and performs releases. Fork it, fill in the top of <code>AGENTS.md</code>, and point your agent at it.</p>
+      </div>
+      <div class="two">
+        <div class="box">
+          <h3>Start a repository</h3>
+          <pre class="obs">git clone https://github.com/sheshavpd/CanonBall my-system
+cd my-system
+tools/canonball check
+tools/canonball new milestone M1-first-promise</pre>
+          <p class="obsnote">Python 3.11 is the only requirement of the tooling. The system itself can be written in any language.</p>
+          <p><a class="more" href={starterUrl}>The starter repository</a> &nbsp; <a class="more" href={fileUrl('AGENTS.md')}>Its AGENTS.md</a></p>
+        </div>
+        <div class="box">
+          <h3>Read the worked example</h3>
+          <pre class="obs">git clone -b example/refunds \
+  https://github.com/sheshavpd/CanonBall refunds
+cd refunds
+git log --oneline     # one commit per station
+tools/canonball run && tools/canonball record</pre>
+          <p class="obsnote">The refunds service from the walkthrough, built with the starter. Each station of milestone M2, and the repair of an incident, is one tagged commit, so you can see exactly what each station changes.</p>
+          <p><a class="more" href={exampleUrl}>The example branch</a></p>
+        </div>
+      </div>
     </div>
   </section>
 

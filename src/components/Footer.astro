@@ -2,6 +2,7 @@
 import { url, guideUrl, agentsUrl } from '../lib/links';
 import { chapters } from '../lib/guide';
 import { site } from '../data/site';
+import { starterUrl, exampleUrl } from '../lib/repo';
 interface Props { path: string }
 const { path } = Astro.props;
 const first = (await chapters())[0]!;
@@ -12,6 +13,8 @@ const first = (await chapters())[0]!;
     <nav aria-label="Footer">
       <a href={guideUrl(first.id)}>Guide</a>
       <a href={url('/glossary/')}>Glossary</a>
+      <a href={starterUrl}>Starter repository</a>
+      <a href={exampleUrl}>Worked example</a>
       <a class="txt" href={agentsUrl(path)}>This page as agents.txt</a>
       <a class="txt" href={url('/agents.txt')}>Site index for agents</a>
     </nav>

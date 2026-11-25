@@ -76,6 +76,15 @@ The running example is a refunds service for an online shop and its milestone M2
 - **ENV-003**, a constraint. No payout above $10,000 without review.
 - **ASM-011**, an assumption. The payment gateway pays at most once per request key.
 
+The example is a real repository. The branch [`example/refunds`](https://github.com/sheshavpd/CanonBall/tree/example/refunds) is the [starter repository](https://github.com/sheshavpd/CanonBall/tree/main) after this service was built with it, and its history has one tagged commit per station. Each station chapter links to the diff its station produced, so the files described here can be read as they were committed.
+
+```sh
+git clone -b example/refunds https://github.com/sheshavpd/CanonBall refunds
+cd refunds
+git log --oneline
+tools/canonball record
+```
+
 The team in the example has used the method for some time. It has handed detailed design to agents, and it still sends anything on the path that moves money to a person. A new team keeps more with people, as [Handing over decisions](../delegation/) describes.
 
 The milestone's work starts at [Collect](../collect/).

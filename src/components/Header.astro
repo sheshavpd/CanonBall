@@ -2,6 +2,7 @@
 import Logo from './Logo.astro';
 import { url, guideUrl, agentsUrl } from '../lib/links';
 import { chapters } from '../lib/guide';
+import { repoUrl } from '../lib/repo';
 interface Props { path: string }
 const { path } = Astro.props;
 const inGuide = path.startsWith('/guide');
@@ -16,6 +17,7 @@ const first = (await chapters())[0]!;
     <nav aria-label="Site">
       <a href={guideUrl(first.id)} aria-current={inGuide ? 'page' : undefined}>Guide</a>
       <a href={url('/glossary/')} aria-current={path.startsWith('/glossary') ? 'page' : undefined}>Glossary</a>
+      <a href={repoUrl}>Repository</a>
       <a class="txt" href={agentsUrl(path)} title="Plain-text version of this page for agents">agents.txt</a>
     </nav>
   </div>

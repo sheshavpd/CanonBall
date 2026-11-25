@@ -3,6 +3,7 @@
 import Who from './Who.astro';
 import { stations, type StationId } from '../data/workflow';
 import { guideUrl } from '../lib/links';
+import { compareUrl } from '../lib/repo';
 interface Props { id: StationId }
 const { id } = Astro.props;
 const s = stations.find((x) => x.id === id)!;
@@ -25,6 +26,12 @@ const s = stations.find((x) => x.id === id)!;
     <dd>{s.reads.map((r) => <code>{r}</code>)}</dd>
     <dt>Writes</dt>
     <dd>{s.writes.map((w) => <code>{w}</code>)}</dd>
+    {s.diff && (
+      <>
+        <dt>In the repo</dt>
+        <dd class="diffs">{s.diff.map((d) => <a href={compareUrl(d.from, d.to)}>{d.label ? `See ${d.label}` : 'See exactly what this station changed'} <span>{d.from}…{d.to}</span></a>)}</dd>
+      </>
+    )}
   </dl>
   {s.gate && <p class="gate"><b>{s.gate.name}:</b> {s.gate.text}</p>}
 </div>
