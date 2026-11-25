@@ -89,7 +89,7 @@ Each file carries the page text in Markdown, with key points at the top and each
 
 ## Deploying
 
-The site is published at [canonball.org](https://canonball.org) by GitHub Pages. Pages serves the `gh-pages` branch. Every push to `main` runs `.github/workflows/deploy.yml`, which type checks, builds, checks links and replaces `gh-pages` with the contents of `dist/`. `public/CNAME` carries the custom domain and `public/.nojekyll` stops Pages from dropping the `_astro` folder.
+The site is published at [canonball.org](https://canonball.org) by GitHub Pages. Pages serves the `gh-pages` branch. This website lives on the `site` branch; `main` holds the CanonBall starter repository. Every push to `site` runs `.github/workflows/deploy.yml`, which type checks, builds, checks links and replaces `gh-pages` with the contents of `dist/`. `public/CNAME` carries the custom domain and `public/.nojekyll` stops Pages from dropping the `_astro` folder.
 
 The domain's DNS lives in Cloudflare. `.github/workflows/domain.yml` is run by hand and points the apex and `www` at GitHub Pages through the Cloudflare API, using the repository secret `CF_API_KEY`: an API token with DNS edit rights on the zone, or a Global API Key together with the account email in `CF_API_EMAIL`. The script behind it, `scripts/cloudflare-dns.mjs`, runs the same way from a shell that has those variables. With `apply` off it prints the existing records and the plan and changes nothing. It only touches A, AAAA and CNAME records on `canonball.org` and `www.canonball.org`, and leaves them unproxied so that GitHub can issue the certificate.
 

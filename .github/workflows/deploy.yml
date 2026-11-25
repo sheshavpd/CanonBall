@@ -1,10 +1,11 @@
 name: Deploy site
 
-# GitHub Pages serves the gh-pages branch. Every push to main rebuilds that branch.
+# GitHub Pages serves the gh-pages branch. Every push to the site branch rebuilds it.
+# main holds the CanonBall starter repository; the website lives only on this branch.
 
 on:
   push:
-    branches: [main]
+    branches: [site]
   workflow_dispatch:
 
 permissions:
