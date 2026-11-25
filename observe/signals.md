@@ -12,9 +12,9 @@ In production the path is `$REFUNDS_DECISION_LOG`; in VE-002 each world has its 
 | Field | Meaning |
 |---|---|
 | `order` | The order id. |
-| `clause` | The clause the decision applied, e.g. `REQ-012`. |
-| `result` | `in_review` or `refused`. |
-| `reason` | Why, in a few words, e.g. `day 31 of 30`. |
+| `clause` | The clause the decision applied: `REQ-012` for a refusal outside the window, `DEC-031` inside it. |
+| `result` | `approved`, `in_review` or `refused`. |
+| `reason` | Why, in a few words, e.g. `day 31 of 30` or `total refunded $120, not under $100`. |
 | `inputs` | Everything the decision used, below. Enough to replay it. |
 | `trace` | The trace id of the request that asked for the decision. |
 | `at` | When it was written, UTC, ISO 8601. |
@@ -27,7 +27,7 @@ In production the path is `$REFUNDS_DECISION_LOG`; in VE-002 each world has its 
 | `dispatched_on` | The day of dispatch, ISO date. |
 | `delivered_on` | The day of delivery, ISO date. |
 | `amount_cents` | The refund amount requested. |
-| `refunded_cents` | What had already been refunded on the order, as the service read it. |
+| `refunded_cents` | What had already been refunded on the order before this refund: every refund on it that is not refused. The total refunded that DEC-031 compares with $100 is this plus `amount_cents`. |
 | `today` | The day of the request, ISO date. |
 | `counted_from` | Which day of the order the refund window was counted from: `dispatch` or `delivery`. |
 | `window_start` | That day, ISO date. |

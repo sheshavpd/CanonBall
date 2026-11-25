@@ -107,11 +107,11 @@ class Store:
             rows = self._db.execute(f"SELECT {_COLUMNS} FROM refunds WHERE order_id = ? ORDER BY id", (order_id,))
             return [Refund(*r) for r in rows.fetchall()]
 
-    def total_paid(self, order_id: int) -> int:
-        """The sum of the refunds on an order that the gateway has paid."""
+    def total_refunded(self, order_id: int) -> int:
+        """The sum of the refunds on an order that are not refused: in review, approved, being paid or paid."""
         with self._lock:
             row = self._db.execute(
-                "SELECT COALESCE(SUM(amount_cents), 0) FROM refunds WHERE order_id = ? AND state = 'paid'",
+                "SELECT COALESCE(SUM(amount_cents), 0) FROM refunds WHERE order_id = ? AND state != 'refused'",
                 (order_id,)).fetchone()
         return row[0]
 

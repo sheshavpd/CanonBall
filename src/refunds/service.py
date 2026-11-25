@@ -15,7 +15,7 @@ from refunds.adapters.gateway import Gateway, PayoutRefused, ReplyLost
 from refunds.adapters.store import Refund, Store
 from refunds.decide import decide_refund
 
-PAYOUT_RETRIES = 3                      # retries after a lost reply, all with the same request key
+PAYOUT_RETRIES = 5                      # retries after a lost reply, all with the same request key
 REVIEW_REQUIRED_ABOVE_CENTS = 1_000_000  # ENV-003: no payout above $10,000 without review
 
 
@@ -35,10 +35,13 @@ class Service:
         if existing is not None:
             return existing  # the same request again: INV-004
         order = self.store.order(order_id)
-        refunded = self.store.total_paid(order_id)
+        refunded = self.store.total_refunded(order_id)
         decision = decide_refund(order, amount_cents, refunded, self.today())
         self.decisions.write(order_id, decision, self.new_trace())
-        return self.store.add_refund(order_id, key, amount_cents, decision.result)
+        refund = self.store.add_refund(order_id, key, amount_cents, decision.result)
+        if refund.state == "approved":
+            return self.pay(refund.id)  # DEC-031: approved automatically, paid as a reviewed refund is
+        return refund
 
     def approve(self, refund_id: int, reviewer: str) -> Refund:
         """The review path: a person approves a refund in review, and it is paid."""
