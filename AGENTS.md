@@ -71,7 +71,7 @@ Work moves through seven stations: Collect, Shape, Build, Verify, Review, Releas
 - The agent that writes code does not write what judges it. A builder may run `verify/` and may not change it; it proposes a correction instead.
 - Every example gets one check, marked with the example it encodes. Every check must be seen to fail against an injected fault (`tools/canonball fault`) before its pass counts.
 - Look before you reason. Use the tools in `observe/` to see what the system did. Log each new decision with the clause it applied and the inputs it used.
-- Never write a status. `tools/canonball` computes task states, milestone states and the Verification Record from what is in the repository.
+- Never write a status. `tools/canonball` computes the state of every milestone and unplanned item, and the Verification Record, from what is in the repository. A task is done when its code and checks are merged.
 - Work that restores an existing promise, or changes no clause, goes in `roadmap/unplanned/`. Anything that changes what is promised waits for a milestone.
 - An agent reviews every change. A person reviews as well when the policy lists the change as critical. Never hand a person a test file or a raw log to read.
 
