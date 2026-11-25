@@ -2,7 +2,7 @@
 
 **The lifecycle agents can run and people can trust.**
 
-This branch is the CanonBall website: a landing page that introduces the method, the guide, a glossary, and a plain-text twin of every page for agents. The starter repository is on `main`, and the worked example on `example/refunds`.
+This branch is the CanonBall website: a landing page that introduces the method, the guide, a glossary, and a plain-text twin of every page for agents. The starter repository is on `main`, and the worked example on `refunds-example`.
 
 ## Stack
 

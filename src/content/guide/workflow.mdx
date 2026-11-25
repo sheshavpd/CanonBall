@@ -76,10 +76,10 @@ The running example is a refunds service for an online shop and its milestone M2
 - **ENV-003**, a constraint. No payout above $10,000 without review.
 - **ASM-011**, an assumption. The payment gateway pays at most once per request key.
 
-The example is a real repository. The branch [`example/refunds`](https://github.com/sheshavpd/CanonBall/tree/example/refunds) is the [starter repository](https://github.com/sheshavpd/CanonBall/tree/main) after this service was built with it, and its history has one tagged commit per station. Each station chapter links to the diff its station produced, so the files described here can be read as they were committed.
+The example is a real repository. The branch [`refunds-example`](https://github.com/sheshavpd/CanonBall/tree/refunds-example) is the [starter repository](https://github.com/sheshavpd/CanonBall/tree/main) after this service was built with it, and its history has one commit per station. Each station chapter links to the diff its station produced, so the files described here can be read as they were committed.
 
 ```sh
-git clone -b example/refunds https://github.com/sheshavpd/CanonBall refunds
+git clone -b refunds-example https://github.com/sheshavpd/CanonBall refunds
 cd refunds
 git log --oneline
 tools/canonball record

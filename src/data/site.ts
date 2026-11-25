@@ -1,7 +1,7 @@
 export const site = {
   name: 'CanonBall',
   repo: 'https://github.com/sheshavpd/CanonBall',
-  example: 'example/refunds',
+  example: 'refunds-example',
   tagline: 'The lifecycle agents can run and people can trust.',
   description:
     'CanonBall is a method for building and operating software with AI agents. People write down what the system must do. Agents build it and produce the evidence. Every release ships the clauses, the build and the evidence together.',

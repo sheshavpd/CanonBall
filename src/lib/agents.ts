@@ -186,7 +186,7 @@ export function homeText(all: Chapter[], s: Site): string {
     '## Start from the repository',
     '',
     `The starter repository is ${site.repo}/tree/main. Create a repository from it, fill in the top of AGENTS.md, and point an agent at it. It holds the layout, the templates, the policy pages, an AGENTS.md whose appendix teaches the method, and tools/canonball, the orchestrator (check, run, fault, record, status, release, new).`,
-    `The worked example is the branch ${site.example}: ${site.repo}/tree/${site.example}. It is the starter after a refunds service was built with it, with one tagged commit per station (refunds-cb12, refunds-collect, refunds-shape, refunds-build, refunds-verify, refunds-review, refunds-cb13, refunds-operate, refunds-cb14).`,
+    `The worked example is the branch ${site.example}: ${site.repo}/tree/${site.example}. It is the starter after a refunds service was built with it, with one commit per station: CanonBall 12, then Collect, Shape, Build, Verify, Review and Release of milestone M2 (CanonBall 13), then the incident INC-007 and its repair (CanonBall 14). Each station chapter links to the diff its station produced.`,
     '',
     '## The repository',
     '',

@@ -19,7 +19,7 @@ export interface Station {
   sometimes?: { who: string; short?: string; when: string; critical?: boolean }[];
   reads: string[];
   writes: string[];
-  /** Tags in the example repository: this station's commits are the diff from..to. */
+  /** Commits in the example branch: this station's work is the diff from..to. */
   diff?: { from: string; to: string; label?: string }[];
   /** The gate that closes this station, if any. */
   gate?: { name: string; text: string };
@@ -31,7 +31,7 @@ export const stations: Station[] = [
     does: 'Requests gather into a milestone, and a one-page proposal says what it will change.',
     people: ['Product manager'], agents: ['Elicitor'],
     reads: ['roadmap/notes/', 'spec/canon/'], writes: ['roadmap/notes/', 'roadmap/index.md', 'roadmap/M2-…/change.md'],
-    diff: [{ from: 'refunds-cb12', to: 'refunds-collect' }],
+    diff: [{ from: '4a967e63e88f997821869e83712fc7f9aca3a6c5', to: 'e292a3bc1cb89792eb4df5c14e5b70fb5dca4bda' }],
   },
   {
     id: 'shape', name: 'Shape', sub: 'promises, decisions, invariants',
@@ -39,7 +39,7 @@ export const stations: Station[] = [
     people: ['Product manager', 'Architect', 'Verification lead'], agents: ['Elicitor'],
     alsoPeople: ['Constraint owner'], alsoAgents: ['Planner', 'Verifier'],
     reads: ['AGENTS.md', 'spec/canon/tenets.md', 'spec/canon/vocabulary.md'], writes: ['roadmap/M2-…/diff/canon/', 'roadmap/M2-…/diff/blueprint/', 'roadmap/M2-…/tasks/', 'roadmap/M2-…/approvals.md'],
-    diff: [{ from: 'refunds-collect', to: 'refunds-shape' }],
+    diff: [{ from: 'e292a3bc1cb89792eb4df5c14e5b70fb5dca4bda', to: '4d4f4b371e6ea3010000c3112ea60d9015681d8b' }],
     gate: { name: 'Agreement gate', text: 'people approve the examples before anything is built.' },
   },
   {
@@ -47,21 +47,21 @@ export const stations: Station[] = [
     does: 'The builder writes the code in named tasks and watches what it does through the observability tools.',
     people: [], agents: ['Builder'], sometimes: [{ who: 'Architect', when: 'if the team keeps detailed design' }],
     reads: ['roadmap/M2-…/diff/', 'observe/'], writes: ['src/', 'observe/signals.md'],
-    diff: [{ from: 'refunds-shape', to: 'refunds-build' }],
+    diff: [{ from: '4d4f4b371e6ea3010000c3112ea60d9015681d8b', to: 'a8b3797cacc5b37e7e410aff08c1bddd2142018c' }],
   },
   {
     id: 'verify', name: 'Verify', sub: 'in an engineered environment',
     does: 'A different agent builds the verification environment and the checks, and shows each check failing before its pass counts.',
     people: ['Verification lead'], agents: ['Verifier'],
     reads: ['roadmap/M2-…/diff/blueprint/', 'observe/'], writes: ['verify/envs/', 'verify/checks/', 'verify/faults/', 'observe/tools/'],
-    diff: [{ from: 'refunds-build', to: 'refunds-verify' }],
+    diff: [{ from: 'a8b3797cacc5b37e7e410aff08c1bddd2142018c', to: '52a288b281d965ae19562b6c2be2e9178e402a83' }],
   },
   {
     id: 'review', name: 'Review', sub: 'an agent always, a person if critical',
     does: 'An agent reviews every milestone. A person reviews as well only when the change is critical or its blast radius is large.',
     people: [], agents: ['Reviewer'], sometimes: [{ who: 'Owner of what is at risk', short: 'Owner', when: 'if critical', critical: true }],
     reads: ['the diff', 'Verification Record', 'spec/canon/policy/'], writes: ['roadmap/M2-…/review.md'],
-    diff: [{ from: 'refunds-verify', to: 'refunds-review' }],
+    diff: [{ from: '52a288b281d965ae19562b6c2be2e9178e402a83', to: 'e56d3fa8ad49d043f1f1b01f33b92fcc2b9a935b' }],
     gate: { name: 'Release gate', text: 'a person accepts the remaining risk, only when the change is critical.' },
   },
   {
@@ -69,14 +69,14 @@ export const stations: Station[] = [
     does: 'The orchestrator, a program, copies the proposed files into spec/, publishes a CanonBall (the canon, the build and the Verification Record together) and deploys its build.',
     people: [], agents: [], program: 'Orchestrator',
     reads: ['Verification Record'], writes: ['spec/', 'roadmap/archive/', 'CANONBALLS.md'],
-    diff: [{ from: 'refunds-review', to: 'refunds-cb13' }],
+    diff: [{ from: 'e56d3fa8ad49d043f1f1b01f33b92fcc2b9a935b', to: '8692fe70009ab8855ceb787e20e99deda474cf9d' }],
   },
   {
     id: 'operate', name: 'Operate', sub: 'the running system',
     does: 'The system runs. Monitors watch what was promised, and what breaks comes back as work.',
     people: ['Operator'], agents: ['On-call agent'],
     reads: ['observe/', 'verify/monitors/'], writes: ['incidents/', 'roadmap/unplanned/'],
-    diff: [{ from: 'refunds-cb13', to: 'refunds-operate', label: 'the incident' }, { from: 'refunds-operate', to: 'refunds-cb14', label: 'the repair, released as CanonBall 14' }],
+    diff: [{ from: '8692fe70009ab8855ceb787e20e99deda474cf9d', to: '137f3a1d62890a0b5692bdd9f764b3a39997cfa2', label: 'the incident' }, { from: '137f3a1d62890a0b5692bdd9f764b3a39997cfa2', to: '98cfb4f3d9d057d4147485f1f2dba395f47d8a4d', label: 'the repair, released as CanonBall 14' }],
   },
 ];
 

@@ -29,7 +29,7 @@ const s = stations.find((x) => x.id === id)!;
     {s.diff && (
       <>
         <dt>In the repo</dt>
-        <dd class="diffs">{s.diff.map((d) => <a href={compareUrl(d.from, d.to)}>{d.label ? `See ${d.label}` : 'See exactly what this station changed'} <span>{d.from}…{d.to}</span></a>)}</dd>
+        <dd class="diffs">{s.diff.map((d) => <a href={compareUrl(d.from, d.to)}>{d.label ? `See ${d.label}` : 'See exactly what this station changed'} <span>{d.from.slice(0, 7)}…{d.to.slice(0, 7)}</span></a>)}</dd>
       </>
     )}
   </dl>
