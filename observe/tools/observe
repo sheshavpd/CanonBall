@@ -55,6 +55,10 @@ def day(iso: str) -> str:
     return f"{d.day} {d.strftime('%B')}"
 
 
+def dollars(cents: int) -> str:
+    return f"${cents // 100:,}" if cents % 100 == 0 else f"${cents / 100:,.2f}"
+
+
 def block(decision: dict, titles: dict[str, str]) -> str:
     clause, inputs = decision["clause"], decision["inputs"]
     rows = [("result", decision["result"].replace("_", " "))]
@@ -62,6 +66,9 @@ def block(decision: dict, titles: dict[str, str]) -> str:
         rows += [("reason", decision["reason"]),
                  ("counted from", f"{inputs['counted_from']}, {day(inputs['window_start'])}"),
                  ("delivered", day(inputs["delivered_on"]))]
+    elif clause == "DEC-031":
+        rows += [("refund amount", dollars(inputs["amount_cents"])),
+                 ("total refunded", dollars(inputs["refunded_cents"] + inputs["amount_cents"]))]
     else:
         rows += [("reason", decision["reason"])]
     width = max(len(label) for label, _ in rows) + 2

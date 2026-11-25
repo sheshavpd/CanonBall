@@ -1,0 +1,7 @@
+{
+  "check": "verify.checks.test_dec031_auto_approve_under_100.AutoApproveUnder100.test_40_refund_is_approved_without_review",
+  "example": "DEC-031#satisfies/1",
+  "fault": "verify/faults/auto-approve-off.patch",
+  "outcome": "failed",
+  "at": "2026-11-25T01:26:38+00:00"
+}

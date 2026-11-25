@@ -1,0 +1,13 @@
+diff --git a/src/refunds/decide.py b/src/refunds/decide.py
+index 1a81700..ca8a677 100644
+--- a/src/refunds/decide.py
++++ b/src/refunds/decide.py
+@@ -59,7 +59,7 @@ def decide_refund(order: Order, amount_cents: int, refunded_cents: int, today: d
+     reason = f"day {day} of {WINDOW_DAYS}"
+     if day > WINDOW_DAYS:
+         return Decision("refused", reason, "REQ-012", inputs)
+-    total = refunded_cents + amount_cents
++    total = amount_cents
+     if total < AUTO_APPROVE_BELOW_CENTS:
+         return Decision("approved", f"total refunded {dollars(total)}, under $100", "DEC-031", inputs)
+     return Decision("in_review", f"total refunded {dollars(total)}, not under $100", "DEC-031", inputs)

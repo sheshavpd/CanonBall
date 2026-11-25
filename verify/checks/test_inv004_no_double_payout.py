@@ -35,6 +35,17 @@ class NoDoublePayout(unittest.TestCase):
         paid = world.observe.gateway.payouts(order=order)
         assert len(paid) == 1
 
+    @example_of("INV-004#satisfies/2", "A retry after a lost reply finds the original payout")
+    def test_retry_after_lost_reply_on_automatic_path_pays_once(self):
+        """The same example on the automatic path of DEC-031: no review, the payout reply is lost."""
+        world = self.world
+        order = world.rig.order(total_cents=15000)
+        world.perturb.gateway.lose_reply()
+        refund = world.act.request_refund(order, 4000, key="lost-reply-auto-1")
+        self.assertEqual(refund.state, "paid")
+        paid = world.observe.gateway.payouts(order=order)
+        assert len(paid) == 1
+
     @example_of("INV-004#violates/1", "Two concurrent copies of one request both pay out")
     def test_two_concurrent_copies_pay_once(self):
         world = self.world

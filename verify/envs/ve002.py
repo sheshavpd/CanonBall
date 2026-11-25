@@ -9,7 +9,7 @@ The declaration is spec/blueprint/environments/VE-002.md. One command up, one co
                                     # down: the store and the log are gone
 
 The four verbs:
-    rig       starting state: orders, existing refunds, today's date
+    rig       starting state: orders, existing refunds, partly refunded orders, today's date
     act       the service API (refunds.service.Service)
     perturb   failures: perturb.gateway.refuse(), .duplicate(), .lose_reply()
     observe   what happened: observe.gateway.payouts(), observe.store, observe.decisions()
@@ -58,11 +58,21 @@ class Rig:
 
     def refund(self, order: int, amount_cents: int, state: str = "in_review",
                reviewer: str | None = None, key: str | None = None) -> int:
-        """A refund already on the order, waiting for review ("in_review") or for payout ("approved")."""
-        if state not in ("in_review", "approved"):
+        """A refund already on the order: waiting for review ("in_review"), waiting for payout
+        ("approved"), or paid before this world started ("paid"), which makes the order partly refunded.
+        A paid refund is in the store only; this world's gateway has not paid it."""
+        if state not in ("in_review", "approved", "paid"):
             raise ValueError(f"VE-002 cannot set up a refund in state {state!r}")
         key = key or f"rig-{order}-{len(self._world.store.refunds(order)) + 1}"
-        return self._world.store.add_refund(order, key, amount_cents, state, reviewed_by=reviewer).id
+        payout_id = f"earlier-{key}" if state == "paid" else None
+        return self._world.store.add_refund(order, key, amount_cents, state, reviewed_by=reviewer,
+                                            payout_id=payout_id).id
+
+    def partly_refunded_order(self, refunded_cents: int, **order) -> int:
+        """An order that has already been partly refunded: one refund of `refunded_cents`, paid."""
+        order_id = self.order(**order)
+        self.refund(order_id, refunded_cents, state="paid")
+        return order_id
 
 
 class Observe:

@@ -1,0 +1,7 @@
+{
+  "check": "verify.checks.test_dec031_auto_approve_under_100.AutoApproveUnder100.test_250_refund_goes_to_review",
+  "example": "DEC-031#violates/1",
+  "fault": "verify/faults/limit-ignores-this-refund.patch",
+  "outcome": "failed",
+  "at": "2026-11-25T01:26:38+00:00"
+}
